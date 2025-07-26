@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+      <PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EventStore.Core\EventStore.Core.csproj" />
+    </ItemGroup>
+
+</Project>
