@@ -4,7 +4,7 @@ using EventStore.SampleApp.TrafficLights.AggregateRoot;
 
 namespace EventStore.SampleApp.TrafficLights.Commands;
 
-public class ChangeColourCommandHandler(IEventSourcedEntityRepository<TrafficLight> _repository) : ICommandHandler<ChangeColour>
+public class ChangeColourCommandHandler(IAggregateRootRepository<TrafficLight> _repository) : ICommandHandler<ChangeColour>
 {
     public async Task HandleAsync(ChangeColour command)
     {
