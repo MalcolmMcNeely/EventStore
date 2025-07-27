@@ -28,23 +28,31 @@ public static class BlobClientExtensions
 
     public static async Task<bool> UploadWithLeaseAsync(this BlobClient blobClient, BinaryData binaryData, CancellationToken token = default)
     {
+        var leaseClient = blobClient.GetBlobLeaseClient();
+        BlobLease? lease = null;
+
         try
         {
-            var leaseClient = blobClient.GetBlobLeaseClient();
-            var lease = await leaseClient.AcquireAsync(LeaseDuration, cancellationToken: token);
-            var leaseId = lease.Value.LeaseId;
+            lease = await leaseClient.AcquireAsync(LeaseDuration, cancellationToken: token);
+
             var uploadOptions = new BlobUploadOptions
             {
-                Conditions = new BlobRequestConditions { LeaseId = leaseId },
+                Conditions = new BlobRequestConditions { LeaseId = lease.LeaseId },
             };
 
             await blobClient.UploadAsync(binaryData, uploadOptions, token);
-            await leaseClient.ReleaseAsync(cancellationToken: token);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.LeaseIdMismatchWithLeaseOperation ||
                                                 ex.ErrorCode == BlobErrorCode.LeaseAlreadyPresent)
         {
             return false;
+        }
+        finally
+        {
+            if (lease?.LeaseId is not null)
+            {
+                await leaseClient.ReleaseAsync(new BlobRequestConditions { LeaseId = lease.LeaseId }, cancellationToken: token);
+            }
         }
 
         return true;

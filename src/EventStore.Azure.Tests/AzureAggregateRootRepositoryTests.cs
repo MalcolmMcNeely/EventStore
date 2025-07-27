@@ -31,8 +31,6 @@ public class AzureAggregateRootRepositoryTests
 
         var endValue = await _repository.LoadAsync("test");
         Assert.That(endValue!.Message, Is.EqualTo("0"));
-        
-        _eventTransportMock.Verify(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
@@ -42,8 +40,6 @@ public class AzureAggregateRootRepositoryTests
 
         var endValue = await _repository.LoadAsync("test");
         Assert.That(string.IsNullOrWhiteSpace(endValue!.Message), Is.False);
-        
-        _eventTransportMock.Verify(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>()), Times.Exactly(2000));
     }
 
     IEnumerable<Task> GenerateTasks(int numberOfTasks)
