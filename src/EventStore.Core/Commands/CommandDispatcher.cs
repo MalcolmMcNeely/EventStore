@@ -11,7 +11,7 @@ public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispa
         {
             throw new Exception($"No handler found for command {command.GetType()}");
         }
-        
+
         var handleMethod = handlerType.GetMethod("HandleAsync");
         await (Task)handleMethod!.Invoke(handler, [command, token])!;
     }

@@ -1,4 +1,5 @@
 ﻿using EventStore.Commands.AggregateRoots;
+using EventStore.Events;
 
 namespace EventStore.Commands.Transactions;
 

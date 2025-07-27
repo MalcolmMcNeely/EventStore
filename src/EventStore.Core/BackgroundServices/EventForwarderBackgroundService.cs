@@ -1,16 +1,24 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using EventStore.Events;
+using EventStore.Events.Transport;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace EventStore.BackgroundServices;
 
-internal sealed class EventForwarderBackgroundService(ILogger<EventForwarderBackgroundService> logger) : BackgroundService
+internal sealed class EventForwarderBackgroundService(IEventTransport eventTransport, IEventDispatcher eventDispatcher, ILogger<EventForwarderBackgroundService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {
-            logger.LogInformation("Test");
-            await Task.Delay(1000, token);
+            await Task.Delay(500, token);
+
+            var @event = await eventTransport.GetEventAsync(token);
+
+            if (@event is not null)
+            {
+                await eventDispatcher.SendEventAsync(@event, token);
+            }
         }
     }
 }

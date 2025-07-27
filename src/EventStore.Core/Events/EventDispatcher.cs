@@ -1,21 +1,21 @@
 ﻿using EventStore.ProjectionBuilders;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Events;
 
-public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatcher
+public class EventDispatcher(IServiceProvider serviceProvider, ProjectionBuilderRegistration registration) : IEventDispatcher
 {
-    public void SendEvent<T>(T @event, CancellationToken token = default) where T : IEvent
+    public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : IEvent
     {
-        //var handlerType = typeof(ProjectionBuilder<>).MakeGenericType(command.GetType());
-        var handlers = serviceProvider.GetServices(typeof(ProjectionBuilder<>));
-        
-        // if (handler is null)
-        // {
-        //     throw new Exception($"No handler found for command {command.GetType()}");
-        // }
-        //
-        // var handleMethod = handlerType.GetMethod("HandleAsync");
-        // await (Task)handleMethod!.Invoke(handler, [command, token])!;
+        var eventType = @event.GetType();
+        var projections = registration.ProjectionsFor(eventType);
+
+        foreach (var projection in projections)
+        {
+            var projectionBuilderType = typeof(ProjectionBuilder<>).MakeGenericType(projection);
+            var projectionBuilder = (IProjectionBuilder)serviceProvider.GetService(projectionBuilderType)!;
+            var applyEventsMethod = projectionBuilderType.GetMethod("ApplyEventAsync");
+            var task = (Task)applyEventsMethod!.Invoke(projectionBuilder, [@event, token])!;
+            await task.ConfigureAwait(false);
+        }
     }
 }

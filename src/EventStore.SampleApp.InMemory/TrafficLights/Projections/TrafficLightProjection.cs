@@ -1,6 +1,6 @@
 ﻿using EventStore.Projections;
 
-namespace EventStore.SampleApp.InMemory.TrafficLights.Reports;
+namespace EventStore.SampleApp.InMemory.TrafficLights.Projections;
 
 public class TrafficLightProjection : IProjection
 {

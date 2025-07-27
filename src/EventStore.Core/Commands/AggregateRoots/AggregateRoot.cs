@@ -14,7 +14,7 @@ public abstract class AggregateRoot
     {
         Handlers[typeof(T)] = eventHandler;
     }
-    
+
     protected void Update<T>(T @event) where T : IEvent
     {
         NewEvents.Add((typeof(T), @event));

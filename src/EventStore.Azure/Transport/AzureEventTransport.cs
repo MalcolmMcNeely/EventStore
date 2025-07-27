@@ -14,7 +14,7 @@ public class AzureEventTransport(AzureService azureService) : IEventTransport
         await queueClient.SendMessageAsync(message, token);
     }
 
-    public Task<IEvent> GetEventAsync(CancellationToken token = default)
+    public Task<IEvent?> GetEventAsync(CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

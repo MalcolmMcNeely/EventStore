@@ -5,7 +5,7 @@ namespace EventStore.InMemory.Transport;
 
 public class InMemoryEventTransport : IEventTransport
 {
-    Queue<IEvent> _eventQueue = new();
+    readonly Queue<IEvent> _eventQueue = new();
 
     public Task SendEventAsync(IEvent @event, CancellationToken token = default)
     {
@@ -14,8 +14,13 @@ public class InMemoryEventTransport : IEventTransport
         return Task.CompletedTask;
     }
 
-    public Task<IEvent> GetEventAsync(CancellationToken token = default)
+    public Task<IEvent?> GetEventAsync(CancellationToken token = default)
     {
-        return Task.FromResult(_eventQueue.Dequeue());
+        if(!_eventQueue.TryDequeue(out var @event))
+        {
+            return Task.FromResult<IEvent?>(null);
+        }
+
+        return Task.FromResult(@event)!;
     }
 }

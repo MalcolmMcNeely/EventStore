@@ -6,15 +6,22 @@ namespace EventStore.ProjectionBuilders;
 public interface IProjectionBuilder
 {
     public IEnumerable<Type> GetEventTypes();
+    public Task ApplyEventAsync(IEvent @event, CancellationToken token);
 }
 
 public delegate void ProjectionBuilderEventHandler<in TEvent, in TProjection>(TEvent @event, TProjection projection) 
     where TEvent : IEvent
     where TProjection : IProjection;
 
-public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository) : IProjectionBuilder where TProjection : IProjection
+public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository) : IProjectionBuilder where TProjection : IProjection, new()
 {
     Dictionary<Type, Delegate> Handlers { get; } = new();
+    string Key { get; set; } = string.Empty;
+
+    protected void WithKey(string key)
+    {
+        Key = key;
+    }
 
     protected void Handles<TEvent>(ProjectionBuilderEventHandler<TEvent, TProjection> eventHandler)
         where TEvent : IEvent
@@ -26,13 +33,21 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
     {
         return Handlers.Keys;
     }
-    
-    internal void ApplyEvents(TProjection projection, params IEvent[] events)
+
+    public async Task ApplyEventAsync(IEvent @event, CancellationToken token)
     {
-        foreach (var @event in events)
+        var key = Key; // need options for key building
+
+        var projection = await repository.LoadAsync(key, token);
+
+        if (projection is null)
         {
-            InvokeHandler(@event.GetType(), @event, projection);
+            projection = new();
         }
+
+        InvokeHandler(@event.GetType(), @event, projection);
+
+        await repository.SaveAsync(projection, token);
     }
 
     void InvokeHandler<TEvent>(Type type, TEvent @event, TProjection projection)

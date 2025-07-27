@@ -15,7 +15,7 @@ public class ProjectionBuilderRegistrationTests
     public void Setup()
     {
         _serviceProvider = new ServiceCollection()
-            .AddSingleton<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, InMemoryProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
+            .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, InMemoryProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
             .AddTransient<IProjectionBuilder, ProjectionBuilderRegistrationTestProjectionBuilder>()
             .BuildServiceProvider();
     }
@@ -24,12 +24,15 @@ public class ProjectionBuilderRegistrationTests
     public void it_can_resolve_a_projection_builder()
     {
         _registration = new(_serviceProvider);
+        var projections = _registration.ProjectionsFor(typeof(ProjectionBuilderRegistrationTestEvent));
+        
+        Assert.That(projections, Is.Not.Null);
     }
 
     [TearDown]
     public void TearDown() => _serviceProvider.Dispose();
 
-    class ProjectionBuilderRegistrationTestEvent1 : IEvent
+    class ProjectionBuilderRegistrationTestEvent : IEvent
     {
         public required string Message { get; set; }
     }
@@ -37,17 +40,17 @@ public class ProjectionBuilderRegistrationTests
     class ProjectionBuilderRegistrationTestProjection : IProjection
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public required string Message { get; set; }
+        public string? Message { get; set; }
     }
 
     class ProjectionBuilderRegistrationTestProjectionBuilder : ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>
     {
         public ProjectionBuilderRegistrationTestProjectionBuilder(IProjectionRepository<ProjectionBuilderRegistrationTestProjection> repository) : base(repository)
         {
-            Handles<ProjectionBuilderRegistrationTestEvent1>(OnEvent);
+            Handles<ProjectionBuilderRegistrationTestEvent>(OnEvent);
         }
 
-        void OnEvent(ProjectionBuilderRegistrationTestEvent1 @event, ProjectionBuilderRegistrationTestProjection projection)
+        void OnEvent(ProjectionBuilderRegistrationTestEvent @event, ProjectionBuilderRegistrationTestProjection projection)
         {
             projection.Message = @event.Message;
         }

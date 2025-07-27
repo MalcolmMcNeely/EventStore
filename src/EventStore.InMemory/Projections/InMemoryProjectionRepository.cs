@@ -6,7 +6,7 @@ public class InMemoryProjectionRepository<T> : IProjectionRepository<T>  where T
 {
     readonly Dictionary<string, T> _projections = new();
     
-    public Task<T?> Load(string id)
+    public Task<T?> LoadAsync(string id, CancellationToken _ = default)
     {
         if (_projections.TryGetValue(id, out var projection))
         {
@@ -16,7 +16,7 @@ public class InMemoryProjectionRepository<T> : IProjectionRepository<T>  where T
         return Task.FromResult<T?>(default);
     }
 
-    public Task Save(T projection)
+    public Task SaveAsync(T projection, CancellationToken _ = default)
     {
         _projections[projection.Id] = projection;
 

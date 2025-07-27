@@ -1,6 +1,7 @@
 ﻿using EventStore.Commands;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
+using EventStore.InMemory.Transport;
 
 namespace EventStore.Core.Tests.Commands.Transactions;
 
@@ -12,7 +13,7 @@ public class UnitOfWorkTests
     [SetUp]
     public async Task Setup()
     {
-        _repository = new InMemoryAggregateRootRepository<UnitOfWorkTestAggregateRoot>();
+        _repository = new InMemoryAggregateRootRepository<UnitOfWorkTestAggregateRoot>(new InMemoryEventTransport());
         _command = new UnitOfWorkTestCommand { Message = "Hello" };
 
         await _repository.CreateUnitOfWork(nameof(UnitOfWorkTestAggregateRoot))

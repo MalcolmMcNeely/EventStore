@@ -1,24 +1,26 @@
-﻿using EventStore.InMemory;
+﻿using EventStore;
+using EventStore.Commands;
+using EventStore.InMemory;
+using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
-using EventStore.SampleApp.InMemory.TrafficLights.Reports;
+using EventStore.Projections;
+using EventStore.SampleApp.InMemory;
+using EventStore.SampleApp.InMemory.TrafficLights.Commands;
+using EventStore.SampleApp.InMemory.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 
-hostBuilder.AddDefaultServices();
-
+hostBuilder.Services.AddTransient<IProjectionRepository<TrafficLightProjection>, InMemoryProjectionRepository<TrafficLightProjection>>();
 hostBuilder.Services.AddTransient<IProjectionBuilder, TrafficLightProjectionBuilder>();
-hostBuilder.Services.AddSingleton<ProjectionBuilderRegistration>();
-hostBuilder.Services.AddHostedService<MyHostedService>();
+hostBuilder.Services.AddTransient<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
+hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
+hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
+
+hostBuilder.AddCoreServices();
+hostBuilder.AddInMemoryServices();
 
 var host = hostBuilder.Build();
 await host.RunAsync();
 
-public class MyHostedService(ProjectionBuilderRegistration registration) : BackgroundService
-{
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-}

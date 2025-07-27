@@ -11,7 +11,7 @@ namespace EventStore.InMemory;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static void AddDefaultServices(this IHostApplicationBuilder hostBuilder)
+    public static void AddInMemoryServices(this IHostApplicationBuilder hostBuilder)
     {
         hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(InMemoryAggregateRootRepository<>));
         hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(InMemoryProjectionRepository<>));

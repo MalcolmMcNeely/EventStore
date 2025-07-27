@@ -2,6 +2,6 @@
 
 public interface IProjectionRepository<T> where T : IProjection
 {
-    Task<T?> Load(string id);
-    Task Save(T projection);
+    Task<T?> LoadAsync(string id, CancellationToken token = default);
+    Task SaveAsync(T projection, CancellationToken token = default);
 }
