@@ -1,8 +1,8 @@
 ﻿namespace EventStore.SampleApp;
 
-public class Colours
+public enum Colour
 {
-    public const string Red = "Red";
-    public const string Green = "Green";
-    public const string Yellow = "Yellow"; 
+    Red,
+    Green,
+    Yellow,
 }

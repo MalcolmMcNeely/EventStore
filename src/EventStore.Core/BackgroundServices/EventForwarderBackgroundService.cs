@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace EventStore;
+namespace EventStore.BackgroundServices;
 
-public class EventForwarderBackgroundService(ILogger<EventForwarderBackgroundService> logger) : BackgroundService
+internal sealed class EventForwarderBackgroundService(ILogger<EventForwarderBackgroundService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
     {

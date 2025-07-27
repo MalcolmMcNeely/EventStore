@@ -1,6 +1,6 @@
-﻿using EventStore.Commands.AggregateRoot;
+﻿using EventStore.Commands.AggregateRoots;
 
-namespace EventStore.Transaction;
+namespace EventStore.Commands.Transactions;
 
 public class UnitOfWork<T> where T : AggregateRoot, new()
 {
@@ -64,7 +64,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
         if (entity.NewEvents.Count != 0)
         {
-            await _aggregateRootRepository.SendEventsAsync(entity.NewEvents, token);
+            await _aggregateRootRepository.SendEventsAsync(entity.NewEvents.Select(x => x.@event), token);
         }
     }
 
@@ -76,6 +76,8 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
         {
             await action(entity);
         }
+
+        entity.ApplyUpdates();
 
         return entity;
     }

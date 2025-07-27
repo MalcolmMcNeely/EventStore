@@ -1,16 +1,26 @@
-﻿using EventStore.Commands.AggregateRoot;
+﻿using EventStore.Commands.AggregateRoots;
+using EventStore.SampleApp.TrafficLights.Commands;
+using EventStore.SampleApp.TrafficLights.Events;
 
 namespace EventStore.SampleApp.TrafficLights.AggregateRoots;
 
 public class TrafficLight : AggregateRoot
 {
-    public const string Key =  "TrafficLight";
+    Colour CurrentColour { get; set; }
 
-    string _colour = Colours.Red;
-
-    public Task ChangeColour(string commandColour)
+    public TrafficLight()
     {
-        _colour = commandColour;
+        Handles<ColourChanged>(OnColourChanged);
+    }
+
+    void OnColourChanged(ColourChanged @event)
+    {
+        CurrentColour = @event.Colour;
+    }
+
+    public Task ChangeColourAsync(ChangeColour command)
+    {
+        Update(new ColourChanged {  Colour = command.Colour });
 
         return Task.CompletedTask;
     }

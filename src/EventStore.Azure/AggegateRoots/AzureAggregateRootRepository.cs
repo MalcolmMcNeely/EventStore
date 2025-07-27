@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Blobs;
-using EventStore.Commands.AggregateRoot;
+using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
-using EventStore.Transport;
+using EventStore.Events.Transport;
 
-namespace EventStore.Azure.AggegateRoot;
+namespace EventStore.Azure.AggegateRoots;
 
 public class AzureAggregateRootRepository<T>(AzureService azureService, IEventTransport transport) : IAggregateRootRepository<T> where T : AggregateRoot, new()
 {

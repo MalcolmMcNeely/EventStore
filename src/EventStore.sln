@@ -10,6 +10,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Core.Tests", "Ev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Azure.Tests", "EventStore.Azure.Tests\EventStore.Azure.Tests.csproj", "{CBDCFA94-2D9C-4335-BC82-869CD3B526CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.InMemory", "EventStore.InMemory\EventStore.InMemory.csproj", "{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0C69FFC4-D249-46CC-8CFB-06246CBC2E82}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleApps", "SampleApps", "{7BB978C5-EFB1-42C3-9594-0F5019F05C22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +42,14 @@ Global
 		{CBDCFA94-2D9C-4335-BC82-869CD3B526CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBDCFA94-2D9C-4335-BC82-869CD3B526CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBDCFA94-2D9C-4335-BC82-869CD3B526CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CBDCFA94-2D9C-4335-BC82-869CD3B526CC} = {0C69FFC4-D249-46CC-8CFB-06246CBC2E82}
+		{22357CC6-66E8-407B-B04B-1BED89082871} = {0C69FFC4-D249-46CC-8CFB-06246CBC2E82}
+		{E38E3940-724D-4908-B31D-2C1BA962AE62} = {7BB978C5-EFB1-42C3-9594-0F5019F05C22}
 	EndGlobalSection
 EndGlobal

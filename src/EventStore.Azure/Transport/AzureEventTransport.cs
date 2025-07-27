@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using EventStore.Events;
-using EventStore.Transport;
+using EventStore.Events.Transport;
 
 namespace EventStore.Azure;
 

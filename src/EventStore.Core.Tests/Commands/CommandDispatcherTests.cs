@@ -1,9 +1,8 @@
 ﻿using EventStore.Commands;
 using Moq;
 
-namespace EventStore.Core.Tests;
+namespace EventStore.Core.Tests.Commands;
 
-[TestFixture]
 public class CommandDispatcherTests
 {
     Mock<IServiceProvider> _mockServiceProvider;
@@ -20,9 +19,8 @@ public class CommandDispatcherTests
             .Setup(sp => sp.GetService(typeof(ICommandHandler<CommandDispatcherTestCommand>)))
             .Returns(_mockCommandHandler.Object);
         _mockCommandHandler
-            .Setup(x => x.HandleAsync(It.IsAny<CommandDispatcherTestCommand>()))
-            .Returns(Task.CompletedTask)
-            .Verifiable(Times.AtLeast(3));
+            .Setup(x => x.HandleAsync(It.IsAny<CommandDispatcherTestCommand>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
         _commandDispatcher = new CommandDispatcher(_mockServiceProvider.Object);
     }
@@ -31,8 +29,9 @@ public class CommandDispatcherTests
     public async Task it_can_dispatch_a_command()
     {
         await _commandDispatcher.DispatchAsync(new CommandDispatcherTestCommand());
-        _mockCommandHandler.Verify(x => x.HandleAsync(It.IsAny<CommandDispatcherTestCommand>()), Times.Once);
+        _mockCommandHandler.Verify(x => x.HandleAsync(It.IsAny<CommandDispatcherTestCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    public class CommandDispatcherTestCommand : ICommand;
 }
 
-public class CommandDispatcherTestCommand : ICommand;

@@ -1,10 +1,10 @@
-﻿using EventStore.Azure.AggegateRoot;
-using EventStore.Commands.AggregateRoot;
+﻿using EventStore.Azure.AggegateRoots;
+using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
-using EventStore.Transport;
+using EventStore.Events.Transport;
 using Moq;
 
-namespace EventStore.Azure.Tests;
+namespace EventStore.Azure.Tests.AggregateRoots;
 
 public class AzureAggregateRootRepositoryTests
 {
@@ -60,7 +60,7 @@ class TestAggregateRoot : AggregateRoot
 {
     public TestAggregateRoot()
     {
-        NewEvents.Add(new TestAggregateRootEvent());
+        NewEvents.Add((typeof(TestAggregateRootEvent), new TestAggregateRootEvent()));
     }
     
     public string Message { get; set; } = string.Empty;

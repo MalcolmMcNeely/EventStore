@@ -1,11 +1,6 @@
-﻿using EventStore.Transport;
+﻿using EventStore.Events.Transport;
 
 namespace EventStore.Events;
-
-public interface IEventDispatcher
-{
-    public void SendEvent(IEvent @event, CancellationToken token = default);
-}
 
 public class EventDispatcher(IEventTransport transport) : IEventDispatcher
 {

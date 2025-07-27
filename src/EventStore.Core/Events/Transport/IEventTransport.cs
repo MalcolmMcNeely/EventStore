@@ -1,6 +1,4 @@
-﻿using EventStore.Events;
-
-namespace EventStore.Transport;
+﻿namespace EventStore.Events.Transport;
 
 public interface IEventTransport
 {

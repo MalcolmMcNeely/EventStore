@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EventStore.Azure\EventStore.Azure.csproj" />
+      <ProjectReference Include="..\EventStore.InMemory\EventStore.InMemory.csproj" />
     </ItemGroup>
 
 </Project>
