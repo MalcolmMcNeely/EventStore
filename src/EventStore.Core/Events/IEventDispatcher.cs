@@ -2,5 +2,5 @@
 
 public interface IEventDispatcher
 {
-    public void SendEvent(IEvent @event, CancellationToken token = default);
+    public void SendEvent<T>(T @event, CancellationToken token = default) where T : IEvent;
 }

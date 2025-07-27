@@ -1,4 +1,4 @@
-﻿namespace EventStore.SampleApp;
+﻿namespace EventStore.SampleApp.InMemory;
 
 public enum Colour
 {

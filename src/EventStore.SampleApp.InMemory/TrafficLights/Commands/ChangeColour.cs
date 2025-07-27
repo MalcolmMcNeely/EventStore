@@ -1,6 +1,6 @@
 ﻿using EventStore.Commands;
 
-namespace EventStore.SampleApp.TrafficLights.Commands;
+namespace EventStore.SampleApp.InMemory.TrafficLights.Commands;
 
 public class ChangeColour : ICommand
 {

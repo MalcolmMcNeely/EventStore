@@ -1,8 +1,8 @@
 ﻿using EventStore.Commands;
 using EventStore.Commands.AggregateRoots;
-using EventStore.SampleApp.TrafficLights.AggregateRoots;
+using EventStore.SampleApp.Azure.TrafficLights.AggregateRoots;
 
-namespace EventStore.SampleApp.TrafficLights.Commands;
+namespace EventStore.SampleApp.Azure.TrafficLights.Commands;
 
 public class ChangeColourCommandHandler(IAggregateRootRepository<TrafficLight> _repository) : ICommandHandler<ChangeColour>
 {

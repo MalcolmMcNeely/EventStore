@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Core", "EventStore.Core\EventStore.Core.csproj", "{2104E16D-4A79-40E5-B3E2-723921E338E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.SampleApp", "EventStore.SampleApp\EventStore.SampleApp.csproj", "{E38E3940-724D-4908-B31D-2C1BA962AE62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.SampleApp.Azure", "EventStore.SampleApp.Azure\EventStore.SampleApp.Azure.csproj", "{E38E3940-724D-4908-B31D-2C1BA962AE62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Azure", "EventStore.Azure\EventStore.Azure.csproj", "{B0819865-F2BA-407A-9BF5-45295D23E81F}"
 EndProject
@@ -15,6 +15,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0C69FFC4-D249-46CC-8CFB-06246CBC2E82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleApps", "SampleApps", "{7BB978C5-EFB1-42C3-9594-0F5019F05C22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.SampleApp.InMemory", "EventStore.SampleApp.InMemory\EventStore.SampleApp.InMemory.csproj", "{42B4E49D-2C66-4958-82FA-6193A53E5E83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,10 +48,15 @@ Global
 		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE3F2899-A57C-4CDA-B4B8-B2DE6A5B727B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B4E49D-2C66-4958-82FA-6193A53E5E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B4E49D-2C66-4958-82FA-6193A53E5E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B4E49D-2C66-4958-82FA-6193A53E5E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B4E49D-2C66-4958-82FA-6193A53E5E83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CBDCFA94-2D9C-4335-BC82-869CD3B526CC} = {0C69FFC4-D249-46CC-8CFB-06246CBC2E82}
 		{22357CC6-66E8-407B-B04B-1BED89082871} = {0C69FFC4-D249-46CC-8CFB-06246CBC2E82}
 		{E38E3940-724D-4908-B31D-2C1BA962AE62} = {7BB978C5-EFB1-42C3-9594-0F5019F05C22}
+		{42B4E49D-2C66-4958-82FA-6193A53E5E83} = {7BB978C5-EFB1-42C3-9594-0F5019F05C22}
 	EndGlobalSection
 EndGlobal

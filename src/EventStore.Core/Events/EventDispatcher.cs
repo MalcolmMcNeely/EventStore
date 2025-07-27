@@ -1,11 +1,21 @@
-﻿using EventStore.Events.Transport;
+﻿using EventStore.ProjectionBuilders;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Events;
 
-public class EventDispatcher(IEventTransport transport) : IEventDispatcher
+public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatcher
 {
-    public void SendEvent(IEvent @event, CancellationToken token = default)
+    public void SendEvent<T>(T @event, CancellationToken token = default) where T : IEvent
     {
-        transport.SendEventAsync(@event, token);
+        //var handlerType = typeof(ProjectionBuilder<>).MakeGenericType(command.GetType());
+        var handlers = serviceProvider.GetServices(typeof(ProjectionBuilder<>));
+        
+        // if (handler is null)
+        // {
+        //     throw new Exception($"No handler found for command {command.GetType()}");
+        // }
+        //
+        // var handleMethod = handlerType.GetMethod("HandleAsync");
+        // await (Task)handleMethod!.Invoke(handler, [command, token])!;
     }
 }

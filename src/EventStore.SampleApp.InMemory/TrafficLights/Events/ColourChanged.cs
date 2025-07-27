@@ -1,6 +1,6 @@
 ﻿using EventStore.Events;
 
-namespace EventStore.SampleApp.TrafficLights.Events;
+namespace EventStore.SampleApp.InMemory.TrafficLights.Events;
 
 public class ColourChanged : IEvent
 {

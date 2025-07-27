@@ -2,7 +2,7 @@
 
 namespace EventStore.Commands.AggregateRoots;
 
-public delegate void AggregateRootHandler<in T>(T @event) where T : IEvent;
+public delegate void AggregateRootEventHandler<in T>(T @event) where T : IEvent;
 
 public abstract class AggregateRoot
 {
@@ -10,9 +10,9 @@ public abstract class AggregateRoot
 
     Dictionary<Type, Delegate> Handlers { get; } = new();
 
-    protected void Handles<T>(AggregateRootHandler<T> handler) where T : IEvent
+    protected void Handles<T>(AggregateRootEventHandler<T> eventHandler) where T : IEvent
     {
-        Handlers[typeof(T)] = handler;
+        Handlers[typeof(T)] = eventHandler;
     }
     
     protected void Update<T>(T @event) where T : IEvent

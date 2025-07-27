@@ -1,8 +1,8 @@
 ﻿using EventStore.Commands.AggregateRoots;
-using EventStore.SampleApp.TrafficLights.Commands;
-using EventStore.SampleApp.TrafficLights.Events;
+using EventStore.SampleApp.InMemory.TrafficLights.Commands;
+using EventStore.SampleApp.InMemory.TrafficLights.Events;
 
-namespace EventStore.SampleApp.TrafficLights.AggregateRoots;
+namespace EventStore.SampleApp.InMemory.TrafficLights.AggregateRoots;
 
 public class TrafficLight : AggregateRoot
 {
