@@ -4,5 +4,5 @@ namespace EventStore.Transport;
 
 public interface IEventTransport
 {
-    public void SendEvent(IEvent @event);
+    public Task SendEventAsync(IEvent @event, CancellationToken token = default);
 }

@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace EventStore.Commands;
 
+[Obsolete("Use CommandDispatcher instead")]
 public static class CommandRegistration
 {
     static readonly ConcurrentDictionary<Type, Type> CommandHandlerMap = new();

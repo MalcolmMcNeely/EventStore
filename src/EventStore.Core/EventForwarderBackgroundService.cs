@@ -5,12 +5,12 @@ namespace EventStore;
 
 public class EventForwarderBackgroundService(ILogger<EventForwarderBackgroundService> logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken token)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        while (!token.IsCancellationRequested)
         {
             logger.LogInformation("Test");
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(1000, token);
         }
     }
 }

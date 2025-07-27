@@ -1,6 +1,6 @@
 ﻿using EventStore.Commands;
 using EventStore.Commands.AggregateRoot;
-using EventStore.SampleApp.TrafficLights.AggregateRoot;
+using EventStore.SampleApp.TrafficLights.AggregateRoots;
 
 namespace EventStore.SampleApp.TrafficLights.Commands;
 

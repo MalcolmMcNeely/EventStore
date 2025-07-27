@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using EventStore.Commands;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace EventStore.Core.Tests;
 

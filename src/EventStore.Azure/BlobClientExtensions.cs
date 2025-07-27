@@ -7,14 +7,16 @@ namespace EventStore.Azure;
 
 public static class BlobClientExtensions
 {
-    public static async Task<bool> UploadOnlyIfNotCreated(this BlobClient blobClient, BinaryData binaryData)
+    static readonly TimeSpan LeaseDuration = TimeSpan.FromSeconds(30);
+    
+    public static async Task<bool> UploadOnlyIfNotCreated(this BlobClient blobClient, BinaryData binaryData, CancellationToken cancellationToken = default)
     {
         try
         {
             await blobClient.UploadAsync(binaryData, new BlobUploadOptions
             {
                 Conditions = new BlobRequestConditions { IfNoneMatch = new ETag("*") }
-            });
+            }, cancellationToken);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobAlreadyExists)
         {
@@ -24,21 +26,23 @@ public static class BlobClientExtensions
         return true;
     }
 
-    public static async Task<bool> UploadWithLeaseAsync(this BlobClient blobClient, BinaryData binaryData)
+    public static async Task<bool> UploadWithLeaseAsync(this BlobClient blobClient, BinaryData binaryData, CancellationToken token = default)
     {
         try
         {
             var leaseClient = blobClient.GetBlobLeaseClient();
-            var lease = await leaseClient.AcquireAsync(TimeSpan.FromSeconds(15));
+            var lease = await leaseClient.AcquireAsync(LeaseDuration, cancellationToken: token);
+            var leaseId = lease.Value.LeaseId;
             var uploadOptions = new BlobUploadOptions
             {
-                Conditions = new BlobRequestConditions { LeaseId = lease.Value.LeaseId },
+                Conditions = new BlobRequestConditions { LeaseId = leaseId },
             };
 
-            await blobClient.UploadAsync(binaryData, uploadOptions);
-            await leaseClient.ReleaseAsync();
+            await blobClient.UploadAsync(binaryData, uploadOptions, token);
+            await leaseClient.ReleaseAsync(cancellationToken: token);
         }
-        catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.LeaseIdMismatchWithLeaseOperation || ex.ErrorCode == BlobErrorCode.LeaseAlreadyPresent)
+        catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.LeaseIdMismatchWithLeaseOperation ||
+                                                ex.ErrorCode == BlobErrorCode.LeaseAlreadyPresent)
         {
             return false;
         }

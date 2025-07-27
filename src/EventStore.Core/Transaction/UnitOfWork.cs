@@ -31,26 +31,26 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
         return this;
     }
 
-    public async Task CompleteAsync()
+    public async Task CompleteAsync(CancellationToken token = default)
     {
         var entity = await LoadAndMergeAsync();
 
-        if (!await _aggregateRootRepository.SaveAsync(entity, _key))
+        if (!await _aggregateRootRepository.SaveAsync(entity, _key, token))
         {
             while (_currentRetry < _retryOptions.MaxRetries)
             {
                 if (_retryOptions is ExponentialUnitOfWorkRetryOptions exponentialUnitOfWorkRetryOptions)
                 {
-                    await Task.Delay(_retryOptions.RetryInterval * _currentRetry * exponentialUnitOfWorkRetryOptions.Exponential);
+                    await Task.Delay(_retryOptions.RetryInterval * _currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token);
                 }
                 else
                 {
-                    await Task.Delay(_retryOptions.RetryInterval);
+                    await Task.Delay(_retryOptions.RetryInterval, token);
                 }
 
-                var retryEntity = await LoadAndMergeAsync();
+                entity = await LoadAndMergeAsync();
 
-                if (await _aggregateRootRepository.SaveAsync(entity, _key))
+                if (await _aggregateRootRepository.SaveAsync(entity, _key, token))
                 {
                     break;
                 }
@@ -60,6 +60,11 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
                     throw new Exception();
                 }
             }
+        }
+
+        if (entity.NewEvents.Count != 0)
+        {
+            await _aggregateRootRepository.SendEventsAsync(entity.NewEvents, token);
         }
     }
 

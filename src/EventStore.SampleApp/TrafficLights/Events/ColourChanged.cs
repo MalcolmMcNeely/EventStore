@@ -2,7 +2,7 @@
 
 namespace EventStore.SampleApp.TrafficLights.Events;
 
-public class RedEvent : IEvent
+public class ColourChanged : IEvent
 {
     
 }

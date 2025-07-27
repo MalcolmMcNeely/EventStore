@@ -1,6 +1,8 @@
-﻿namespace EventStore.SampleApp.TrafficLights.AggregateRoot;
+﻿using EventStore.Commands.AggregateRoot;
 
-public class TrafficLight : EventStore.Commands.AggregateRoot.AggregateRoot
+namespace EventStore.SampleApp.TrafficLights.AggregateRoots;
+
+public class TrafficLight : AggregateRoot
 {
     public const string Key =  "TrafficLight";
 

@@ -2,7 +2,7 @@
 
 public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispatcher
 {
-    public async Task DispatchAsync<TCommand>(TCommand command) where TCommand : ICommand
+    public async Task DispatchAsync<TCommand>(TCommand command, CancellationToken token = default) where TCommand : ICommand
     {
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
         var handler = serviceProvider.GetService(handlerType);
@@ -13,6 +13,6 @@ public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispa
         }
         
         var handleMethod = handlerType.GetMethod("HandleAsync");
-        await (Task)handleMethod!.Invoke(handler, [command])!;
+        await (Task)handleMethod!.Invoke(handler, [command, token])!;
     }
 }

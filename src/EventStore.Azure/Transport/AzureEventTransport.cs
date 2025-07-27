@@ -6,11 +6,11 @@ namespace EventStore.Azure;
 
 public class AzureEventTransport(AzureService azureService) : IEventTransport
 {
-    public void SendEvent(IEvent @event)
+    public async Task SendEventAsync(IEvent @event, CancellationToken token = default)
     {
         var queueClient = azureService.QueueServiceClient.GetQueueClient(QueueConstants.TransportQueueName);
         var message = JsonSerializer.Serialize(@event);
         
-        queueClient.SendMessageAsync(message);
+        await queueClient.SendMessageAsync(message, token);
     }
 }

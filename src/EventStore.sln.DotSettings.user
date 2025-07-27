@@ -14,12 +14,9 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AStorageChecksumAlgorithm_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fmalco_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003Ff5791f2677ca4771bb3dff613fcbe9683b220_003F45_003Fc1daf7de_003FStorageChecksumAlgorithm_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATableClientOptions_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fmalco_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003F655a3ed98df3c23a5cd1b5dbf3b11b793a94228acb75ada12e65b2a66aed_003FTableClientOptions_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATransactionScope_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fmalco_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003F3f11c3d591b9e8c134d66ba543e8e9bdce9821474a0796130ca9c1cb6f897_003FTransactionScope_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c4879b31_002D81d6_002D42b4_002D8445_002D4c329b793fb2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=767a7f09_002D1b60_002D4e99_002Dbf39_002D9277890de844/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AzureAggregateRootRepositoryTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::22357CC6-66E8-407B-B04B-1BED89082871::net9.0::EventStore.Core.Tests.CommandRegistrationTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::22357CC6-66E8-407B-B04B-1BED89082871::net9.0::EventStore.Core.Tests.CommandDispatcherTests.it_can_resolve_a_command_handler&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CBDCFA94-2D9C-4335-BC82-869CD3B526CC::net9.0::EventStore.Azure.Tests.AzureAggregateRootRepositoryTests.Test1&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CBDCFA94-2D9C-4335-BC82-869CD3B526CC::net9.0::EventStore.Azure.Tests.AzureAggregateRootRepositoryTests.Test0&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CBDCFA94-2D9C-4335-BC82-869CD3B526CC::net9.0::EventStore.Azure.Tests.AzureAggregateRootRepositoryTests.when_everyone_is_trying_to_update_the_same_aggregate_root&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::CBDCFA94-2D9C-4335-BC82-869CD3B526CC::net9.0::EventStore.Azure.Tests.AzureAggregateRootRepositoryTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>

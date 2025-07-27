@@ -1,11 +1,15 @@
 ﻿using EventStore.Azure.AggegateRoot;
 using EventStore.Commands.AggregateRoot;
+using EventStore.Events;
+using EventStore.Transport;
+using Moq;
 
 namespace EventStore.Azure.Tests;
 
 public class AzureAggregateRootRepositoryTests
 {
     AzureAggregateRootRepository<TestAggregateRoot> _repository;
+    Mock<IEventTransport> _eventTransportMock;
 
     [SetUp]
     public async Task Setup()
@@ -13,8 +17,11 @@ public class AzureAggregateRootRepositoryTests
         var azureService = new AzureService();
 
         await azureService.BlobServiceClient.GetBlobContainerClient(BlobContainerConstants.AggregateRootContainerName).CreateIfNotExistsAsync();
+        
+        _eventTransportMock = new Mock<IEventTransport>();
+        _eventTransportMock.Setup(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService);
+        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, _eventTransportMock.Object);
     }
 
     [Test]
@@ -24,6 +31,8 @@ public class AzureAggregateRootRepositoryTests
 
         var endValue = await _repository.LoadAsync("test");
         Assert.That(endValue!.Message, Is.EqualTo("0"));
+        
+        _eventTransportMock.Verify(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
@@ -33,6 +42,8 @@ public class AzureAggregateRootRepositoryTests
 
         var endValue = await _repository.LoadAsync("test");
         Assert.That(string.IsNullOrWhiteSpace(endValue!.Message), Is.False);
+        
+        _eventTransportMock.Verify(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>()), Times.Exactly(2000));
     }
 
     IEnumerable<Task> GenerateTasks(int numberOfTasks)
@@ -51,5 +62,12 @@ public class AzureAggregateRootRepositoryTests
 
 class TestAggregateRoot : AggregateRoot
 {
+    public TestAggregateRoot()
+    {
+        NewEvents.Add(new TestAggregateRootEvent());
+    }
+    
     public string Message { get; set; } = string.Empty;
 }
+
+class TestAggregateRootEvent : IEvent;
