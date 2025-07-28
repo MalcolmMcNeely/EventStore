@@ -1,0 +1,55 @@
+﻿using Microsoft.Extensions.Logging;
+
+namespace EventStore.Azure.Initialization;
+
+public class Storage(AzureService azureService, IEnumerable<IStorageInitializer> storageInitializers, ILogger<Storage> logger)
+{
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    {
+        var blobServiceClient = azureService.BlobServiceClient;
+        var tableServiceClient = azureService.TableServiceClient;
+        var queueServiceClient = azureService.QueueServiceClient;
+
+        foreach (var initializer in storageInitializers)
+        {
+            foreach (var containerInitializer in initializer.ContainerInitializers)
+            {
+                var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerInitializer.Name);
+
+                if (await blobContainerClient.ExistsAsync(cancellationToken))
+                {
+                    continue;
+                }
+
+                logger.LogInformation($"Creating blob container {containerInitializer.Name}");
+
+                await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+            }
+
+            foreach (var tableInitializer in initializer.TableInitializers)
+            {
+                var tableClient = tableServiceClient.GetTableClient(tableInitializer.Name);
+                var response = await tableClient.CreateIfNotExistsAsync(cancellationToken);
+
+                if (response.GetRawResponse().Status == TableConstants.TableCreatedResponseCode)
+                {
+                    logger.LogInformation($"Creating table {tableInitializer.Name}");
+                }
+            }
+
+            foreach (var queueInitializer in initializer.QueueInitializers)
+            {
+                var queueClient = queueServiceClient.GetQueueClient(queueInitializer.Name);
+
+                if (await queueClient.ExistsAsync(cancellationToken))
+                {
+                    continue;
+                }
+
+                logger.LogInformation($"Creating queue {queueInitializer.Name}");
+
+                await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+            }
+        }
+    }
+}

@@ -1,16 +1,31 @@
-﻿using EventStore.Projections;
+﻿using System.Text.Json;
+using Azure.Storage.Blobs;
+using EventStore.Projections;
 
 namespace EventStore.Azure.Projections;
 
-public class AzureProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
+public class AzureProjectionRepository<T>(AzureService azureService) : IProjectionRepository<T>  where T : IProjection
 {
-    public Task<T?> LoadAsync(string id, CancellationToken token = default)
+    readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(BlobContainerConstants.ProjectionContainerName);
+
+    public async Task<T?> LoadAsync(string key, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{key}");
+
+        return !await blobClient.ExistsAsync(token) ? default : JsonSerializer.Deserialize<T>(await blobClient.OpenReadAsync(cancellationToken: token));
     }
 
-    public Task SaveAsync(T projection, CancellationToken token = default)
+    public async Task SaveAsync(T projection, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var blobContent = JsonSerializer.Serialize(projection);
+        var binaryData = BinaryData.FromString(blobContent);
+        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{projection.Id}");
+
+        if (await blobClient.ExistsAsync(token) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token))
+        {
+            await blobClient.UploadWithLeaseAsync(binaryData, token: token);
+        }
+
+        // need more advanced versioning here
     }
 }

@@ -9,6 +9,7 @@ public class BlobContainerConstants
 {
     public const string LargeEventContainerName = "large-events";
     public const string AggregateRootContainerName = "aggregate-roots";
+    public const string ProjectionContainerName = "projections";
 }
 
 public class QueueConstants
@@ -19,5 +20,7 @@ public class QueueConstants
 public class TableConstants
 {
     public const string EventTableName = "events";
-    public const string EventCursorsTableName = "event-cursors";
+    public const string EventCursorsTableName = "eventcursors";
+
+    public const int TableCreatedResponseCode = 409;
 }

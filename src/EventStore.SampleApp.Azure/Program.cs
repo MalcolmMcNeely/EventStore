@@ -1,4 +1,6 @@
 ﻿using EventStore;
+using EventStore.Azure;
+using EventStore.Azure.Initialization;
 using EventStore.Commands;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
@@ -19,8 +21,12 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
-hostBuilder.AddAzureServices();
+hostBuilder.AddAzureServices(AzureContants.AzuriteConnectionString);
 
 var host = hostBuilder.Build();
+
+var storage = host.Services.GetService<Storage>();
+await storage.InitializeAsync();
+
 await host.RunAsync();
 
