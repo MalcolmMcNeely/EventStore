@@ -16,7 +16,8 @@ public class ProjectionBuilderRegistrationTests
     {
         _serviceProvider = new ServiceCollection()
             .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, InMemoryProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
-            .AddTransient<IProjectionBuilder, ProjectionBuilderRegistrationTestProjectionBuilder>()
+            .AddTransient<ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>, ProjectionBuilderRegistrationTestProjectionBuilder>()
+            .AddTransient<IProjection, ProjectionBuilderRegistrationTestProjection>()
             .BuildServiceProvider();
     }
 
@@ -24,7 +25,7 @@ public class ProjectionBuilderRegistrationTests
     public void it_can_resolve_a_projection_builder()
     {
         _registration = new(_serviceProvider);
-        var projections = _registration.ProjectionsFor(typeof(ProjectionBuilderRegistrationTestEvent));
+        var projections = _registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
         
         Assert.That(projections, Is.Not.Null);
     }

@@ -5,41 +5,38 @@ namespace EventStore.ProjectionBuilders;
 
 public class ProjectionBuilderRegistration
 {
-    Dictionary<Type, List<Type>> ProjectionToEventsTypeMap = new();
+    Dictionary<Type, List<Type>> ProjectionBuilderToEventsTypeMap = new();
     
     public ProjectionBuilderRegistration(IServiceProvider serviceProvider)
     {
         RegisterProjectionBuilders(serviceProvider);
     }
 
-    public IEnumerable<Type> ProjectionsFor(Type eventType)
+    public IEnumerable<Type> ProjectionBuildersFor(Type eventType)
     {
-        return ProjectionToEventsTypeMap
+        return ProjectionBuilderToEventsTypeMap
             .Where(x => x.Value.Any(x => x.IsAssignableFrom(eventType)))
             .Select(x => x.Key);
     }
 
     void RegisterProjectionBuilders(IServiceProvider serviceProvider)
     {
-        var projectionBuilders = serviceProvider.GetServices<IProjectionBuilder>().ToList();
-        
-        foreach (var projectionBuilder in projectionBuilders)
+        var projectionTypes = serviceProvider.GetServices<IProjection>().Select(x => x.GetType());
+
+        foreach (var projectionType in projectionTypes)
         {
-            var baseType = projectionBuilder.GetType().BaseType;
+            var projectionBuilderType = typeof(ProjectionBuilder<>).MakeGenericType(projectionType);
+            var projectionBuilder = serviceProvider.GetService(projectionBuilderType);
 
-            if (baseType == null || !baseType.IsGenericType || baseType.GetGenericTypeDefinition() != typeof(ProjectionBuilder<>))
+            if (projectionBuilder is null)
             {
-                throw new Exception("Invalid ProjectionBuilder base type.");
+                throw new Exception($"ProjectionBuilder {projectionType} not found.");
             }
+            
+            var getEventTypesMethod = projectionBuilderType.GetMethod("GetEventTypes");
+            var eventTypes = (IEnumerable<Type>)getEventTypesMethod!.Invoke(projectionBuilder, [])!;
 
-            var projectionType = baseType.GetGenericArguments()[0];
-
-            if (!typeof(IProjection).IsAssignableFrom(projectionType))
-            {
-                throw new Exception($"{projectionType} does not implement IProjection.");
-            }
-
-            ProjectionToEventsTypeMap[projectionType] = projectionBuilder.GetEventTypes().ToList();
+            ProjectionBuilderToEventsTypeMap[projectionBuilderType] = eventTypes.ToList();
         }
     }
 }

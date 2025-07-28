@@ -2,7 +2,7 @@
 using EventStore.Events;
 using EventStore.Events.Transport;
 
-namespace EventStore.Core.Tests.Commands.Transactions;
+namespace EventStore.InMemory.AggregateRoots;
 
 public class InMemoryAggregateRootRepository<T>(IEventTransport transport) : IAggregateRootRepository<T>  where T : AggregateRoot, new()
 {
@@ -22,14 +22,7 @@ public class InMemoryAggregateRootRepository<T>(IEventTransport transport) : IAg
 
     public Task<bool> SaveAsync(T aggregateRoot, string key, CancellationToken token = default)
     {
-        if (AggregateRoots.ContainsKey(key))
-        {
-            AggregateRoots[key] = aggregateRoot;
-        }
-        else
-        {
-            AggregateRoots.Add(key, aggregateRoot);
-        }
+        AggregateRoots[key] = aggregateRoot;
 
         return Task.FromResult(true);
     }

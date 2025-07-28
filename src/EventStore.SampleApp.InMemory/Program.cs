@@ -1,7 +1,6 @@
 ﻿using EventStore;
 using EventStore.Commands;
 using EventStore.InMemory;
-using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.SampleApp.InMemory;
@@ -12,9 +11,11 @@ using Microsoft.Extensions.Hosting;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 
-hostBuilder.Services.AddTransient<IProjectionRepository<TrafficLightProjection>, InMemoryProjectionRepository<TrafficLightProjection>>();
-hostBuilder.Services.AddTransient<IProjectionBuilder, TrafficLightProjectionBuilder>();
+hostBuilder.Services.AddTransient<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
+hostBuilder.Services.AddTransient<IProjection, TrafficLightProjection>();
+
 hostBuilder.Services.AddTransient<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
+
 hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 

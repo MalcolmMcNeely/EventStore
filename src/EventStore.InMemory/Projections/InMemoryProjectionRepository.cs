@@ -1,14 +1,15 @@
-﻿using EventStore.Projections;
+﻿using System.Collections.Concurrent;
+using EventStore.Projections;
 
 namespace EventStore.InMemory.Projections;
 
 public class InMemoryProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
 {
-    readonly Dictionary<string, T> _projections = new();
+    static readonly ConcurrentDictionary<string, T> Projections = new();
     
     public Task<T?> LoadAsync(string id, CancellationToken _ = default)
     {
-        if (_projections.TryGetValue(id, out var projection))
+        if (Projections.TryGetValue(id, out var projection))
         {
             return Task.FromResult(projection)!;
         }
@@ -18,7 +19,7 @@ public class InMemoryProjectionRepository<T> : IProjectionRepository<T>  where T
 
     public Task SaveAsync(T projection, CancellationToken _ = default)
     {
-        _projections[projection.Id] = projection;
+        Projections.TryAdd(projection.Id, projection);
 
         return Task.CompletedTask;
     }

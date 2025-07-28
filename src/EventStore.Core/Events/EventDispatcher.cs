@@ -7,15 +7,15 @@ public class EventDispatcher(IServiceProvider serviceProvider, ProjectionBuilder
     public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : IEvent
     {
         var eventType = @event.GetType();
-        var projections = registration.ProjectionsFor(eventType);
+        var projectionBuilderTypes = registration.ProjectionBuildersFor(eventType);
 
-        foreach (var projection in projections)
+        foreach (var projectionBuilderType in projectionBuilderTypes)
         {
-            var projectionBuilderType = typeof(ProjectionBuilder<>).MakeGenericType(projection);
-            var projectionBuilder = (IProjectionBuilder)serviceProvider.GetService(projectionBuilderType)!;
+            var projectionBuilder = serviceProvider.GetService(projectionBuilderType)!;
             var applyEventsMethod = projectionBuilderType.GetMethod("ApplyEventAsync");
+
             var task = (Task)applyEventsMethod!.Invoke(projectionBuilder, [@event, token])!;
-            await task.ConfigureAwait(false);
+            await task;
         }
     }
 }

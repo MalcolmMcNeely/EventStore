@@ -3,17 +3,11 @@ using EventStore.Projections;
 
 namespace EventStore.ProjectionBuilders;
 
-public interface IProjectionBuilder
-{
-    public IEnumerable<Type> GetEventTypes();
-    public Task ApplyEventAsync(IEvent @event, CancellationToken token);
-}
-
 public delegate void ProjectionBuilderEventHandler<in TEvent, in TProjection>(TEvent @event, TProjection projection) 
     where TEvent : IEvent
     where TProjection : IProjection;
 
-public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository) : IProjectionBuilder where TProjection : IProjection, new()
+public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository) where TProjection : IProjection, new()
 {
     Dictionary<Type, Delegate> Handlers { get; } = new();
     string Key { get; set; } = string.Empty;
@@ -42,7 +36,7 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
 
         if (projection is null)
         {
-            projection = new();
+            projection = new() { Id = key };
         }
 
         InvokeHandler(@event.GetType(), @event, projection);

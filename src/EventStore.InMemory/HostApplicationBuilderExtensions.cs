@@ -1,6 +1,6 @@
 ﻿using EventStore.Commands.AggregateRoots;
-using EventStore.Core.Tests.Commands.Transactions;
 using EventStore.Events.Transport;
+using EventStore.InMemory.AggregateRoots;
 using EventStore.InMemory.Projections;
 using EventStore.InMemory.Transport;
 using EventStore.Projections;
