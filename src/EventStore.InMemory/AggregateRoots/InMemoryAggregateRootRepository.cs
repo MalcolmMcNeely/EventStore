@@ -29,9 +29,11 @@ public class InMemoryAggregateRootRepository<T>(IEventTransport transport) : IAg
 
     public async Task SendEventsAsync(IEnumerable<IEvent> events, CancellationToken token = default)
     {
-        NewEvents.AddRange(events);
+        var eventList = events.ToList();
 
-        foreach (var @event in events)
+        NewEvents.AddRange(eventList);
+
+        foreach (var @event in eventList)
         {
             await transport.SendEventAsync(@event, token);
         }

@@ -11,8 +11,6 @@ internal sealed class EventForwarderBackgroundService(IEventTransport eventTrans
     {
         while (!token.IsCancellationRequested)
         {
-            await Task.Delay(500, token);
-
             var @event = await eventTransport.GetEventAsync(token);
 
             if (@event is not null)

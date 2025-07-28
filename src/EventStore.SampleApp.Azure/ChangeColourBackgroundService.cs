@@ -1,8 +1,8 @@
 ﻿using EventStore.Commands;
-using EventStore.SampleApp.InMemory.TrafficLights.Commands;
+using EventStore.SampleApp.Azure.TrafficLights.Commands;
 using Microsoft.Extensions.Hosting;
 
-namespace EventStore.SampleApp.InMemory;
+namespace EventStore.SampleApp.Azure;
 
 public class ChangeColourBackgroundService(ICommandDispatcher commandDispatcher) : BackgroundService
 {

@@ -1,8 +1,8 @@
 ﻿using EventStore.Projections;
-using EventStore.SampleApp.InMemory.TrafficLights.Projections;
+using EventStore.SampleApp.Azure.TrafficLights.Projections;
 using Microsoft.Extensions.Hosting;
 
-namespace EventStore.SampleApp.InMemory;
+namespace EventStore.SampleApp.Azure;
 
 public class PrintColourBackgroundService(IProjectionRepository<TrafficLightProjection> repository) : BackgroundService
 {
