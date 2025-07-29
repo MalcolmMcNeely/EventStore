@@ -17,6 +17,8 @@ internal sealed class EventForwarderBackgroundService(IEventTransport eventTrans
             {
                 await eventDispatcher.SendEventAsync(@event, token);
             }
+
+            await Task.Delay(100, token);
         }
     }
 }

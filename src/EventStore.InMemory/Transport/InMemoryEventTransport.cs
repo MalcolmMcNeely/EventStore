@@ -7,7 +7,7 @@ public class InMemoryEventTransport : IEventTransport
 {
     readonly Queue<IEvent> _eventQueue = new();
 
-    public Task SendEventAsync(IEvent @event, CancellationToken token = default)
+    public Task SendEventAsync<T>(T @event, CancellationToken token = default) where T :  class, IEvent
     {
         _eventQueue.Enqueue(@event);
 

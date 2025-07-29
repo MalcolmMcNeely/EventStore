@@ -65,7 +65,12 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
         if (entity.NewEvents.Count != 0)
         {
-            await _aggregateRootRepository.SendEventsAsync(entity.NewEvents.Select(x => x.@event), token);
+            foreach (var (_, @event) in entity.NewEvents)
+            {
+                await _aggregateRootRepository.SendEventAsync(@event, token);
+            }
+
+            entity.NewEvents.Clear();
         }
     }
 

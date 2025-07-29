@@ -1,6 +1,7 @@
 ﻿using EventStore.Azure.AggegateRoots;
 using EventStore.Azure.Initialization;
 using EventStore.Azure.Projections;
+using EventStore.Azure.Transport;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events.Transport;
 using EventStore.Projections;

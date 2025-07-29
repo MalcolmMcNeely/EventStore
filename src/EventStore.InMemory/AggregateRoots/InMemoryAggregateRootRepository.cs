@@ -4,38 +4,33 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.AggregateRoots;
 
-public class InMemoryAggregateRootRepository<T>(IEventTransport transport) : IAggregateRootRepository<T>  where T : AggregateRoot, new()
+public class InMemoryAggregateRootRepository<TAggregateRoot>(IEventTransport transport) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
 {
     public List<IEvent> NewEvents { get; } = new();
 
-    Dictionary<string, T> AggregateRoots { get; } = new();
+    Dictionary<string, TAggregateRoot> AggregateRoots { get; } = new();
     
-    public Task<T?> LoadAsync(string key, CancellationToken token = default)
+    public Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default)
     {
         if (AggregateRoots.TryGetValue(key, out var aggregateRoot))
         {
-            return Task.FromResult<T?>(aggregateRoot);
+            return Task.FromResult<TAggregateRoot?>(aggregateRoot);
         }
 
-        return Task.FromResult<T?>(null);
+        return Task.FromResult<TAggregateRoot?>(null);
     }
 
-    public Task<bool> SaveAsync(T aggregateRoot, string key, CancellationToken token = default)
+    public Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
     {
         AggregateRoots[key] = aggregateRoot;
 
         return Task.FromResult(true);
     }
 
-    public async Task SendEventsAsync(IEnumerable<IEvent> events, CancellationToken token = default)
+    public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : class, IEvent
     {
-        var eventList = events.ToList();
+        NewEvents.Add(@event);
 
-        NewEvents.AddRange(eventList);
-
-        foreach (var @event in eventList)
-        {
-            await transport.SendEventAsync(@event, token);
-        }
+        await transport.SendEventAsync(@event, token);
     }
 }

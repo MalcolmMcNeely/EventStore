@@ -6,22 +6,22 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.AggegateRoots;
 
-public class AzureAggregateRootRepository<T>(AzureService azureService, IEventTransport transport) : IAggregateRootRepository<T> where T : AggregateRoot, new()
+public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(BlobContainerConstants.AggregateRootContainerName);
 
-    public async Task<T?> LoadAsync(string key, CancellationToken token = default)
+    public async Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default)
     {
-        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).FullName}/{key}");
+        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(TAggregateRoot).FullName}/{key}");
 
-        return !await blobClient.ExistsAsync(token) ? null : JsonSerializer.Deserialize<T>(await blobClient.OpenReadAsync(cancellationToken: token));
+        return !await blobClient.ExistsAsync(token) ? null : JsonSerializer.Deserialize<TAggregateRoot>(await blobClient.OpenReadAsync(cancellationToken: token));
     }
 
-    public async Task<bool> SaveAsync(T aggregateRoot, string key, CancellationToken token = default)
+    public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
     {
         var blobContent = JsonSerializer.Serialize(aggregateRoot);
         var binaryData = BinaryData.FromString(blobContent);
-        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).FullName}/{key}");
+        var blobClient = _blobContainerClient.GetBlobClient($"{typeof(TAggregateRoot).FullName}/{key}");
 
         if (await blobClient.ExistsAsync(token) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token))
         {
@@ -31,11 +31,8 @@ public class AzureAggregateRootRepository<T>(AzureService azureService, IEventTr
         return true;
     }
 
-    public async Task SendEventsAsync(IEnumerable<IEvent> events, CancellationToken token = default)
+    public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : class, IEvent
     {
-        foreach (var @event in events)
-        {
-            await transport.SendEventAsync(@event, token);
-        }
+        await transport.SendEventAsync(@event, token);
     }
 }

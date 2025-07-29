@@ -1,32 +1,48 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Queues;
+using Azure.Storage.Queues.Models;
 using EventStore.Events;
 using EventStore.Events.Transport;
 
-namespace EventStore.Azure;
+namespace EventStore.Azure.Transport;
 
 public class AzureEventTransport(AzureService azureService) : IEventTransport
 {
-    QueueClient queueClient = azureService.QueueServiceClient.GetQueueClient(QueueConstants.TransportQueueName);
+    readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(QueueConstants.TransportQueueName);
 
-    public async Task SendEventAsync(IEvent @event, CancellationToken token = default)
+    public async Task SendEventAsync<T>(T @event, CancellationToken token = default) where T : class, IEvent
     {
-        var message = JsonSerializer.Serialize(@event);
-        
-        await queueClient.SendMessageAsync(message, token);
+        var envelope = TransportEnvelope.Create(@event);
+
+        await _queueClient.SendMessageAsync(JsonSerializer.Serialize(envelope), token);
     }
 
     public async Task<IEvent?> GetEventAsync(CancellationToken token = default)
     {
-        throw new NotImplementedException(); 
+        QueueMessage message = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
 
-        // var message = await queueClient.ReceiveMessageAsync(cancellationToken: token);
-        //
-        // if (!message.HasValue)
-        // {
-        //     return null;
-        // }
-        //
-        // return JsonSerializer.Deserialize<IEvent>(message, );
+        if (message is null)
+        {
+            return null;
+        }
+
+        await _queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, token);
+
+        if (message.MessageText is null)
+        {
+            return null;
+        }
+
+        var envelope = JsonSerializer.Deserialize<TransportEnvelope>(message.MessageText);
+
+        if (envelope is null)
+        {
+            throw new Exception($"Could not deserialize the message {message.MessageText}");
+        }
+
+        var type = Type.GetType(envelope.Type);
+        var @event = JsonSerializer.Deserialize(envelope.Body, type);
+
+        return @event as IEvent;
     }
 }
