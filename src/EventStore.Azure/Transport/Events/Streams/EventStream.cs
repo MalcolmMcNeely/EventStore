@@ -6,36 +6,33 @@ using EventStore.Azure.Extensions;
 using EventStore.Azure.Transport.Events.TableEntities;
 using EventStore.Events;
 
-namespace EventStore.Azure.Transport.Events;
+namespace EventStore.Azure.Transport.Events.Streams;
 
-public class EventStream(AzureService azureService)
+public abstract class EventStream(AzureService azureService)
 {
-    static SemaphoreSlim _semaphore = new(1, 1);
-
     const int MaxRetries = 3;
     const int Exponential = 2;
 
     readonly TimeSpan _retryInterval = TimeSpan.FromMilliseconds(200);
     readonly TableClient _tableClient = azureService.TableServiceClient.GetTableClient(Defaults.Events.EventStoreTable);
 
-    public async Task PublishAsync(IEvent entity, CancellationToken token = default)
+    protected async Task PublishToStreamAsync(string partitionKey, IEvent entity, SemaphoreSlim semaphore, CancellationToken token = default)
     {
         var eventType = entity.GetType();
         var content = JsonSerializer.Serialize((object)entity);
         var currentRetry = 0;
 
-        await _semaphore.WaitAsync(token);
+        await semaphore.WaitAsync(token);
 
         while (currentRetry < MaxRetries)
         {
-
             try
             {
-                var metadataEntity = await GetMetadataEntityAsync(token);
+                var metadataEntity = await _tableClient.GetMetadataEntityAsync(Defaults.Streams.AllStreamPartition, token: token);
                 var eventEntity = new EventEntity
                 {
-                    PartitionKey = Defaults.Streams.AllStreamPartition,
-                    RowKey = RowKey.ForAllStream(metadataEntity.LastEvent + 1).ToString(),
+                    PartitionKey = partitionKey,
+                    RowKey = RowKey.ForEventStream(metadataEntity.LastEvent + 1).ToString(),
                     EventType = eventType.Name,
                     IsLarge = false,
                     Content = content
@@ -54,26 +51,8 @@ public class EventStream(AzureService azureService)
             }
             finally
             {
-                _semaphore.Release();
+                semaphore.Release();
             }
-        }
-    }
-
-    async Task<MetadataEntity> GetMetadataEntityAsync(CancellationToken token = default)
-    {
-        try
-        {
-            return await _tableClient.GetEntityAsync<MetadataEntity>(
-                Defaults.Streams.AllStreamPartition, RowKey.ForMetadata().ToString(), cancellationToken: token);
-
-        }
-        catch (RequestFailedException ex) when (ex.ErrorCode == TableErrorCode.ResourceNotFound)
-        {
-            return new MetadataEntity
-            {
-                PartitionKey = Defaults.Streams.AllStreamPartition,
-                RowKey = RowKey.ForMetadata().ToString()
-            };
         }
     }
 }

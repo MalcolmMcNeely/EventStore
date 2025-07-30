@@ -1,21 +1,22 @@
 ﻿using Azure.Data.Tables;
 using EventStore.Azure.Transport.Events;
+using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Azure.Transport.Events.TableEntities;
 using EventStore.Events;
 
-namespace EventStore.Azure.Tests.Events;
+namespace EventStore.Azure.Tests.Events.Streams;
 
-public class EventStreamTests
+public class AllStreamTests
 {
     AzureService _azureService;
-    EventStream _eventStream;
+    AllStream _allStream;
     TableClient _eventStoreTable;
 
     [SetUp]
     public async Task Setup()
     {
         _azureService = new AzureService();
-        _eventStream = new EventStream(_azureService);
+        _allStream = new AllStream(_azureService);
 
         _eventStoreTable = _azureService.TableServiceClient.GetTableClient(Defaults.Events.EventStoreTable);
         await _eventStoreTable.CreateIfNotExistsAsync();
@@ -24,7 +25,7 @@ public class EventStreamTests
     [Test]
     public async Task it_can_publish_an_event()
     {
-        await _eventStream.PublishAsync(new EventStreamTestEvent());
+        await _allStream.PublishAsync(Defaults.Streams.AllStreamPartition, new EventStreamTestEvent());
         
         MetadataEntity metadataEntity = await _eventStoreTable.GetEntityAsync<MetadataEntity>(
             Defaults.Streams.AllStreamPartition, 
@@ -53,7 +54,7 @@ public class EventStreamTests
 
     IEnumerable<Task> GenerateTasks(IEnumerable<IEvent> events)
     {
-        return events.Select(e => _eventStream.PublishAsync(e));
+        return events.Select(e => _allStream.PublishAsync(Defaults.Streams.AllStreamPartition, e));
     }
 
     class EventStreamTestEvent : IEvent

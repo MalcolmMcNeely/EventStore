@@ -2,18 +2,19 @@
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using EventStore.Azure.Transport.Events;
+using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Events;
 using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Transport;
 
-public class AzureEventTransport(AzureService azureService, EventStream eventStream) : IEventTransport
+public class AzureEventTransport(AzureService azureService, AllStream allStream) : IEventTransport
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
 
     public async Task PublishEventAsync<T>(T @event, CancellationToken token = default) where T : class, IEvent
     {
-        await eventStream.PublishAsync(@event, token);
+        await allStream.PublishAsync(Defaults.Streams.AllStreamPartition, @event, token);
     }
 
     public async Task<IEvent?> ReceiveEventAsync(CancellationToken token = default)

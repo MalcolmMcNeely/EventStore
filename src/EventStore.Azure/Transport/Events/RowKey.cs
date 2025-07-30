@@ -10,11 +10,11 @@ internal sealed class RowKey
         return $"{RowPrefix}{RowNumber:0000000000}";
     }
 
-    public static RowKey ForAllStream(int rowNumber)
+    public static RowKey ForEventStream(int rowNumber)
     {
         return new RowKey
         {
-            RowPrefix = Defaults.Streams.AllStreamRowPrefix,
+            RowPrefix = Defaults.Streams.EventStreamRowPrefix,
             RowNumber = rowNumber
         };
     }

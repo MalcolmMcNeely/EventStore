@@ -1,4 +1,7 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
+using Azure.Data.Tables.Models;
+using EventStore.Azure.Transport.Events;
 using EventStore.Azure.Transport.Events.TableEntities;
 
 namespace EventStore.Azure.Extensions;
@@ -14,5 +17,21 @@ public static class TableClientExtensions
         };
 
         await tableClient.SubmitTransactionAsync(transactions, token);
+    }
+
+    public static async Task<MetadataEntity> GetMetadataEntityAsync(this TableClient tableClient, string partition, CancellationToken token = default)
+    {
+        try
+        {
+            return await tableClient.GetEntityAsync<MetadataEntity>(partition, RowKey.ForMetadata().ToString(), cancellationToken: token);
+        }
+        catch (RequestFailedException ex) when (ex.ErrorCode == TableErrorCode.ResourceNotFound)
+        {
+            return new MetadataEntity
+            {
+                PartitionKey = Defaults.Streams.AllStreamPartition,
+                RowKey = RowKey.ForMetadata().ToString()
+            };
+        }
     }
 }

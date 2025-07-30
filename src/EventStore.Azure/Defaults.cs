@@ -42,8 +42,7 @@ public static class Defaults
     public static class Streams
     {
         public const string AllStreamPartition = "AllStream";
-        public const string AllStreamRowPrefix = "A";
-    
+        public const string EventStreamRowPrefix = "A";
         public const string MetadataRowPrefix = "$";
     }
 }
