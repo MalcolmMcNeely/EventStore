@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace EventStore.InMemory;
 
-public static class HostApplicationBuilderExtensions
+public static class HostBuilderInstaller
 {
     public static void AddInMemoryServices(this IHostApplicationBuilder hostBuilder)
     {

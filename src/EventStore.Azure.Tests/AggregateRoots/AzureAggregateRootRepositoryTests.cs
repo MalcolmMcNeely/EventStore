@@ -16,10 +16,10 @@ public class AzureAggregateRootRepositoryTests
     {
         var azureService = new AzureService();
 
-        await azureService.BlobServiceClient.GetBlobContainerClient(BlobContainerConstants.AggregateRootContainerName).CreateIfNotExistsAsync();
+        await azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName).CreateIfNotExistsAsync();
         
         _eventTransportMock = new Mock<IEventTransport>();
-        _eventTransportMock.Setup(x => x.SendEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        _eventTransportMock.Setup(x => x.PublishEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
         _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, _eventTransportMock.Object);
     }

@@ -31,7 +31,7 @@ public class Storage(AzureService azureService, IEnumerable<IStorageInitializer>
                 var tableClient = tableServiceClient.GetTableClient(tableInitializer.Name);
                 var response = await tableClient.CreateIfNotExistsAsync(cancellationToken);
 
-                if (response.GetRawResponse().Status == TableConstants.TableCreatedResponseCode)
+                if (response.GetRawResponse().Status == Defaults.Tables.TableCreatedResponseCode)
                 {
                     logger.LogInformation($"Creating table {tableInitializer.Name}");
                 }

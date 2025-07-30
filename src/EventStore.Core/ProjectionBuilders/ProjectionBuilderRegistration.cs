@@ -5,7 +5,7 @@ namespace EventStore.ProjectionBuilders;
 
 public class ProjectionBuilderRegistration
 {
-    Dictionary<Type, List<Type>> ProjectionBuilderToEventsTypeMap = new();
+    readonly Dictionary<Type, List<Type>> _projectionBuilderToEventsTypeMap = new();
     
     public ProjectionBuilderRegistration(IServiceProvider serviceProvider)
     {
@@ -14,7 +14,7 @@ public class ProjectionBuilderRegistration
 
     public IEnumerable<Type> ProjectionBuildersFor(Type eventType)
     {
-        return ProjectionBuilderToEventsTypeMap
+        return _projectionBuilderToEventsTypeMap
             .Where(x => x.Value.Any(x => x.IsAssignableFrom(eventType)))
             .Select(x => x.Key);
     }
@@ -36,7 +36,7 @@ public class ProjectionBuilderRegistration
             var getEventTypesMethod = projectionBuilderType.GetMethod("GetEventTypes");
             var eventTypes = (IEnumerable<Type>)getEventTypesMethod!.Invoke(projectionBuilder, [])!;
 
-            ProjectionBuilderToEventsTypeMap[projectionBuilderType] = eventTypes.ToList();
+            _projectionBuilderToEventsTypeMap[projectionBuilderType] = eventTypes.ToList();
         }
     }
 }

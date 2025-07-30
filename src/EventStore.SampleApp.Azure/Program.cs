@@ -21,7 +21,7 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
-hostBuilder.AddAzureServices(AzureContants.AzuriteConnectionString);
+hostBuilder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
 
 var host = hostBuilder.Build();
 

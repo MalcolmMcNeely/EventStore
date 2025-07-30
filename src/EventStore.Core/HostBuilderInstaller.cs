@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace EventStore;
 
-public static class HostApplicationBuilderExtensions
+public static class HostBuilderInstaller
 {
     public static void AddCoreServices(this IHostApplicationBuilder hostBuilder)
     {

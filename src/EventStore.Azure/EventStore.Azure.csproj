@@ -10,10 +10,15 @@
       <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
       <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
       <PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
+      <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\EventStore.Core\EventStore.Core.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="EventStore.Azure.Tests"/>
     </ItemGroup>
 
 </Project>

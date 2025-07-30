@@ -1,12 +1,13 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Blobs;
+using EventStore.Azure.Extensions;
 using EventStore.Projections;
 
 namespace EventStore.Azure.Projections;
 
 public class AzureProjectionRepository<T>(AzureService azureService) : IProjectionRepository<T>  where T : IProjection
 {
-    readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(BlobContainerConstants.ProjectionContainerName);
+    readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
 
     public async Task<T?> LoadAsync(string key, CancellationToken token = default)
     {

@@ -8,7 +8,6 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
     readonly string _key;
     readonly IAggregateRootRepository<T> _aggregateRootRepository;
     readonly List<Func<T, Task>> _actions = new();
-    readonly int _currentRetry = 0;
 
     UnitOfWorkRetryOptions _retryOptions = new(TimeSpan.FromSeconds(1), 3);
 
@@ -38,11 +37,13 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
         if (!await _aggregateRootRepository.SaveAsync(entity, _key, token))
         {
-            while (_currentRetry < _retryOptions.MaxRetries)
+            var currentRetry = 0;
+
+            while (currentRetry < _retryOptions.MaxRetries)
             {
                 if (_retryOptions is ExponentialUnitOfWorkRetryOptions exponentialUnitOfWorkRetryOptions)
                 {
-                    await Task.Delay(_retryOptions.RetryInterval * _currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token);
+                    await Task.Delay(_retryOptions.RetryInterval * currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token);
                 }
                 else
                 {
@@ -56,10 +57,12 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
                     break;
                 }
 
-                if (_currentRetry == _retryOptions.MaxRetries)
+                if (currentRetry == _retryOptions.MaxRetries)
                 {
                     throw new Exception();
                 }
+
+                currentRetry++;
             }
         }
 
