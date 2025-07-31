@@ -57,7 +57,7 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
         }
         else
         {
-            throw new Exception($"No handler registered for event type {typeof(TEvent).Name}");
+            throw new ProjectionBuilderException($"No builder registered for event type {typeof(TEvent).Name}");
         }
     }
 }

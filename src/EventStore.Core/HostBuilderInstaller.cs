@@ -1,5 +1,6 @@
 ﻿using EventStore.BackgroundServices;
 using EventStore.Commands;
+using EventStore.Commands.Dispatching;
 using EventStore.Events;
 using EventStore.ProjectionBuilders;
 using Microsoft.Extensions.DependencyInjection;

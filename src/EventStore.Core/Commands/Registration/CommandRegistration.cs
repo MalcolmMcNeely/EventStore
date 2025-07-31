@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace EventStore.Commands;
+namespace EventStore.Commands.Registration;
 
 [Obsolete("Use CommandDispatcher instead")]
 public static class CommandRegistration
@@ -26,10 +26,10 @@ public static class CommandRegistration
             CommandHandlerMap.TryAdd(commandType, commandHandlerType);
         }
 
-        var missingCommandTypes = commandTypes.Except(resolvedCommandTypes);
-        if (missingCommandTypes.Any())
+        var missingCommandTypes = commandTypes.Except(resolvedCommandTypes).ToList();
+        if (missingCommandTypes.Count != 0)
         {
-            throw new Exception();
+            throw new CommandRegistrationException($"Commands missing handlers: {string.Join(',', missingCommandTypes.Select(x => x.Name))}");
         }
     }
     

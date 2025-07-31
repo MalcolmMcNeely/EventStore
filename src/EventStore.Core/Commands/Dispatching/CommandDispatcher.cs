@@ -1,4 +1,4 @@
-﻿namespace EventStore.Commands;
+﻿namespace EventStore.Commands.Dispatching;
 
 public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispatcher
 {
@@ -9,7 +9,7 @@ public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispa
 
         if (handler is null)
         {
-            throw new Exception($"No handler found for command {command.GetType()}");
+            throw new CommandDispatcherException($"No handler found for command {command.GetType().Name}");
         }
 
         var handleMethod = handlerType.GetMethod("HandleAsync");

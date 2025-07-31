@@ -1,4 +1,4 @@
-﻿namespace EventStore.Commands;
+﻿namespace EventStore.Commands.Dispatching;
 
 public interface ICommandDispatcher
 {

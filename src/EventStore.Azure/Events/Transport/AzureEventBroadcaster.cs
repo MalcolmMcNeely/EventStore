@@ -40,7 +40,7 @@ public class AzureEventBroadcaster(AzureService azureService, EventDispatcher ev
 
         if (envelope is null)
         {
-            throw new Exception($"Could not deserialize the message {message.MessageText}");
+            throw new AzureEventBroadcasterException($"Could not deserialize the message {message.MessageText}");
         }
 
         var type = Type.GetType(envelope.Type);

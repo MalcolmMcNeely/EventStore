@@ -37,7 +37,7 @@ public abstract class AggregateRoot
         }
         else
         {
-            throw new Exception($"No handler registered for event type {typeof(T).Name}");
+            throw new AggregateRootException($"No handler registered for event type {typeof(T).Name}");
         }
     }
 }

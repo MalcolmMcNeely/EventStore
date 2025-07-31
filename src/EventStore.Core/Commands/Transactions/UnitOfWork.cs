@@ -59,7 +59,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
                 if (currentRetry == _retryOptions.MaxRetries)
                 {
-                    throw new Exception();
+                    throw new UnitOfWorkException($"Maximum number of retries reached trying to update {typeof(T).Name}");
                 }
 
                 currentRetry++;

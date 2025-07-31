@@ -37,7 +37,7 @@ public class ProjectionBuilderRegistration
 
             if (projectionBuilder is null)
             {
-                throw new Exception($"ProjectionBuilder {projectionType} not found.");
+                throw new ProjectionBuilderRegistrationException($"Projection builder {projectionType} not found.");
             }
             
             var getEventTypesMethod = projectionBuilderType.GetMethod("GetEventTypes");

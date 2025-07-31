@@ -1,4 +1,5 @@
 ﻿using EventStore.Commands;
+using EventStore.Commands.Dispatching;
 using EventStore.SampleApp.InMemory.TrafficLights.Commands;
 using Microsoft.Extensions.Hosting;
 

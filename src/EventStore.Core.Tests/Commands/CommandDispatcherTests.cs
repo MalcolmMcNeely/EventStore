@@ -1,4 +1,5 @@
 ﻿using EventStore.Commands;
+using EventStore.Commands.Dispatching;
 using Moq;
 
 namespace EventStore.Core.Tests.Commands;

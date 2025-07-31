@@ -13,7 +13,7 @@ public class TransportEnvelope
     {
         if (@object is null)
         {
-            throw new Exception();
+            throw new TransportEnvelopeException("Object is null");
         }
 
         return new TransportEnvelope
