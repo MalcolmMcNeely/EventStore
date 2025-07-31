@@ -22,11 +22,13 @@ public static class Defaults
     public static class AggregateRoot
     {
         public const string ContainerName = "aggregate-roots";
+        public const string AggregateRootPartitionPrefix = "aggregate-root-";
     }
 
     public static class Projections
     {
         public const string ContainerName = "projections";
+        public const string ProjectionPartitionPrefix = "projection-";
     }
     
     public static class Transport

@@ -35,7 +35,7 @@ public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureServ
 
     public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent
     {
-        var eventStream = eventStreamFactory.For(key);
+        var eventStream = eventStreamFactory.For($"{Defaults.AggregateRoot.AggregateRootPartitionPrefix}{key}");
         await eventStream.PublishAsync(@event, token);
 
         await transport.PublishEventAsync(@event, token);
