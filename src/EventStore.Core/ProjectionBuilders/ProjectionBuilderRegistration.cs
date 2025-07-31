@@ -21,7 +21,9 @@ public class ProjectionBuilderRegistration
 
     public IEnumerable<Type> GetAllEventTypes()
     {
-        return _projectionBuilderToEventsTypeMap.SelectMany(x => x.Value.Select(y => y)).DistinctBy(x => x.AssemblyQualifiedName);
+        return _projectionBuilderToEventsTypeMap
+            .SelectMany(x => x.Value.Select(y => y))
+            .DistinctBy(x => x.AssemblyQualifiedName);
     }
 
     void RegisterProjectionBuilders(IServiceProvider serviceProvider)

@@ -8,7 +8,7 @@ public sealed class EventCursorFactory(AzureService azureService)
 
     internal async Task<EventCursorEntity> GetOrAddCursorAsync(string cursorName, CancellationToken token = default)
     {
-        var existingCursorEntity = await _tableClient.GetEntityIfExistsAsync<EventCursorEntity?>(cursorName, cursorName, cancellationToken: token);
+        var existingCursorEntity = await _tableClient.GetEntityIfExistsAsync<EventCursorEntity?>(Defaults.Cursors.PartitionKey, cursorName, cancellationToken: token);
         if (existingCursorEntity.HasValue)
         {
             return existingCursorEntity.Value!;
