@@ -3,11 +3,11 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.Events.Transport;
 
-public class InMemoryEventPump(IEventTransport eventTransport) : IEventPump
+public class EventPump(IEventTransport eventTransport) : IEventPump
 {
     public Queue<IEvent> EventPumpQueue { get; } = new();
 
-    readonly InMemoryEventTransport? _inMemoryEventTransport = eventTransport as InMemoryEventTransport;
+    readonly EventTransport? _inMemoryEventTransport = eventTransport as EventTransport;
 
     public Task PublishEventsAsync(CancellationToken token = default)
     {

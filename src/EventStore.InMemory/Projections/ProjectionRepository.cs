@@ -3,7 +3,7 @@ using EventStore.Projections;
 
 namespace EventStore.InMemory.Projections;
 
-public class InMemoryProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
+public class ProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
 {
     static readonly ConcurrentDictionary<string, T> Projections = new();
     

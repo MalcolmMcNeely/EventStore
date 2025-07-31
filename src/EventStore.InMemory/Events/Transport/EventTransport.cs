@@ -3,7 +3,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.Events.Transport;
 
-public class InMemoryEventTransport : IEventTransport
+public class EventTransport : IEventTransport
 {
     public Queue<IEvent> TransportQueue { get; } = new();
 

@@ -20,18 +20,18 @@ public static class HostBuilderInstaller
         var azureService = new AzureService(connectionString);
 
         hostBuilder.Services.AddSingleton(azureService);
-        hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AzureAggregateRootRepository<>));
+        hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 
         hostBuilder.Services.AddSingleton<EventCursorFactory>();
         hostBuilder.Services.AddSingleton<IEventStreamFactory, EventStreamFactory>();
 
-        hostBuilder.Services.AddSingleton<IEventBroadcaster, AzureEventBroadcaster>();
-        hostBuilder.Services.AddSingleton<IEventPump, AzureEventPump>();
-        hostBuilder.Services.AddSingleton<IEventTransport, AzureEventTransport>();
+        hostBuilder.Services.AddSingleton<IEventBroadcaster, EventBroadcaster>();
+        hostBuilder.Services.AddSingleton<IEventPump, EventPump>();
+        hostBuilder.Services.AddSingleton<IEventTransport, EventTransport>();
 
         hostBuilder.Services.AddSingleton<IStorageInitializer, AzureStorageInitializer>();
 
-        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(AzureProjectionRepository<>));
+        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
         hostBuilder.Services.AddSingleton<Storage>();
     }
 }

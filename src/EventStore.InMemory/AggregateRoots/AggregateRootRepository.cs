@@ -4,7 +4,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.AggregateRoots;
 
-public class InMemoryAggregateRootRepository<TAggregateRoot>(IEventTransport transport) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
+public class AggregateRootRepository<TAggregateRoot>(IEventTransport transport) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
 {
     public List<IEvent> NewEvents { get; } = new();
 

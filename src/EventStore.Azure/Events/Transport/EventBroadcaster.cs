@@ -6,7 +6,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Events.Transport;
 
-public class AzureEventBroadcaster(AzureService azureService, EventDispatcher eventDispatcher) : IEventBroadcaster
+public class EventBroadcaster(AzureService azureService, EventDispatcher eventDispatcher) : IEventBroadcaster
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
 
@@ -40,7 +40,7 @@ public class AzureEventBroadcaster(AzureService azureService, EventDispatcher ev
 
         if (envelope is null)
         {
-            throw new AzureEventBroadcasterException($"Could not deserialize the message {message.MessageText}");
+            throw new EventBroadcasterException($"Could not deserialize the message {message.MessageText}");
         }
 
         var type = Type.GetType(envelope.Type);

@@ -3,9 +3,9 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.Events.Transport;
 
-public class InMemoryEventBroadcaster(IEventPump eventPump, EventDispatcher eventDispatcher) : IEventBroadcaster
+public class EventBroadcaster(IEventPump eventPump, EventDispatcher eventDispatcher) : IEventBroadcaster
 {
-    readonly InMemoryEventPump? _inMemoryEventPump = eventPump as InMemoryEventPump;
+    readonly EventPump? _inMemoryEventPump = eventPump as EventPump;
 
     public async Task BroadcastEventAsync(CancellationToken token)
     {

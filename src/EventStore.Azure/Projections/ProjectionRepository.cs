@@ -4,11 +4,10 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using EventStore.Azure.Extensions;
 using EventStore.Projections;
-using EventStore.Utils;
 
 namespace EventStore.Azure.Projections;
 
-public class AzureProjectionRepository<T>(AzureService azureService) : IProjectionRepository<T>  where T : IProjection
+public class ProjectionRepository<T>(AzureService azureService) : IProjectionRepository<T>  where T : IProjection
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
 

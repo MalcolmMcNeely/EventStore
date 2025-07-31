@@ -1,11 +1,10 @@
-﻿using EventStore.Azure.Events.Streams;
-using EventStore.Events;
+﻿using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Events.Transport;
 
-public class AzureEventTransport(IEventStreamFactory eventStreamFactory) : IEventTransport
+public class EventTransport(IEventStreamFactory eventStreamFactory) : IEventTransport
 {
     readonly IEventStream _allStream = eventStreamFactory.For(Defaults.Streams.AllStreamPartition);
 

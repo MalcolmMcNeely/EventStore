@@ -13,10 +13,10 @@ public static class HostBuilderInstaller
 {
     public static void AddInMemoryServices(this IHostApplicationBuilder hostBuilder)
     {
-        hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(InMemoryAggregateRootRepository<>));
-        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(InMemoryProjectionRepository<>));
-        hostBuilder.Services.AddSingleton<IEventBroadcaster, InMemoryEventBroadcaster>();
-        hostBuilder.Services.AddSingleton<IEventPump, InMemoryEventPump>();
-        hostBuilder.Services.AddSingleton<IEventTransport, InMemoryEventTransport>();
+        hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
+        hostBuilder.Services.AddSingleton<IEventBroadcaster, EventBroadcaster>();
+        hostBuilder.Services.AddSingleton<IEventPump, EventPump>();
+        hostBuilder.Services.AddSingleton<IEventTransport, EventTransport>();
     }
 }

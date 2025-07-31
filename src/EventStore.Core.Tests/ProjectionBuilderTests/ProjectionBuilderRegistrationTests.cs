@@ -15,7 +15,7 @@ public class ProjectionBuilderRegistrationTests
     public void Setup()
     {
         _serviceProvider = new ServiceCollection()
-            .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, InMemoryProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
+            .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, ProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
             .AddTransient<ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>, ProjectionBuilderRegistrationTestProjectionBuilder>()
             .AddTransient<IProjection, ProjectionBuilderRegistrationTestProjection>()
             .AddSingleton<IEventStreamFactory, NullEventStreamFactory>()

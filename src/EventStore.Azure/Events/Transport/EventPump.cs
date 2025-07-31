@@ -10,7 +10,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Events.Transport;
 
-public class AzureEventPump(AzureService azureService, EventCursorFactory eventCursorFactory, EventTypeRegistration eventTypeRegistration) : IEventPump
+public class EventPump(AzureService azureService, EventCursorFactory eventCursorFactory, EventTypeRegistration eventTypeRegistration) : IEventPump
 {
     readonly TableClient _eventsTable = azureService.TableServiceClient.GetTableClient(Defaults.Events.EventStoreTable);
     readonly QueueClient _transportQueue = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);

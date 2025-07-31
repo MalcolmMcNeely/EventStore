@@ -6,9 +6,9 @@ using EventStore.Events;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 
-public class AzureAggregateRootRepositoryTests
+public class AggregateRootRepositoryTests
 {
-    AzureAggregateRootRepository<TestAggregateRoot> _repository;
+    AggregateRootRepository<TestAggregateRoot> _repository;
 
     [SetUp]
     public void Setup()
@@ -16,7 +16,7 @@ public class AzureAggregateRootRepositoryTests
         var azureService = new AzureService();
         var eventStreamFactory = new EventStreamFactory(azureService);
         
-        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, new AzureEventTransport(eventStreamFactory), eventStreamFactory);
+        _repository = new AggregateRootRepository<TestAggregateRoot>(azureService, new EventTransport(eventStreamFactory), eventStreamFactory);
     }
 
     [Test]
