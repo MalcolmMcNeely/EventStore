@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace EventStore.Azure.Transport.Events.Streams;
+namespace EventStore.Azure.Events.Streams;
 
 public class EventStreamFactory(AzureService azureService)
 {

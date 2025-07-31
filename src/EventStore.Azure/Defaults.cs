@@ -17,6 +17,7 @@ public static class Defaults
     {
         public const string TableName = "eventcursors";
         public const string PartitionKey = nameof(Cursors);
+        public const string AllStreamCursor = nameof(AllStreamCursor);
     }
 
     public static class AggregateRoot

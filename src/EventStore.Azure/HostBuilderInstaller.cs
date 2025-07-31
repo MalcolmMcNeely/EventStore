@@ -1,9 +1,9 @@
 ﻿using EventStore.Azure.AggegateRoots;
+using EventStore.Azure.Events.Cursors;
+using EventStore.Azure.Events.Streams;
+using EventStore.Azure.Events.Transport;
 using EventStore.Azure.Initialization;
 using EventStore.Azure.Projections;
-using EventStore.Azure.Transport;
-using EventStore.Azure.Transport.Cursors;
-using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events.Transport;
 using EventStore.Projections;
@@ -20,12 +20,17 @@ public static class HostBuilderInstaller
 
         hostBuilder.Services.AddSingleton(azureService);
         hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AzureAggregateRootRepository<>));
-        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(AzureProjectionRepository<>));
-        hostBuilder.Services.AddSingleton<EventStreamFactory>();
-        hostBuilder.Services.AddSingleton<EventCursor>();
         
+        hostBuilder.Services.AddSingleton<EventCursorFactory>();
+        hostBuilder.Services.AddSingleton<EventStreamFactory>();
+        
+        hostBuilder.Services.AddSingleton<IEventBroadcaster, AzureEventBroadcaster>();
+        hostBuilder.Services.AddSingleton<IEventPump, AzureEventPump>();
         hostBuilder.Services.AddSingleton<IEventTransport, AzureEventTransport>();
+        
         hostBuilder.Services.AddSingleton<IStorageInitializer, AzureStorageInitializer>();
+        
+        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(AzureProjectionRepository<>));
         hostBuilder.Services.AddSingleton<Storage>();
     }
 }

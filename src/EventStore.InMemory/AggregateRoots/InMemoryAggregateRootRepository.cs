@@ -31,6 +31,6 @@ public class InMemoryAggregateRootRepository<TAggregateRoot>(IEventTransport tra
     {
         NewEvents.Add(@event);
 
-        await transport.PublishEventAsync(@event, token);
+        await transport.WriteEventAsync(@event, token);
     }
 }

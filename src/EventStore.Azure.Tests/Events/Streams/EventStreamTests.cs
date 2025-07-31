@@ -1,7 +1,7 @@
 ﻿using Azure.Data.Tables;
+using EventStore.Azure.Events.Streams;
+using EventStore.Azure.Events.TableEntities;
 using EventStore.Azure.Extensions;
-using EventStore.Azure.Transport.Events.Streams;
-using EventStore.Azure.Transport.Events.TableEntities;
 using EventStore.Events;
 
 namespace EventStore.Azure.Tests.Events.Streams;

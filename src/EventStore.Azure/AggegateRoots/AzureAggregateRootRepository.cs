@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
 using Azure.Storage.Blobs;
+using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Extensions;
-using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.Events.Transport;
@@ -35,9 +36,10 @@ public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureServ
 
     public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent
     {
+        // TODO: writing to aggregate root stream and all steam should be as one transaction
         var eventStream = eventStreamFactory.For($"{Defaults.AggregateRoot.AggregateRootPartitionPrefix}{key}");
         await eventStream.PublishAsync(@event, token);
 
-        await transport.PublishEventAsync(@event, token);
+        await transport.WriteEventAsync(@event, token);
     }
 }

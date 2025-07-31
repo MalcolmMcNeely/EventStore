@@ -1,8 +1,8 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
-using EventStore.Azure.Transport.Events;
-using EventStore.Azure.Transport.Events.TableEntities;
+using EventStore.Azure.Events;
+using EventStore.Azure.Events.TableEntities;
 
 namespace EventStore.Azure.Extensions;
 

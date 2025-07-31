@@ -1,4 +1,4 @@
-﻿namespace EventStore.Azure.Transport.Events;
+﻿namespace EventStore.Azure.Events;
 
 internal sealed class RowKey
 {

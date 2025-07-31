@@ -1,7 +1,10 @@
 ﻿using System.Text.Json;
+using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using EventStore.Azure.Extensions;
 using EventStore.Projections;
+using EventStore.Utils;
 
 namespace EventStore.Azure.Projections;
 
@@ -13,7 +16,22 @@ public class AzureProjectionRepository<T>(AzureService azureService) : IProjecti
     {
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{key}");
 
-        return !await blobClient.ExistsAsync(token) ? default : JsonSerializer.Deserialize<T>(await blobClient.OpenReadAsync(cancellationToken: token));
+        if (!await blobClient.ExistsAsync(token))
+        {
+            return default;
+        }
+
+        try
+        {
+            var blobStream = await blobClient.OpenReadAsync(cancellationToken: token);
+            return JsonSerializer.Deserialize<T>(blobStream);
+        }
+        catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.ConditionNotMet)
+        {
+            await Task.Delay(50, token); // TODO: backoff, revisit Retry logic
+        }
+
+        return default;
     }
 
     public async Task SaveAsync(T projection, CancellationToken token = default)
@@ -26,7 +44,5 @@ public class AzureProjectionRepository<T>(AzureService azureService) : IProjecti
         {
             await blobClient.UploadWithLeaseAsync(binaryData, token: token);
         }
-
-        // need more advanced versioning here
     }
 }

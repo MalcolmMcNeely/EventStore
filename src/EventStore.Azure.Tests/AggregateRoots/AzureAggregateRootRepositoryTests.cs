@@ -1,6 +1,6 @@
 ﻿using EventStore.Azure.AggegateRoots;
-using EventStore.Azure.Transport;
-using EventStore.Azure.Transport.Events.Streams;
+using EventStore.Azure.Events.Streams;
+using EventStore.Azure.Events.Transport;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 
@@ -16,7 +16,7 @@ public class AzureAggregateRootRepositoryTests
         var azureService = new AzureService();
         var eventStreamFactory = new EventStreamFactory(azureService);
         
-        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, new AzureEventTransport(azureService, eventStreamFactory), eventStreamFactory);
+        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, new AzureEventTransport(eventStreamFactory), eventStreamFactory);
     }
 
     [Test]

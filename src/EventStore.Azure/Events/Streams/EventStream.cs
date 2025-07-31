@@ -2,11 +2,11 @@
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using EventStore.Azure.Events.TableEntities;
 using EventStore.Azure.Extensions;
-using EventStore.Azure.Transport.Events.TableEntities;
 using EventStore.Events;
 
-namespace EventStore.Azure.Transport.Events.Streams;
+namespace EventStore.Azure.Events.Streams;
 
 public class EventStream(AzureService azureService, string streamName, SemaphoreSlim semaphore)
 {

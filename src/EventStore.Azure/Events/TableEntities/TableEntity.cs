@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace EventStore.Azure.Transport.Events.TableEntities;
+namespace EventStore.Azure.Events.TableEntities;
 
 public class TableEntity : ITableEntity
 {

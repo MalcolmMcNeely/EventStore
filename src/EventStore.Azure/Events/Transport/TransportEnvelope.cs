@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace EventStore.Azure.Transport;
+namespace EventStore.Azure.Events.Transport;
 
 public class TransportEnvelope
 {

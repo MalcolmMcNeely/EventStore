@@ -1,4 +1,4 @@
-﻿namespace EventStore.Azure.Transport.Events.TableEntities;
+﻿namespace EventStore.Azure.Events.TableEntities;
 
 public class MetadataEntity : TableEntity
 {

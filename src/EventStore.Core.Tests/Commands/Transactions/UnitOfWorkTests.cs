@@ -2,7 +2,7 @@
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.InMemory.AggregateRoots;
-using EventStore.InMemory.Transport;
+using EventStore.InMemory.Events.Transport;
 
 namespace EventStore.Core.Tests.Commands.Transactions;
 

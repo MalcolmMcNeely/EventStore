@@ -1,9 +1,9 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace EventStore.Azure.Transport.Cursors;
+namespace EventStore.Azure.Events.Cursors;
 
-internal sealed class EventCursorEntity : ITableEntity
+public sealed class EventCursorEntity : ITableEntity
 {
     public int LastSeenEvent { get; set; }
 

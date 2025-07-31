@@ -1,24 +1,26 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
-using EventStore.Azure.Transport.Events;
-using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Events;
 using EventStore.Events.Transport;
 
-namespace EventStore.Azure.Transport;
+namespace EventStore.Azure.Events.Transport;
 
-public class AzureEventTransport(AzureService azureService, EventStreamFactory eventStreamFactory) : IEventTransport
+public class AzureEventBroadcaster(AzureService azureService, IEventDispatcher eventDispatcher) : IEventBroadcaster
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
-    readonly EventStream _allStream = eventStreamFactory.For(Defaults.Streams.AllStreamPartition);
 
-    public async Task PublishEventAsync<T>(T @event, CancellationToken token = default) where T : class, IEvent
+    public async Task BroadcastEventAsync(CancellationToken token = default)
     {
-        await _allStream.PublishAsync(@event, token);
+        var @event = await ReceiveEventAsync(token);
+        
+        if (@event is not null)
+        {
+            await eventDispatcher.SendEventAsync(@event, token);
+        }
     }
 
-    public async Task<IEvent?> ReceiveEventAsync(CancellationToken token = default)
+    async Task<IEvent?> ReceiveEventAsync(CancellationToken token = default)
     {
         QueueMessage message = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
 
