@@ -8,13 +8,14 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Transport;
 
-public class AzureEventTransport(AzureService azureService, AllStream allStream) : IEventTransport
+public class AzureEventTransport(AzureService azureService, EventStreamFactory eventStreamFactory) : IEventTransport
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
+    readonly EventStream _allStream = eventStreamFactory.For(Defaults.Streams.AllStreamPartition);
 
     public async Task PublishEventAsync<T>(T @event, CancellationToken token = default) where T : class, IEvent
     {
-        await allStream.PublishAsync(Defaults.Streams.AllStreamPartition, @event, token);
+        await _allStream.PublishAsync(@event, token);
     }
 
     public async Task<IEvent?> ReceiveEventAsync(CancellationToken token = default)

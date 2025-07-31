@@ -8,7 +8,7 @@ using EventStore.Events;
 
 namespace EventStore.Azure.Transport.Events.Streams;
 
-public abstract class EventStream(AzureService azureService)
+public class EventStream(AzureService azureService, string streamName, SemaphoreSlim semaphore)
 {
     const int MaxRetries = 3;
     const int Exponential = 2;
@@ -16,7 +16,7 @@ public abstract class EventStream(AzureService azureService)
     readonly TimeSpan _retryInterval = TimeSpan.FromMilliseconds(200);
     readonly TableClient _tableClient = azureService.TableServiceClient.GetTableClient(Defaults.Events.EventStoreTable);
 
-    protected async Task PublishToStreamAsync(string partitionKey, IEvent entity, SemaphoreSlim semaphore, CancellationToken token = default)
+    internal async Task PublishAsync(IEvent entity, CancellationToken token = default)
     {
         var eventType = entity.GetType();
         var content = JsonSerializer.Serialize((object)entity);
@@ -28,10 +28,10 @@ public abstract class EventStream(AzureService azureService)
         {
             try
             {
-                var metadataEntity = await _tableClient.GetMetadataEntityAsync(Defaults.Streams.AllStreamPartition, token: token);
+                var metadataEntity = await _tableClient.GetMetadataEntityAsync(streamName, token: token);
                 var eventEntity = new EventEntity
                 {
-                    PartitionKey = partitionKey,
+                    PartitionKey = streamName,
                     RowKey = RowKey.ForEventStream(metadataEntity.LastEvent + 1).ToString(),
                     EventType = eventType.Name,
                     IsLarge = false,

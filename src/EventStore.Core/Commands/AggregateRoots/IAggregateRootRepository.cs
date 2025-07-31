@@ -6,5 +6,5 @@ public interface IAggregateRootRepository<TAggregateRoot> where TAggregateRoot :
 {
     public Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default);
     public Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default);
-    public Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : class, IEvent;
+    public Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent;
 }

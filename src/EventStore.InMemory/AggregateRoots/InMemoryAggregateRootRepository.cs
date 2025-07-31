@@ -27,7 +27,7 @@ public class InMemoryAggregateRootRepository<TAggregateRoot>(IEventTransport tra
         return Task.FromResult(true);
     }
 
-    public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : class, IEvent
+    public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent
     {
         NewEvents.Add(@event);
 

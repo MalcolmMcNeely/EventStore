@@ -19,17 +19,17 @@ public static class TableClientExtensions
         await tableClient.SubmitTransactionAsync(transactions, token);
     }
 
-    public static async Task<MetadataEntity> GetMetadataEntityAsync(this TableClient tableClient, string partition, CancellationToken token = default)
+    public static async Task<MetadataEntity> GetMetadataEntityAsync(this TableClient tableClient, string streamName, CancellationToken token = default)
     {
         try
         {
-            return await tableClient.GetEntityAsync<MetadataEntity>(partition, RowKey.ForMetadata().ToString(), cancellationToken: token);
+            return await tableClient.GetEntityAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == TableErrorCode.ResourceNotFound)
         {
             return new MetadataEntity
             {
-                PartitionKey = Defaults.Streams.AllStreamPartition,
+                PartitionKey = streamName,
                 RowKey = RowKey.ForMetadata().ToString()
             };
         }

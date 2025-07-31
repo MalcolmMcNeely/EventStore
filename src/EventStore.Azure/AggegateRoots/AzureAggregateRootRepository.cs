@@ -1,13 +1,14 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Blobs;
 using EventStore.Azure.Extensions;
+using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.Events.Transport;
 
 namespace EventStore.Azure.AggegateRoots;
 
-public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
+public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport, EventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName);
 
@@ -32,8 +33,11 @@ public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureServ
         return true;
     }
 
-    public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : class, IEvent
+    public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent
     {
+        var eventStream = eventStreamFactory.For(key);
+        await eventStream.PublishAsync(@event, token);
+
         await transport.PublishEventAsync(@event, token);
     }
 }

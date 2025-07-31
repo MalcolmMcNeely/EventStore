@@ -1,27 +1,22 @@
 ﻿using EventStore.Azure.AggegateRoots;
+using EventStore.Azure.Transport;
+using EventStore.Azure.Transport.Events.Streams;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
-using EventStore.Events.Transport;
-using Moq;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 
 public class AzureAggregateRootRepositoryTests
 {
     AzureAggregateRootRepository<TestAggregateRoot> _repository;
-    Mock<IEventTransport> _eventTransportMock;
 
     [SetUp]
-    public async Task Setup()
+    public void Setup()
     {
         var azureService = new AzureService();
-
-        await azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName).CreateIfNotExistsAsync();
+        var eventStreamFactory = new EventStreamFactory(azureService);
         
-        _eventTransportMock = new Mock<IEventTransport>();
-        _eventTransportMock.Setup(x => x.PublishEventAsync(It.IsAny<IEvent>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-
-        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, _eventTransportMock.Object);
+        _repository = new AzureAggregateRootRepository<TestAggregateRoot>(azureService, new AzureEventTransport(azureService, eventStreamFactory), eventStreamFactory);
     }
 
     [Test]

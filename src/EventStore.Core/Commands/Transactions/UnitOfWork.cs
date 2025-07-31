@@ -70,7 +70,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
         {
             foreach (var (_, @event) in entity.NewEvents)
             {
-                await _aggregateRootRepository.SendEventAsync(@event, token);
+                await _aggregateRootRepository.SendEventAsync(@event, _key, token);
             }
 
             entity.NewEvents.Clear();
