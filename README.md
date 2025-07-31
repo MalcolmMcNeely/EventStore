@@ -11,5 +11,6 @@ TODO List:
 - [x] Also publish events to specific Projection streams
 - [ ] Rebuild Projections based on their speicific Projection streams on demand
 - [ ] Rebuild AggregateRoots based on their specific AggregateRoot streams on demand
+- [ ] Key building for projections
 - [ ] Also allow for commands on the message transport
 - [ ] Allow for events to be upgraded
