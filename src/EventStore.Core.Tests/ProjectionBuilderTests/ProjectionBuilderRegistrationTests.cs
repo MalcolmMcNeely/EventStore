@@ -1,4 +1,5 @@
 ﻿using EventStore.Events;
+using EventStore.Events.Streams;
 using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
@@ -17,6 +18,7 @@ public class ProjectionBuilderRegistrationTests
             .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, InMemoryProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
             .AddTransient<ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>, ProjectionBuilderRegistrationTestProjectionBuilder>()
             .AddTransient<IProjection, ProjectionBuilderRegistrationTestProjection>()
+            .AddSingleton<IEventStreamFactory, NullEventStreamFactory>()
             .BuildServiceProvider();
     }
 
@@ -25,7 +27,7 @@ public class ProjectionBuilderRegistrationTests
     {
         var registration = new ProjectionBuilderRegistration(_serviceProvider);
         var projections = registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
-        
+
         Assert.That(projections, Is.Not.Null);
     }
 
@@ -36,7 +38,7 @@ public class ProjectionBuilderRegistrationTests
     {
         public required string Message { get; set; }
     }
-    
+
     class ProjectionBuilderRegistrationTestProjection : IProjection
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -45,7 +47,8 @@ public class ProjectionBuilderRegistrationTests
 
     class ProjectionBuilderRegistrationTestProjectionBuilder : ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>
     {
-        public ProjectionBuilderRegistrationTestProjectionBuilder(IProjectionRepository<ProjectionBuilderRegistrationTestProjection> repository) : base(repository)
+        public ProjectionBuilderRegistrationTestProjectionBuilder(IProjectionRepository<ProjectionBuilderRegistrationTestProjection> repository,
+            IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
         {
             Handles<ProjectionBuilderRegistrationTestEvent>(OnEvent);
         }
@@ -53,6 +56,22 @@ public class ProjectionBuilderRegistrationTests
         void OnEvent(ProjectionBuilderRegistrationTestEvent @event, ProjectionBuilderRegistrationTestProjection projection)
         {
             projection.Message = @event.Message;
+        }
+    }
+
+    class NullEventStreamFactory : IEventStreamFactory
+    {
+        public IEventStream For(string streamName)
+        {
+            return new NullEventStream();
+        }
+
+        class NullEventStream : IEventStream
+        {
+            public Task PublishAsync(IEvent entity, CancellationToken token = default)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using System.Collections.Concurrent;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Azure.Storage.Blobs;
-using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Extensions;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
+using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 
 namespace EventStore.Azure.AggegateRoots;
 
-public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport, EventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
+public class AzureAggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName);
 

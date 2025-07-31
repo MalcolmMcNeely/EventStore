@@ -8,7 +8,7 @@ The breakdown of the message loops comes in 3 parts:
 - `IEventBroadcaster`: Takes published messages and broadcasts them to any `IProjectionBuilder<>` which handles them
 
 TODO List:
-- [ ] Also publish events to specific Projection streams
+- [x] Also publish events to specific Projection streams
 - [ ] Rebuild Projections based on their speicific Projection streams on demand
 - [ ] Rebuild AggregateRoots based on their specific AggregateRoot streams on demand
 - [ ] Also allow for commands on the message transport

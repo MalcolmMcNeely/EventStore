@@ -1,4 +1,5 @@
 ﻿using EventStore.Events;
+using EventStore.Events.Streams;
 using EventStore.Projections;
 
 namespace EventStore.ProjectionBuilders;
@@ -7,7 +8,7 @@ public delegate void ProjectionBuilderEventHandler<in TEvent, in TProjection>(TE
     where TEvent : IEvent
     where TProjection : IProjection;
 
-public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository) where TProjection : IProjection, new()
+public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository, IEventStreamFactory eventStreamFactory) where TProjection : IProjection, new()
 {
     Dictionary<Type, Delegate> Handlers { get; } = new();
     string Key { get; set; } = string.Empty;
@@ -40,6 +41,9 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
         }
 
         InvokeHandler(@event.GetType(), @event, projection);
+
+        var eventStream = eventStreamFactory.For($"projection-{Key}");
+        await eventStream.PublishAsync(@event, token);
 
         await repository.SaveAsync(projection, token);
     }
