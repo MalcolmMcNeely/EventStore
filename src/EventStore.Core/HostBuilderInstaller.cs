@@ -16,7 +16,7 @@ public static class HostBuilderInstaller
 
         hostBuilder.Services.AddSingleton<EventTypeRegistration>();
         hostBuilder.Services.AddSingleton<ProjectionBuilderRegistration>();
-        hostBuilder.Services.AddSingleton<IEventDispatcher, EventDispatcher>();
+        hostBuilder.Services.AddSingleton<EventDispatcher>();
         hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
     }
 }

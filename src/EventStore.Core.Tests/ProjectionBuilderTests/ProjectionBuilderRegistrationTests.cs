@@ -9,8 +9,7 @@ namespace EventStore.Core.Tests.ProjectionBuilderTests;
 public class ProjectionBuilderRegistrationTests
 {
     ServiceProvider _serviceProvider;
-    ProjectionBuilderRegistration _registration;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -24,8 +23,8 @@ public class ProjectionBuilderRegistrationTests
     [Test]
     public void it_can_resolve_a_projection_builder()
     {
-        _registration = new(_serviceProvider);
-        var projections = _registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
+        var registration = new ProjectionBuilderRegistration(_serviceProvider);
+        var projections = registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
         
         Assert.That(projections, Is.Not.Null);
     }

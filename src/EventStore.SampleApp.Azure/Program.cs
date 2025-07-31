@@ -26,7 +26,7 @@ hostBuilder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
 var host = hostBuilder.Build();
 
 var storage = host.Services.GetService<Storage>();
-await storage.InitializeAsync();
+await storage!.InitializeAsync();
 
 await host.RunAsync();
 

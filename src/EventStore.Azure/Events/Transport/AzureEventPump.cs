@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
@@ -43,7 +44,7 @@ public class AzureEventPump(AzureService azureService, EventCursorFactory eventC
         await eventCursorFactory.SaveCursorAsync(cursor, token);
     }
 
-    async IAsyncEnumerable<Page<EventEntity>> ReceiveEventsAsync(EventCursorEntity eventCursor, string? continuationToken = null, CancellationToken token = default)
+    async IAsyncEnumerable<Page<EventEntity>> ReceiveEventsAsync(EventCursorEntity eventCursor, string? continuationToken = null, [EnumeratorCancellation] CancellationToken token = default)
     {
         var pages = _eventsTable.QueryAsync<EventEntity>(
                 $"PartitionKey eq '{Defaults.Streams.AllStreamPartition}' and RowKey gt '{RowKey.ForEventStream(eventCursor.LastSeenEvent)}'",

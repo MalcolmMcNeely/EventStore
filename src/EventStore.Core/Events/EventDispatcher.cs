@@ -2,7 +2,7 @@
 
 namespace EventStore.Events;
 
-public class EventDispatcher(IServiceProvider serviceProvider, ProjectionBuilderRegistration registration) : IEventDispatcher
+public class EventDispatcher(IServiceProvider serviceProvider, ProjectionBuilderRegistration registration)
 {
     public async Task SendEventAsync<TEvent>(TEvent @event, CancellationToken token = default) where TEvent : IEvent
     {

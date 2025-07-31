@@ -3,7 +3,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.InMemory.Events.Transport;
 
-public class InMemoryEventBroadcaster(IEventPump eventPump, IEventDispatcher eventDispatcher) : IEventBroadcaster
+public class InMemoryEventBroadcaster(IEventPump eventPump, EventDispatcher eventDispatcher) : IEventBroadcaster
 {
     readonly InMemoryEventPump? _inMemoryEventPump = eventPump as InMemoryEventPump;
 

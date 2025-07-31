@@ -6,7 +6,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Events.Transport;
 
-public class AzureEventBroadcaster(AzureService azureService, IEventDispatcher eventDispatcher) : IEventBroadcaster
+public class AzureEventBroadcaster(AzureService azureService, EventDispatcher eventDispatcher) : IEventBroadcaster
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
 
@@ -44,7 +44,7 @@ public class AzureEventBroadcaster(AzureService azureService, IEventDispatcher e
         }
 
         var type = Type.GetType(envelope.Type);
-        var @event = JsonSerializer.Deserialize(envelope.Body, type);
+        var @event = JsonSerializer.Deserialize(envelope.Body, type!);
 
         return @event as IEvent;
     }

@@ -15,7 +15,7 @@ public static class Retry
             {
                 return await asyncAction();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ignored
             }
