@@ -5,7 +5,7 @@ namespace EventStore.InMemory.Events.Transport;
 
 public class InMemoryEventBroadcaster(IEventPump eventPump, IEventDispatcher eventDispatcher) : IEventBroadcaster
 {
-    InMemoryEventPump? _inMemoryEventPump = eventPump as InMemoryEventPump;
+    readonly InMemoryEventPump? _inMemoryEventPump = eventPump as InMemoryEventPump;
 
     public async Task BroadcastEventAsync(CancellationToken token)
     {

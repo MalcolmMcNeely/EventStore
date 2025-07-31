@@ -53,5 +53,6 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-# Rider user-specific settings
+# Rider
+.idea/
 *.DotSettings.user
