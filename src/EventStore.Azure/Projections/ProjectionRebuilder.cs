@@ -1,9 +1,10 @@
 ﻿using EventStore.Events.Streams;
+using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 
 namespace EventStore.Azure.Projections;
 
-public class ProjectionRebuilder(ProjectionRebuilderRegistration registration, IEventStreamFactory eventStreamFactory)
+public class ProjectionRebuilder(IEventStreamFactory eventStreamFactory, IServiceProvider serviceProvider)
 {
     public async Task<bool> CanRebuildAsync(string key, CancellationToken token)
     {
@@ -15,8 +16,13 @@ public class ProjectionRebuilder(ProjectionRebuilderRegistration registration, I
     {
         var eventStream = eventStreamFactory.For($"projection-{key}");
         var events = eventStream.GetAllEventsAsync(token);
+        var projectionBuilder = (ProjectionBuilder<T>)serviceProvider.GetService(typeof(ProjectionBuilder<T>))!;
 
-        var projectionBuilder = registration.ProjectionBuilderFor<T>();
+        if (projectionBuilder is null)
+        {
+            throw new ProjectionRebuilderException($"Projection builder {typeof(T)} not found in service provider");
+        }
+        
         var projection = new T { Id = key };
 
         await foreach (var @event in events)

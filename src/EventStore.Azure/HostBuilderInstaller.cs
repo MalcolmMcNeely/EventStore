@@ -33,7 +33,6 @@ public static class HostBuilderInstaller
         hostBuilder.Services.AddSingleton<Storage>();
 
         hostBuilder.Services.AddSingleton<ProjectionRebuilder>();
-        hostBuilder.Services.AddSingleton<ProjectionRebuilderRegistration>();
         hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
     }
 }
