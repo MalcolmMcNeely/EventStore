@@ -35,7 +35,7 @@ public class AzureSanityTests : IntegrationTest
         var successfulUploads = 0;
         var timesToInvoke = 2000;
 
-        await TestUtility.InvokeMany(async () =>
+        await TestUtility.InvokeManyAsync(async () =>
         {
             if (await _blobClient.UploadOnlyIfNotCreated(_binaryData))
             {

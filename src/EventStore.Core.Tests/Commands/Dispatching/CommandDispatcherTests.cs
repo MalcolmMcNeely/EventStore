@@ -33,7 +33,7 @@ public class CommandDispatcherTests : IntegrationTest
     {
         _counter = 0;
 
-        await TestUtility.InvokeMany(async () => await DispatchCommandAsync(new TestCommand()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await DispatchCommandAsync(new TestCommand()), 2000);
 
         Assert.That(_counter, Is.EqualTo(2000));
     }

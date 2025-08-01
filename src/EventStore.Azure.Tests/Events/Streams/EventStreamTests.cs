@@ -36,7 +36,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "oneStream";
 
-        await TestUtility.InvokeMany(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 1);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 1);
 
         var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
         var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
@@ -53,7 +53,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "anotherStream";
 
-        await TestUtility.InvokeMany(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 2000);
 
         var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
         var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
