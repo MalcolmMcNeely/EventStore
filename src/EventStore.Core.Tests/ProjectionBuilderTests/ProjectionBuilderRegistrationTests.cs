@@ -3,6 +3,7 @@ using EventStore.Events.Streams;
 using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
+using EventStore.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;
@@ -56,22 +57,6 @@ public class ProjectionBuilderRegistrationTests
         void OnEvent(ProjectionBuilderRegistrationTestEvent @event, ProjectionBuilderRegistrationTestProjection projection)
         {
             projection.Message = @event.Message;
-        }
-    }
-
-    class NullEventStreamFactory : IEventStreamFactory
-    {
-        public IEventStream For(string streamName)
-        {
-            return new NullEventStream();
-        }
-
-        class NullEventStream : IEventStream
-        {
-            public Task PublishAsync(IEvent entity, CancellationToken token = default)
-            {
-                return Task.CompletedTask;
-            }
         }
     }
 }

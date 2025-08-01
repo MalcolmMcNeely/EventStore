@@ -3,6 +3,7 @@ using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Events.TableEntities;
 using EventStore.Azure.Extensions;
 using EventStore.Events;
+using EventStore.Testing;
 
 namespace EventStore.Azure.Tests.Events.Streams;
 
@@ -48,7 +49,7 @@ public class EventStreamTests
 
     IEnumerable<Task> GenerateTasks(string streamName, IEnumerable<IEvent> events)
     {
-        var eventStream = new EventStreamFactory(_azureService).For(streamName);
+        var eventStream = new EventStreamFactory(_azureService, new Lazy<IEventTypeRegistration>(new TestEventTypeRegistration())).For(streamName);
         return events.Select(e => eventStream.PublishAsync(e));
     }
 

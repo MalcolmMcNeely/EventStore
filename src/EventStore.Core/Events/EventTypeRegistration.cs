@@ -2,22 +2,22 @@
 
 namespace EventStore.Events;
 
-public class EventTypeRegistration
+public class EventTypeRegistration(Lazy<IProjectionBuilderRegistration> projectionBuilderRegistration) : IEventTypeRegistration
 {
-    public Dictionary<string, Type> EventNameToTypeMap { get; } = new();
+    public Dictionary<string, Type> EventNameToTypeMap => _eventNameToTypeMap.Value;
 
-    public EventTypeRegistration(ProjectionBuilderRegistration projectionBuilderRegistration)
-    {
-        RegisterEventTypes(projectionBuilderRegistration);
-    }
+    readonly Lazy<Dictionary<string, Type>> _eventNameToTypeMap = new(() => CreateEventNameToTypeMap(projectionBuilderRegistration));
 
-    void RegisterEventTypes(ProjectionBuilderRegistration projectionBuilderRegistration)
+    static Dictionary<string, Type> CreateEventNameToTypeMap(Lazy<IProjectionBuilderRegistration> projectionBuilderRegistration)
     {
-        var allEventTypes = projectionBuilderRegistration.GetAllEventTypes();
+        var eventNameToTypeMap = new Dictionary<string, Type>();
+        var allEventTypes = projectionBuilderRegistration.Value.GetAllEventTypes();
 
         foreach (var eventType in allEventTypes)
         {
-            EventNameToTypeMap[eventType.Name] = eventType;
+            eventNameToTypeMap[eventType.Name] = eventType;
         }
+
+        return eventNameToTypeMap;
     }
 }

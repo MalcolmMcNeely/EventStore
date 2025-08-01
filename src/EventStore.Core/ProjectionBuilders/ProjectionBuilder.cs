@@ -35,6 +35,7 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
 
         var projection = await repository.LoadAsync(key, token);
 
+        // this should happen in the repo
         if (projection is null)
         {
             projection = new() { Id = key };

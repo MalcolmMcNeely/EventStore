@@ -1,6 +1,7 @@
 ﻿using EventStore.BackgroundServices;
 using EventStore.Commands;
 using EventStore.Commands.Dispatching;
+using EventStore.DependencyInjection;
 using EventStore.Events;
 using EventStore.ProjectionBuilders;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,8 +16,9 @@ public static class HostBuilderInstaller
         hostBuilder.Services.AddHostedService<EventBroadcasterBackgroundService>();
         hostBuilder.Services.AddHostedService<EventPumpBackgroundService>();
 
-        hostBuilder.Services.AddSingleton<EventTypeRegistration>();
-        hostBuilder.Services.AddSingleton<ProjectionBuilderRegistration>();
+        hostBuilder.Services.AddLazy<IEventTypeRegistration, EventTypeRegistration>();
+        hostBuilder.Services.AddLazy<IProjectionBuilderRegistration, ProjectionBuilderRegistration>();
+        
         hostBuilder.Services.AddSingleton<EventDispatcher>();
         hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
     }

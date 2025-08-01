@@ -3,6 +3,7 @@ using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Events.Transport;
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
+using EventStore.Testing;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 
@@ -14,7 +15,7 @@ public class AggregateRootRepositoryTests
     public void Setup()
     {
         var azureService = new AzureService();
-        var eventStreamFactory = new EventStreamFactory(azureService);
+        var eventStreamFactory = new EventStreamFactory(azureService, new Lazy<IEventTypeRegistration>(new TestEventTypeRegistration()));
         
         _repository = new AggregateRootRepository<TestAggregateRoot>(azureService, new EventTransport(eventStreamFactory), eventStreamFactory);
     }

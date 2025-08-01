@@ -10,7 +10,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.Events.Transport;
 
-public class EventPump(AzureService azureService, EventCursorFactory eventCursorFactory, EventTypeRegistration eventTypeRegistration) : IEventPump
+public class EventPump(AzureService azureService, EventCursorFactory eventCursorFactory, Lazy<IEventTypeRegistration> eventTypeRegistration) : IEventPump
 {
     readonly TableClient _eventsTable = azureService.TableServiceClient.GetTableClient(Defaults.Events.EventStoreTable);
     readonly QueueClient _transportQueue = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
@@ -29,7 +29,7 @@ public class EventPump(AzureService azureService, EventCursorFactory eventCursor
             {
                 foreach (var eventEntity in page.Values)
                 {
-                    var eventType = eventTypeRegistration.EventNameToTypeMap[eventEntity.EventType];
+                    var eventType = eventTypeRegistration.Value.EventNameToTypeMap[eventEntity.EventType];
                     var @event = JsonSerializer.Deserialize(eventEntity.Content, eventType);
                     var transportEnvelope = TransportEnvelope.Create(@event!);
                     await _transportQueue.SendMessageAsync(JsonSerializer.Serialize(transportEnvelope), token);

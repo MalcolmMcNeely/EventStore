@@ -30,8 +30,10 @@ public static class HostBuilderInstaller
         hostBuilder.Services.AddSingleton<IEventTransport, EventTransport>();
 
         hostBuilder.Services.AddSingleton<IStorageInitializer, AzureStorageInitializer>();
-
-        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
         hostBuilder.Services.AddSingleton<Storage>();
+
+        hostBuilder.Services.AddSingleton<ProjectionRebuilder>();
+        hostBuilder.Services.AddSingleton<ProjectionRebuilderRegistration>();
+        hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
     }
 }

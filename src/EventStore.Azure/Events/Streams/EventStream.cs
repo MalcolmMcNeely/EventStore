@@ -9,7 +9,7 @@ using EventStore.Events.Streams;
 
 namespace EventStore.Azure.Events.Streams;
 
-public class EventStream(AzureService azureService, string streamName, SemaphoreSlim semaphore) : IEventStream
+public class EventStream(AzureService azureService, string streamName, SemaphoreSlim semaphore, Lazy<IEventTypeRegistration> eventTypeRegistration) : IEventStream
 {
     const int MaxRetries = 3;
     const int Exponential = 2;
@@ -54,6 +54,25 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
             {
                 semaphore.Release();
             }
+        }
+    }
+
+    public async Task<bool> ExistsAsync(CancellationToken token = default)
+    {
+        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
+        return response.HasValue;
+    }
+
+    public async IAsyncEnumerable<IEvent> GetAllEventsAsync(CancellationToken token = default)
+    {
+        var events = _tableClient.QueryAsync<EventEntity>(x => x.PartitionKey == streamName && x.RowKey != RowKey.ForMetadata().ToString());
+
+        await foreach (var entity in events)
+        {
+            var eventType = eventTypeRegistration.Value.EventNameToTypeMap[entity.EventType];
+            var @event = JsonSerializer.Deserialize(entity.Content, eventType);
+
+            yield return (IEvent)@event!;
         }
     }
 }
