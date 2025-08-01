@@ -1,23 +1,27 @@
-﻿using EventStore.Azure.AggegateRoots;
-using EventStore.Azure.Events.Streams;
-using EventStore.Azure.Events.Transport;
-using EventStore.Commands.AggregateRoots;
+﻿using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.Testing;
+using EventStore.Testing.Configuration;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 
-public class AggregateRootRepositoryTests
+public class AggregateRootRepositoryTests : IntegrationTest
 {
-    AggregateRootRepository<TestAggregateRoot> _repository;
+    IAggregateRootRepository<TestAggregateRoot> _repository;
 
+    [OneTimeSetUp]
+    public void Configure()
+    {
+        TestConfiguration
+            .Configure()
+            .WithAzureServices()
+            .Build();
+    }
+    
     [SetUp]
     public void Setup()
     {
-        var azureService = new AzureService();
-        var eventStreamFactory = new EventStreamFactory(azureService, new Lazy<IEventTypeRegistration>(new TestEventTypeRegistration()));
-        
-        _repository = new AggregateRootRepository<TestAggregateRoot>(azureService, new EventTransport(eventStreamFactory), eventStreamFactory);
+        _repository = GetService<IAggregateRootRepository<TestAggregateRoot>>();
     }
 
     [Test]
@@ -50,16 +54,16 @@ public class AggregateRootRepositoryTests
     {
         await _repository.SaveAsync(new TestAggregateRoot { Message = message }, "test");
     }
-}
-
-class TestAggregateRoot : AggregateRoot
-{
-    public TestAggregateRoot()
-    {
-        NewEvents.Add((typeof(TestAggregateRootEvent), new TestAggregateRootEvent()));
-    }
     
-    public string Message { get; set; } = string.Empty;
-}
+    class TestAggregateRoot : AggregateRoot
+    {
+        public TestAggregateRoot()
+        {
+            NewEvents.Add((typeof(TestAggregateRootEvent), new TestAggregateRootEvent()));
+        }
+    
+        public string Message { get; set; } = string.Empty;
+    }
 
-class TestAggregateRootEvent : IEvent;
+    class TestAggregateRootEvent : IEvent;
+}
