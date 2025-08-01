@@ -1,5 +1,4 @@
 ﻿using EventStore.BackgroundServices;
-using EventStore.Commands;
 using EventStore.Commands.Dispatching;
 using EventStore.DependencyInjection;
 using EventStore.Events;
@@ -18,7 +17,7 @@ public static class HostBuilderInstaller
 
         hostBuilder.Services.AddLazy<IEventTypeRegistration, EventTypeRegistration>();
         hostBuilder.Services.AddLazy<IProjectionBuilderRegistration, ProjectionBuilderRegistration>();
-        
+
         hostBuilder.Services.AddSingleton<EventDispatcher>();
         hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
     }

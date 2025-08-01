@@ -1,27 +1,35 @@
-﻿using EventStore.ProjectionBuilders;
+﻿using System.Collections.Concurrent;
+using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 
 namespace EventStore.Azure.Projections;
 
 public class ProjectionRebuilderRegistration(IServiceProvider serviceProvider)
 {
-    readonly Dictionary<Type, object> _projectionBuilderMap = new();
-    
+    readonly ConcurrentDictionary<Type, object> _projectionBuilderMap = new();
+
     public ProjectionBuilder<T> ProjectionBuilderFor<T>() where T : IProjection, new()
     {
         if (!_projectionBuilderMap.ContainsKey(typeof(T)))
         {
             var projectionBuilderType = typeof(ProjectionBuilder<>).MakeGenericType(typeof(T));
-            var projectionBuilder = serviceProvider.GetService(projectionBuilderType);
+            var resolvedProjectionBuilder = serviceProvider.GetService(projectionBuilderType);
 
-            if (projectionBuilder is null)
+            if (resolvedProjectionBuilder is null)
             {
-                throw new ProjectionBuilderRegistrationException($"Projection builder {typeof(T)} not found.");
+                throw new ProjectionBuilderRegistrationException($"Projection builder {typeof(T)} not found in service provider");
             }
-            
-            _projectionBuilderMap.Add(projectionBuilder.GetType(), projectionBuilder);
+
+            _projectionBuilderMap.TryAdd(typeof(T), resolvedProjectionBuilder);
         }
-            
-        return (ProjectionBuilder<T>)_projectionBuilderMap[typeof(T)];
+
+        _projectionBuilderMap.TryGetValue(typeof(T), out var projectionBuilder);
+
+        if (projectionBuilder is null)
+        {
+            throw new ProjectionBuilderRegistrationException($"Projection builder {typeof(T)} not added to registration");
+        }
+
+        return (ProjectionBuilder<T>)projectionBuilder;
     }
 }

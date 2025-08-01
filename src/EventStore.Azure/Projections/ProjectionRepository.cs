@@ -7,7 +7,7 @@ using EventStore.Projections;
 
 namespace EventStore.Azure.Projections;
 
-public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder) : IProjectionRepository<T>  where T : IProjection
+public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder) : IProjectionRepository<T>  where T : IProjection, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
 
@@ -17,7 +17,11 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
 
         if (!await blobClient.ExistsAsync(token))
         {
-            // but if we have events then we can rebuild
+            if (await projectionRebuilder.CanRebuildAsync(key, token))
+            {
+                return await projectionRebuilder.RebuildAsync<T>(key, token);
+            }
+
             return default;
         }
 

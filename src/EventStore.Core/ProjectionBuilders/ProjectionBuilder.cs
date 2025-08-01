@@ -49,6 +49,11 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
         await repository.SaveAsync(projection, token);
     }
 
+    public void ApplyEventToProjection(TProjection projection, IEvent @event, CancellationToken token)
+    {
+        InvokeHandler(@event.GetType(), @event, projection);
+    }
+
     void InvokeHandler<TEvent>(Type type, TEvent @event, TProjection projection)
     {
         if (Handlers.TryGetValue(type, out var @delegate))
