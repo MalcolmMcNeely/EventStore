@@ -4,11 +4,11 @@ using EventStore.SampleApp.Azure.TrafficLights.AggregateRoots;
 
 namespace EventStore.SampleApp.Azure.TrafficLights.Commands;
 
-public class ChangeColourCommandHandler(IAggregateRootRepository<TrafficLight> _repository) : ICommandHandler<ChangeColour>
+public class ChangeColourCommandHandler(IAggregateRootRepository<TrafficLight> repository) : ICommandHandler<ChangeColour>
 {
     public async Task HandleAsync(ChangeColour command, CancellationToken token = default)
     {
-        await _repository.CreateUnitOfWork(nameof(TrafficLight))
+        await repository.CreateUnitOfWork(nameof(TrafficLight))
             .PerformAsync(x => x.ChangeColourAsync(command))
             .CompleteAsync(token);
     }

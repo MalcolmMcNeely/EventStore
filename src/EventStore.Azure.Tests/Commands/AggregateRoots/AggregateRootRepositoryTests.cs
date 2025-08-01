@@ -3,7 +3,7 @@ using EventStore.Events;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 
-namespace EventStore.Azure.Tests.AggregateRoots;
+namespace EventStore.Azure.Tests.Commands.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {

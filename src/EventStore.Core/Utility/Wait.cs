@@ -1,4 +1,4 @@
-﻿namespace EventStore.Utils;
+﻿namespace EventStore.Utility;
 
 public static class Wait
 {

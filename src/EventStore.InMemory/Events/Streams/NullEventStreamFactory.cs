@@ -1,6 +1,6 @@
 ﻿using EventStore.Events.Streams;
 
-namespace EventStore.Testing;
+namespace EventStore.InMemory.Events.Streams;
 
 public class NullEventStreamFactory : IEventStreamFactory
 {

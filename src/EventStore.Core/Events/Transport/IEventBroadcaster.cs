@@ -2,5 +2,5 @@
 
 public interface IEventBroadcaster
 {
-    public Task BroadcastEventAsync(CancellationToken token);
+    public Task BroadcastEventAsync(CancellationToken token = default);
 }

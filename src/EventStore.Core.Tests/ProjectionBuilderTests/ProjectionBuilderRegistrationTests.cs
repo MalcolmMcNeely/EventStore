@@ -1,5 +1,6 @@
 ﻿using EventStore.Events;
 using EventStore.Events.Streams;
+using EventStore.InMemory.Events.Streams;
 using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;

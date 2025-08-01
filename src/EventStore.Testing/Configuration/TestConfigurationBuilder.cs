@@ -1,16 +1,29 @@
 ﻿using EventStore.Azure;
+using EventStore.Commands;
 using EventStore.InMemory;
+using EventStore.ProjectionBuilders;
+using EventStore.Projections;
+using EventStore.Testing.BasicTestCase;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace EventStore.Testing.Configuration;
 
+public enum TestMode
+{
+    NotSet,
+    InMemory,
+    Azure
+}
+
 public class TestConfigurationBuilder
 {
     public IHost? ServiceHost { get; set; }
 
     readonly HostApplicationBuilder _hostBuilder;
+    
+    TestMode _mode = TestMode.NotSet;
 
     public TestConfigurationBuilder()
     {
@@ -20,6 +33,7 @@ public class TestConfigurationBuilder
     
     public TestConfigurationBuilder WithInMemoryServices()
     {
+        _mode = TestMode.InMemory;
         _hostBuilder.AddCoreServices();
         _hostBuilder.AddInMemoryServices();
         return this;
@@ -27,6 +41,7 @@ public class TestConfigurationBuilder
     
     public TestConfigurationBuilder WithAzureServices()
     {
+        _mode = TestMode.Azure;
         _hostBuilder.AddCoreServices();
         _hostBuilder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
         return this;
@@ -45,8 +60,22 @@ public class TestConfigurationBuilder
         return this;
     }
 
-    public void Build()
+    public TestConfigurationBuilder WithBasicTestCase()
     {
+        _hostBuilder.Services.AddTransient<ProjectionBuilder<TestProjection>, TestProjectionBuilder>();
+        _hostBuilder.Services.AddTransient<IProjection, TestProjection>();
+        _hostBuilder.Services.AddTransient<ICommandHandler<TestCommand>, TestCommandHandler>();
+        return this;
+    }
+
+    public void Build() 
+    {
+        if (_mode == TestMode.NotSet)
+        {
+            _hostBuilder.AddCoreServices();
+            _hostBuilder.AddInMemoryServices();
+        }
+
         ServiceHost = _hostBuilder.Build();
     }
 }

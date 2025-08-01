@@ -2,19 +2,19 @@
 using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.InMemory.AggregateRoots;
-using EventStore.InMemory.Events.Transport;
+using EventStore.Testing;
 
 namespace EventStore.Core.Tests.Commands.Transactions;
 
-public class UnitOfWorkTests
+public class UnitOfWorkTests : IntegrationTest
 {
     AggregateRootRepository<UnitOfWorkTestAggregateRoot> _repository;
     UnitOfWorkTestCommand _command;
-
+    
     [SetUp]
     public async Task Setup()
     {
-        _repository = new AggregateRootRepository<UnitOfWorkTestAggregateRoot>(new EventTransport());
+        _repository = (GetService<IAggregateRootRepository<UnitOfWorkTestAggregateRoot>>() as AggregateRootRepository<UnitOfWorkTestAggregateRoot>)!;
         _command = new UnitOfWorkTestCommand { Message = "Hello" };
 
         await _repository.CreateUnitOfWork(nameof(UnitOfWorkTestAggregateRoot))

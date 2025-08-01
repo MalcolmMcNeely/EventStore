@@ -1,13 +1,13 @@
 ﻿using EventStore.Events;
 using EventStore.Events.Streams;
 
-namespace EventStore.Testing;
+namespace EventStore.InMemory.Events.Streams;
 
 public class NullEventStream : IEventStream
 {
     public Task PublishAsync(IEvent entity, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public Task<bool> ExistsAsync(CancellationToken token = default)

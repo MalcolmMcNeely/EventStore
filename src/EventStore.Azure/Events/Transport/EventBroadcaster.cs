@@ -10,7 +10,7 @@ public class EventBroadcaster(AzureService azureService, EventDispatcher eventDi
 {
     readonly QueueClient _queueClient = azureService.QueueServiceClient.GetQueueClient(Defaults.Transport.QueueName);
 
-    public async Task BroadcastEventAsync(CancellationToken token = default)
+    public async Task BroadcastEventAsync(CancellationToken token)
     {
         var @event = await ReceiveEventAsync(token);
         
@@ -20,7 +20,7 @@ public class EventBroadcaster(AzureService azureService, EventDispatcher eventDi
         }
     }
 
-    async Task<IEvent?> ReceiveEventAsync(CancellationToken token = default)
+    async Task<IEvent?> ReceiveEventAsync(CancellationToken token)
     {
         QueueMessage message = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
 
