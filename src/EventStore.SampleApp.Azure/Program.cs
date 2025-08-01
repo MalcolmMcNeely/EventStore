@@ -4,9 +4,9 @@ using EventStore.Azure.Initialization;
 using EventStore.Commands;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
-using EventStore.SampleApp.Azure;
-using EventStore.SampleApp.Azure.TrafficLights.Commands;
-using EventStore.SampleApp.Azure.TrafficLights.Projections;
+using EventStore.SampleApp.Domain;
+using EventStore.SampleApp.Domain.TrafficLights.Commands;
+using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\EventStore.InMemory\EventStore.InMemory.csproj" />
+      <ProjectReference Include="..\EventStore.SampleApp.Domain\EventStore.SampleApp.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

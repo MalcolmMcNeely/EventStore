@@ -1,6 +1,6 @@
 ﻿using EventStore;
 using EventStore.Commands;
-using EventStore.InMemory;
+using EventStore.EFCore.Postgres;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.SampleApp.Domain;
@@ -20,8 +20,7 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
-hostBuilder.AddInMemoryServices();
+hostBuilder.AddEFServices();
 
 var host = hostBuilder.Build();
 await host.RunAsync();
-
