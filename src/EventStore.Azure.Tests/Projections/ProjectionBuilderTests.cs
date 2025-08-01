@@ -3,12 +3,12 @@ using EventStore.Testing;
 using EventStore.Testing.BasicTestCase;
 using EventStore.Testing.Configuration;
 
-namespace EventStore.Azure.Tests.ProjectionBuilderTests;
+namespace EventStore.Azure.Tests.Projections;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
     IProjectionRepository<TestProjection> _projectionRepository;
-    
+
     [OneTimeSetUp]
     public void Configure()
     {
@@ -29,9 +29,9 @@ public class ProjectionBuilderTests : IntegrationTest
     public async Task when_command_is_dispatched_it_updates_the_projection()
     {
         await SendEventAsync(new TestEvent { Data = "test" });
-        
+
         var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));
-        
+
         Assert.That(projection, Is.Not.Null);
         Assert.That(projection.Data, Is.EqualTo("test"));
     }
