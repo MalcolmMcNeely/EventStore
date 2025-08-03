@@ -6,7 +6,7 @@ namespace EventStore.EFCore.Postgres.AggregateRoots;
 
 public class AggregateRootRepository<TAggregateRoot>(IEventTransport transport) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
 {
-    public Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default)
+    public Task<TAggregateRoot> LoadAsync(string key, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

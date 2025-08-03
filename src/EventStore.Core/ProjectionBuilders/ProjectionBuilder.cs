@@ -32,14 +32,7 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
     public async Task ApplyEventAsync(IEvent @event, CancellationToken token)
     {
         var key = Key; // need options for key building
-
         var projection = await repository.LoadAsync(key, token);
-
-        // this should happen in the repo
-        if (projection is null)
-        {
-            projection = new() { Id = key };
-        }
 
         InvokeHandler(@event.GetType(), @event, projection);
 

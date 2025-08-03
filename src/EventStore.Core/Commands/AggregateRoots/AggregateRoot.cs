@@ -6,6 +6,7 @@ public delegate void AggregateRootEventHandler<in T>(T @event) where T : IEvent;
 
 public abstract class AggregateRoot
 {
+    public string Id { get; set; }
     public List<(Type Type, IEvent @event)> NewEvents { get; } = new();
 
     Dictionary<Type, Delegate> Handlers { get; } = new();

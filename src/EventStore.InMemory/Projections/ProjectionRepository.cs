@@ -3,18 +3,18 @@ using EventStore.Projections;
 
 namespace EventStore.InMemory.Projections;
 
-public class ProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
+public class ProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection, new()
 {
     static readonly ConcurrentDictionary<string, T> Projections = new();
     
-    public Task<T?> LoadAsync(string id, CancellationToken _ = default)
+    public Task<T> LoadAsync(string id, CancellationToken _ = default)
     {
         if (Projections.TryGetValue(id, out var projection))
         {
             return Task.FromResult(projection)!;
         }
 
-        return Task.FromResult<T?>(default);
+        return Task.FromResult(new T());
     }
 
     public Task SaveAsync(T projection, CancellationToken _ = default)

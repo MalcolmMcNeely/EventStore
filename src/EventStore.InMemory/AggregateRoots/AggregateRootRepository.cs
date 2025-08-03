@@ -10,14 +10,14 @@ public class AggregateRootRepository<TAggregateRoot>(IEventTransport transport) 
 
     Dictionary<string, TAggregateRoot> AggregateRoots { get; } = new();
     
-    public Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default)
+    public Task<TAggregateRoot> LoadAsync(string key, CancellationToken token = default)
     {
         if (AggregateRoots.TryGetValue(key, out var aggregateRoot))
         {
-            return Task.FromResult<TAggregateRoot?>(aggregateRoot);
+            return Task.FromResult(aggregateRoot);
         }
 
-        return Task.FromResult<TAggregateRoot?>(null);
+        return Task.FromResult(new TAggregateRoot {  Id = key });
     }
 
     public Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)

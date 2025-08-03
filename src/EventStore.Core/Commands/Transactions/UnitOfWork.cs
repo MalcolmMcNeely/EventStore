@@ -79,7 +79,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
     async Task<T> LoadAndMergeAsync()
     {
-        var entity = await _aggregateRootRepository.LoadAsync(_key) ?? new T();
+        var entity = await _aggregateRootRepository.LoadAsync(_key);
 
         foreach (var action in _actions)
         {

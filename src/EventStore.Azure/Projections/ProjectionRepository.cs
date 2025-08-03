@@ -11,7 +11,7 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
 
-    public async Task<T?> LoadAsync(string key, CancellationToken token = default)
+    public async Task<T> LoadAsync(string key, CancellationToken token = default)
     {
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{key}");
 
@@ -22,20 +22,20 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
                 return await projectionRebuilder.RebuildAsync<T>(key, token);
             }
 
-            return default;
+            return new T();
         }
 
         try
         {
             var blobStream = await blobClient.OpenReadAsync(cancellationToken: token);
-            return JsonSerializer.Deserialize<T>(blobStream);
+            return JsonSerializer.Deserialize<T>(blobStream)!;
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.ConditionNotMet)
         {
             await Task.Delay(50, token); // TODO: backoff, revisit Retry logic
         }
 
-        return default;
+        return new T();
     }
 
     public async Task SaveAsync(T projection, CancellationToken token = default)

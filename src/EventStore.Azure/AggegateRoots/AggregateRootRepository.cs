@@ -12,11 +12,16 @@ public class AggregateRootRepository<TAggregateRoot>(AzureService azureService, 
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName);
 
-    public async Task<TAggregateRoot?> LoadAsync(string key, CancellationToken token = default)
+    public async Task<TAggregateRoot> LoadAsync(string key, CancellationToken token = default)
     {
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(TAggregateRoot).FullName}/{key}");
 
-        return !await blobClient.ExistsAsync(token) ? null : JsonSerializer.Deserialize<TAggregateRoot>(await blobClient.OpenReadAsync(cancellationToken: token));
+        if (await blobClient.ExistsAsync(token))
+        {
+            return JsonSerializer.Deserialize<TAggregateRoot>(await blobClient.OpenReadAsync(cancellationToken: token))!;
+        }
+
+        return new TAggregateRoot { Id = key };
     }
 
     public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
