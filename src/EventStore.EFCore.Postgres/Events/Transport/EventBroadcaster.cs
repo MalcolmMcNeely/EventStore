@@ -12,6 +12,7 @@ public class EventBroadcaster(IServiceScopeFactory scopeFactory, EventDispatcher
     public async Task BroadcastEventAsync(CancellationToken token = default)
     {
         using var scope = scopeFactory.CreateScope();
+
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
         await using var transaction = await scopedDbContext.Database.BeginTransactionAsync(token);

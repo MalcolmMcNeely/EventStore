@@ -4,6 +4,7 @@ using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    partial class EventStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804191023_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +29,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
             modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Cursors.EventCursorEntity", b =>
                 {
                     b.Property<string>("CursorName")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<long>("LastSeenEvent")
                         .HasColumnType("bigint");
@@ -42,7 +46,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
             modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Streams.EventStreamEntity", b =>
                 {
                     b.Property<string>("Key")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("RowKey")
                         .HasColumnType("integer");
@@ -53,7 +58,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.Property<string>("EventType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
@@ -83,7 +89,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.Property<string>("EventType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");

@@ -17,7 +17,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 name: "EventCursorEntities",
                 columns: table => new
                 {
-                    CursorName = table.Column<string>(type: "text", nullable: false),
+                    CursorName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastSeenEvent = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -30,10 +30,10 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 name: "EventStreams",
                 columns: table => new
                 {
-                    Key = table.Column<string>(type: "text", nullable: false),
+                    Key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     RowKey = table.Column<int>(type: "integer", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EventType = table.Column<string>(type: "text", nullable: false),
+                    EventType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Envelope = table.Column<Envelope>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
@@ -48,7 +48,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EventType = table.Column<string>(type: "text", nullable: false),
+                    EventType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Envelope = table.Column<Envelope>(type: "jsonb", nullable: false),
                     DequeueCount = table.Column<int>(type: "integer", nullable: false)
                 },
