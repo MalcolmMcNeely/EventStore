@@ -44,7 +44,7 @@ public class ProjectionBuilderRegistrationTests
     class ProjectionBuilderRegistrationTestProjection : IProjection
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public byte[] RowVersion { get; set; }
+        public int RowVersion { get; set; }
         public string? Message { get; set; }
     }
 

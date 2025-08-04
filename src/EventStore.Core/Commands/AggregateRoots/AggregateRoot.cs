@@ -1,12 +1,14 @@
-﻿using EventStore.Events;
+﻿using EventStore.Concurrency;
+using EventStore.Events;
 
 namespace EventStore.Commands.AggregateRoots;
 
 public delegate void AggregateRootEventHandler<in T>(T @event) where T : IEvent;
 
-public abstract class AggregateRoot
+public abstract class AggregateRoot : IConcurrencyCheck
 {
     public string Id { get; set; }
+    public int RowVersion { get; set; }
     public List<(Type Type, IEvent @event)> NewEvents { get; } = new();
 
     Dictionary<Type, Delegate> Handlers { get; } = new();

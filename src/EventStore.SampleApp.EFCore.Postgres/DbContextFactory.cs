@@ -1,4 +1,5 @@
 ﻿using EventStore.EFCore.Postgres;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.SampleApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

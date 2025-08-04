@@ -1,5 +1,5 @@
-﻿using EventStore.Projections;
-using Microsoft.EntityFrameworkCore;
+﻿using EventStore.EFCore.Postgres.Database;
+using EventStore.Projections;
 
 namespace EventStore.EFCore.Postgres.Projections;
 
@@ -12,19 +12,6 @@ public class ProjectionRepository<T>(EventStoreDbContext dbContext, ProjectionRe
 
     public async Task SaveAsync(T projection, CancellationToken token = default)
     {
-        try
-        {
-            dbContext.Update(projection);
-            await dbContext.SaveChangesAsync(token);
-        }
-        catch (DbUpdateConcurrencyException exception)
-        {
-            // TODO: Need to think about this more
-            foreach (var entry in exception.Entries)
-            {
-                var proposedValues = entry.CurrentValues;
-                entry.OriginalValues.SetValues(proposedValues);
-            }
-        }
+        await dbContext.UpsertAsync(projection, projection.Id);
     }
 }

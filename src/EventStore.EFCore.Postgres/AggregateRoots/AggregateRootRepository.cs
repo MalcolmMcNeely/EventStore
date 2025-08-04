@@ -1,4 +1,5 @@
 ﻿using EventStore.Commands.AggregateRoots;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
@@ -19,9 +20,9 @@ public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory servic
     {
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        dbContext.Update(aggregateRoot);
-        var result = await dbContext.SaveChangesAsync(token);
-        return result > 0;
+        await dbContext.UpsertAsync(aggregateRoot, key);
+
+        return true;
     }
 
     public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent

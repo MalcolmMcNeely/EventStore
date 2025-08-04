@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using EventStore.Commands.AggregateRoots;
+using EventStore.Concurrency;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
 using EventStore.EFCore.Postgres.Events.Transport;
 using EventStore.Projections;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventStore.EFCore.Postgres;
+namespace EventStore.EFCore.Postgres.Database;
 
 public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, params Assembly[] aggregateAssemblies) : DbContext(options)
 {
@@ -25,7 +25,17 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
 
         foreach (var type in aggregateTypes)
         {
-            modelBuilder.Entity(type).ToTable(type.Name + "s");
+            var entityBuilder =  modelBuilder.Entity(type);
+            entityBuilder.ToTable(type.Name + "s");
+
+            var rowVersionProperty = type.GetProperty(nameof(IConcurrencyCheck.RowVersion));
+            if (rowVersionProperty != null && rowVersionProperty.PropertyType == typeof(byte[]))
+            {
+                entityBuilder
+                    .Property<int>(nameof(IConcurrencyCheck.RowVersion))
+                    .IsConcurrencyToken()
+                    .ValueGeneratedOnAddOrUpdate();
+            }
         }
 
         var projectionTypes = aggregateAssemblies.SelectMany(x => x
@@ -34,7 +44,17 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
 
         foreach (var type in projectionTypes)
         {
-            modelBuilder.Entity(type).ToTable(type.Name + "s");
+            var entityBuilder = modelBuilder.Entity(type);
+            entityBuilder.ToTable(type.Name + "s");
+
+            var rowVersionProperty = type.GetProperty(nameof(IConcurrencyCheck.RowVersion));
+            if (rowVersionProperty != null && rowVersionProperty.PropertyType == typeof(byte[]))
+            {
+                entityBuilder
+                    .Property<int>(nameof(IConcurrencyCheck.RowVersion))
+                    .IsConcurrencyToken()
+                    .ValueGeneratedOnAddOrUpdate();
+            }
         }
 
         base.OnModelCreating(modelBuilder);

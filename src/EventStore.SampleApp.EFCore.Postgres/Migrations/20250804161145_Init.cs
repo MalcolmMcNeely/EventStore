@@ -63,7 +63,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "bytea", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false),
                     Colour = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -75,7 +75,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 name: "TrafficLights",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

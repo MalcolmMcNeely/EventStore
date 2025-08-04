@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
 using EventStore.Events.Transport;

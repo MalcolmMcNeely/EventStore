@@ -1,4 +1,6 @@
-﻿namespace EventStore.EFCore.Postgres.Events.Cursors;
+﻿using EventStore.EFCore.Postgres.Database;
+
+namespace EventStore.EFCore.Postgres.Events.Cursors;
 
 public class EventCursorFactory(EventStoreDbContext dbContext)
 {

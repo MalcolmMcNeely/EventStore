@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.Events;
 using EventStore.Events.Transport;
 using Microsoft.EntityFrameworkCore;

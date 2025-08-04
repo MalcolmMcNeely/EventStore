@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Transport;
 using EventStore.Events;
 using EventStore.Events.Streams;

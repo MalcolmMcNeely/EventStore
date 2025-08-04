@@ -14,4 +14,4 @@ TODO List:
 - [ ] Key building for projections
 - [ ] Also allow for commands on the message transport
 - [ ] Allow for events to be upgraded
-- [ ] EF Core implementation
+- [x] EF Core implementation
