@@ -6,4 +6,6 @@ public interface IProjection
 {
     [Key]
     public string Id { get; set; }
+    [ConcurrencyCheck]
+    public byte[] RowVersion { get; set; }
 }

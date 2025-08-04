@@ -1,4 +1,5 @@
-﻿using EventStore.Events;
+﻿using System.Text.Json;
+using EventStore.Events;
 using EventStore.Events.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,16 +15,19 @@ public class EventBroadcaster(IServiceScopeFactory scopeFactory, EventDispatcher
 
         await using var transaction = await scopedDbContext.Database.BeginTransactionAsync(token);
 
-        var queuedEvents = await scopedDbContext.QueuedEvents.Take(10).ToListAsync(cancellationToken: token);
+        var queuedEvents = await scopedDbContext.QueuedEvents.ToListAsync(cancellationToken: token);
 
         if (queuedEvents.Count == 0)
         {
             return;
         }
 
-        foreach (var @event in queuedEvents)
+        foreach (var queuedEvent in queuedEvents)
         {
-            await eventDispatcher.SendEventAsync(@event.Content, token);
+            var envelope = queuedEvent.Envelope;
+            var @event = (IEvent)JsonSerializer.Deserialize(envelope.Body, Type.GetType(envelope.Type)!)!;
+            
+            await eventDispatcher.SendEventAsync(@event, token);
         }
 
         scopedDbContext.QueuedEvents.RemoveRange(queuedEvents);

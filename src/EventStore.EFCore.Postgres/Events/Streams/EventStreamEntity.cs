@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using EventStore.EFCore.Postgres.Events.Transport;
 using EventStore.Events;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,10 @@ public class EventStreamEntity
 {
     [Key]
     public required string Key { get; set; }
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // TODO: don't use this, row keys should increment per Key
     public long RowKey { get; set; }
-    public TimeSpan TimeStamp { get; set; }
+    public DateTime TimeStamp { get; set; }
     public required string EventType { get; set; }
     [Column(TypeName = "jsonb")]
-    public required IEvent Content { get; set; }
+    public required Envelope Envelope { get; set; }
 }

@@ -2,18 +2,23 @@
 using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.EFCore.Postgres.AggregateRoots;
 
-public class AggregateRootRepository<TAggregateRoot>(EventStoreDbContext dbContext, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
+public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory serviceScopeFactory, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
 {
     public async Task<TAggregateRoot> LoadAsync(string key, CancellationToken token = default)
     {
+        using var scope = serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
         return await dbContext.FindAsync<TAggregateRoot>([key], token) ?? new TAggregateRoot { Id = key };
     }
 
     public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
     {
+        using var scope = serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
         dbContext.Update(aggregateRoot);
         var result = await dbContext.SaveChangesAsync(token);
         return result > 0;

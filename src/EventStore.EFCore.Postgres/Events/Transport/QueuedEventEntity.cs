@@ -9,9 +9,9 @@ public class QueuedEventEntity
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
-    public TimeSpan TimeStamp { get; set; }
+    public DateTime TimeStamp { get; set; }
     public required string EventType { get; set; }
     [Column(TypeName = "jsonb")]
-    public required IEvent Content { get; set; }
+    public required Envelope Envelope { get; set; }
     public int DequeueCount { get; set; }
 }

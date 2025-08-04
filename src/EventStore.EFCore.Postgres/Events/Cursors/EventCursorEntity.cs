@@ -6,6 +6,6 @@ public sealed class EventCursorEntity
 {
     [Key]
     public required string CursorName { get; set; }
-    public DateTimeOffset? Timestamp { get; set; }
+    public DateTime Timestamp { get; set; }
     public long LastSeenEvent { get; set; }
 }

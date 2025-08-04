@@ -8,19 +8,20 @@ using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 var databaseConnectionString = hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
 
-hostBuilder.Services.AddTransient<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
-hostBuilder.Services.AddTransient<IProjection, TrafficLightProjection>();
+hostBuilder.Services.AddScoped<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
+hostBuilder.Services.AddScoped<IProjection, TrafficLightProjection>();
 
-hostBuilder.Services.AddTransient<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
+hostBuilder.Services.AddScoped<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
 
 hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
-hostBuilder.AddCoreServices();
+hostBuilder.AddCoreServices(true);
 hostBuilder.AddEFServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();

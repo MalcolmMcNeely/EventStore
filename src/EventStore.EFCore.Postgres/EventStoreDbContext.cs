@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 using EventStore.Commands.AggregateRoots;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
@@ -16,6 +17,8 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<EventStreamEntity>().HasKey(e => new { e.Key, e.RowKey });
+
         var aggregateTypes = aggregateAssemblies.SelectMany(x => x
             .GetTypes()
             .Where(t => !t.IsAbstract && typeof(AggregateRoot).IsAssignableFrom(t)));
