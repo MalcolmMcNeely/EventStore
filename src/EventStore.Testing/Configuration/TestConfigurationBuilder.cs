@@ -1,12 +1,10 @@
 ﻿using EventStore.Azure;
 using EventStore.Commands;
 using EventStore.EFCore.Postgres;
-using EventStore.EFCore.Postgres.Database;
 using EventStore.InMemory;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.Testing.SimpleTestDomain;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -25,20 +23,19 @@ public enum TestMode
 public class TestConfigurationBuilder
 {
     public IHost? ServiceHost { get; set; }
+    public TestMode Mode = TestMode.NotSet;
+    public string DatabaseConnectionString { get; set; }
 
     readonly HostApplicationBuilder _hostBuilder;
-
-    TestMode _mode = TestMode.NotSet;
 
     public TestConfigurationBuilder()
     {
         _hostBuilder = Host.CreateApplicationBuilder([]);
-        _hostBuilder.AddCoreServices();
     }
 
     public TestConfigurationBuilder WithInMemoryServices()
     {
-        _mode = TestMode.InMemory;
+        Mode = TestMode.InMemory;
         _hostBuilder.AddCoreServices();
         _hostBuilder.AddInMemoryServices();
         return this;
@@ -46,7 +43,7 @@ public class TestConfigurationBuilder
 
     public TestConfigurationBuilder WithAzureServices()
     {
-        _mode = TestMode.Azure;
+        Mode = TestMode.Azure;
         _hostBuilder.AddCoreServices();
         _hostBuilder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
         return this;
@@ -54,13 +51,10 @@ public class TestConfigurationBuilder
 
     public TestConfigurationBuilder WithEFCoreServices()
     {
-        _mode = TestMode.EFCore;
-        _hostBuilder.AddCoreServices();
-        _hostBuilder.AddEFServices(string.Empty);
-
-        _hostBuilder.Services.RemoveAll<DbContextOptions<EventStoreDbContext>>();
-        _hostBuilder.Services.AddDbContext<EventStoreDbContext>(options => options.UseInMemoryDatabase("EventStore"));
-        
+        DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
+        Mode = TestMode.EFCore;
+        _hostBuilder.AddCoreServices(true);
+        _hostBuilder.AddEFServices(DatabaseConnectionString);
         return this;
     }
 
@@ -79,7 +73,7 @@ public class TestConfigurationBuilder
 
     public TestConfigurationBuilder WithBasicTestCase()
     {
-        if (_mode == TestMode.EFCore)
+        if (Mode == TestMode.EFCore)
         {
             _hostBuilder.Services.AddScoped<ProjectionBuilder<TestProjection>, TestProjectionBuilder>();
             _hostBuilder.Services.AddScoped<IProjection, TestProjection>();
@@ -97,7 +91,7 @@ public class TestConfigurationBuilder
 
     public void Build()
     {
-        if (_mode == TestMode.NotSet)
+        if (Mode == TestMode.NotSet)
         {
             _hostBuilder.AddCoreServices();
             _hostBuilder.AddInMemoryServices();

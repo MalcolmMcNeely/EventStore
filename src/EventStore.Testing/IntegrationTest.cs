@@ -1,8 +1,12 @@
-﻿using EventStore.Commands;
+﻿using System.Text;
+using EventStore.Commands;
 using EventStore.Commands.Dispatching;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.Events;
 using EventStore.Events.Transport;
 using EventStore.Testing.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace EventStore.Testing;
 
@@ -23,15 +27,43 @@ public abstract class IntegrationTest
     }
 
     [SetUp]
-    public void DefaultSetup()
+    public async Task DefaultSetup()
     {
-        _commandDispatcher = GetService<ICommandDispatcher>();
-        _eventBroadcaster = GetService<IEventBroadcaster>();
-        _eventPump = GetService<IEventPump>();
-        _eventTransport = GetService<IEventTransport>();
+        _commandDispatcher = GetService<ICommandDispatcher>()!;
+        _eventBroadcaster = GetService<IEventBroadcaster>()!;
+        _eventPump = GetService<IEventPump>()!;
+        _eventTransport = GetService<IEventTransport>()!;
+
+        if (TestConfiguration.IsEFCoreTest)
+        {
+            await using var connection = new NpgsqlConnection(TestConfiguration.DatabaseConnectionString);
+            await connection.OpenAsync();
+
+            await using var queryTables = new NpgsqlCommand("SELECT tablename FROM pg_tables WHERE schemaname = 'public';", connection);
+            await using var reader = await queryTables.ExecuteReaderAsync();
+
+            var tableNames = new List<string>();
+            
+            while (await reader.ReadAsync())
+            {
+                tableNames.Add(reader.GetString(0));
+            }
+
+            if (tableNames.Count == 0)
+            {
+                return;
+            }
+            
+            var truncateString = new StringBuilder("TRUNCATE ");
+            truncateString.AppendJoin(", ", tableNames.Select(name => $"\"{name}\""));
+            truncateString.Append(" RESTART IDENTITY CASCADE;");
+
+            var truncateCommand = new NpgsqlCommand(truncateString.ToString(), connection);
+            await truncateCommand.ExecuteNonQueryAsync();
+        }
     }
 
-    protected T GetService<T>() where T : class
+    protected T? GetService<T>() where T : class
     {
         return TestConfiguration.Resolve<T>();
     }
