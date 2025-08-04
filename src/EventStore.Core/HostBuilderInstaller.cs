@@ -10,23 +10,18 @@ namespace EventStore;
 
 public static class HostBuilderInstaller
 {
-    public static void AddCoreServices(this IHostApplicationBuilder hostBuilder, bool useScopedServices = false)
+    public static void AddCoreServices(this IHostApplicationBuilder hostBuilder)
     {
-        hostBuilder.Services.AddHostedService<EventBroadcasterBackgroundService>();
-        hostBuilder.Services.AddHostedService<EventPumpBackgroundService>();
-
         hostBuilder.Services.AddLazy<IEventTypeRegistration, EventTypeRegistration>();
         hostBuilder.Services.AddLazy<IProjectionBuilderRegistration, ProjectionBuilderRegistration>();
 
-        if (useScopedServices)
-        {
-            hostBuilder.Services.AddScoped<EventDispatcher>();
-            hostBuilder.Services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-        }
-        else
-        {
-            hostBuilder.Services.AddSingleton<EventDispatcher>();
-            hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
-        }
+        hostBuilder.Services.AddSingleton<EventDispatcher>();
+        hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
+    }
+
+    public static void AddCoreBackgroundServices(this IHostApplicationBuilder hostBuilder)
+    {
+        hostBuilder.Services.AddHostedService<EventBroadcasterBackgroundService>();
+        hostBuilder.Services.AddHostedService<EventPumpBackgroundService>();
     }
 }

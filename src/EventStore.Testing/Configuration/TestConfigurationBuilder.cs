@@ -1,4 +1,5 @@
-﻿using EventStore.Azure;
+﻿using System.Reflection;
+using EventStore.Azure;
 using EventStore.Commands;
 using EventStore.EFCore.Postgres;
 using EventStore.InMemory;
@@ -49,12 +50,12 @@ public class TestConfigurationBuilder
         return this;
     }
 
-    public TestConfigurationBuilder WithEFCoreServices()
+    public TestConfigurationBuilder WithEFCoreServices(Assembly withAssembly)
     {
         DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
         Mode = TestMode.EFCore;
-        _hostBuilder.AddCoreServices(true);
-        _hostBuilder.AddEFServices(DatabaseConnectionString);
+        _hostBuilder.AddCoreServices();
+        _hostBuilder.AddEFServices(DatabaseConnectionString, [typeof(TestingNamespace).Assembly, withAssembly]);
         return this;
     }
 

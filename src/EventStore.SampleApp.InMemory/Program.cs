@@ -20,6 +20,7 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
+hostBuilder.AddCoreBackgroundServices();
 hostBuilder.AddInMemoryServices();
 
 var host = hostBuilder.Build();

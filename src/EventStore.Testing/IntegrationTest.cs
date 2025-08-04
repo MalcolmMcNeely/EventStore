@@ -13,7 +13,7 @@ namespace EventStore.Testing;
 public abstract class IntegrationTest
 {
     ICommandDispatcher _commandDispatcher;
-    IEventBroadcaster  _eventBroadcaster;
+    IEventBroadcaster _eventBroadcaster;
     IEventPump _eventPump;
     IEventTransport _eventTransport;
 
@@ -40,15 +40,9 @@ public abstract class IntegrationTest
         }
     }
 
-    protected T? GetService<T>() where T : class
-    {
-        return TestConfiguration.Resolve<T>();
-    }
+    protected T? GetService<T>() where T : class => TestConfiguration.Resolve<T>();
 
-    protected async Task DispatchCommandAsync(ICommand command)
-    {
-        await _commandDispatcher.DispatchAsync(command);
-    }
+    protected async Task DispatchCommandAsync(ICommand command) => await _commandDispatcher.DispatchAsync(command);
 
     protected async Task SendEventAsync(IEvent @event)
     {
@@ -62,21 +56,22 @@ public abstract class IntegrationTest
         await using var connection = new NpgsqlConnection(TestConfiguration.DatabaseConnectionString);
         await connection.OpenAsync();
 
-        await using var queryTables = new NpgsqlCommand("SELECT tablename FROM pg_tables WHERE schemaname = 'public';", connection);
-        await using var reader = await queryTables.ExecuteReaderAsync();
-
         var tableNames = new List<string>();
-            
-        while (await reader.ReadAsync())
+
+        await using var queryTables = new NpgsqlCommand("SELECT tablename FROM pg_tables WHERE schemaname = 'public';", connection);
+        await using (var reader = await queryTables.ExecuteReaderAsync())
         {
-            tableNames.Add(reader.GetString(0));
+            while (await reader.ReadAsync())
+            {
+                tableNames.Add(reader.GetString(0));
+            }
         }
 
         if (tableNames.Count == 0)
         {
             return;
         }
-            
+
         var truncateString = new StringBuilder("TRUNCATE ");
         truncateString.AppendJoin(", ", tableNames.Select(name => $"\"{name}\""));
         truncateString.Append(" RESTART IDENTITY CASCADE;");

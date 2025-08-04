@@ -22,16 +22,17 @@ public static class HostBuilderInstaller
 {
     public static void AddEFServices(this IHostApplicationBuilder hostBuilder, string connectionString, params Assembly[] aggregateAssemblies)
     {
+        hostBuilder.Services.AddScoped<Assembly[]>(_ => aggregateAssemblies);
         hostBuilder.AddDatabase(connectionString, aggregateAssemblies);
 
-        hostBuilder.Services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+        hostBuilder.Services.AddTransient(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 
         hostBuilder.Services.AddScoped<EventCursorFactory>();
         hostBuilder.Services.AddSingleton<IEventStreamFactory, EventStreamFactory>();
 
-        hostBuilder.Services.AddScoped<IEventBroadcaster, EventBroadcaster>();
-        hostBuilder.Services.AddScoped<IEventPump, EventPump>();
-        hostBuilder.Services.AddScoped<IEventTransport, EventTransport>();
+        hostBuilder.Services.AddSingleton<IEventBroadcaster, EventBroadcaster>();
+        hostBuilder.Services.AddSingleton<IEventPump, EventPump>();
+        hostBuilder.Services.AddSingleton<IEventTransport, EventTransport>();
 
         hostBuilder.Services.AddScoped<ProjectionRebuilder>();
         hostBuilder.Services.AddScoped(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));

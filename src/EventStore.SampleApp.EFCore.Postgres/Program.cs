@@ -20,7 +20,8 @@ hostBuilder.Services.AddScoped<ICommandHandler<ChangeColour>, ChangeColourComman
 hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
-hostBuilder.AddCoreServices(true);
+hostBuilder.AddCoreServices();
+hostBuilder.AddCoreBackgroundServices();
 hostBuilder.AddEFServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();
