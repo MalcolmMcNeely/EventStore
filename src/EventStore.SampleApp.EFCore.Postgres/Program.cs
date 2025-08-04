@@ -8,7 +8,6 @@ using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Npgsql;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 var databaseConnectionString = hostBuilder.Configuration["ConnectionStrings:Postgres"]!;

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    [Migration("20250804161145_Init")]
+    [Migration("20250804190143_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -47,11 +47,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.Property<string>("Key")
                         .HasColumnType("text");
 
-                    b.Property<long>("RowKey")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("RowKey"));
+                    b.Property<int>("RowKey")
+                        .HasColumnType("integer");
 
                     b.Property<Envelope>("Envelope")
                         .IsRequired()

@@ -11,8 +11,7 @@ public class EventStreamEntity
 {
     [Key]
     public required string Key { get; set; }
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // TODO: don't use this, row keys should increment per Key
-    public long RowKey { get; set; }
+    public int RowKey { get; set; }
     public DateTime TimeStamp { get; set; }
     public required string EventType { get; set; }
     [Column(TypeName = "jsonb")]

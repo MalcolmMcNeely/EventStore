@@ -17,25 +17,23 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
 
         try
         {
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-                var eventEntity = new EventStreamEntity
-                {
-                    Key = streamName,
-                    TimeStamp = DateTime.UtcNow,
-                    EventType = entity.GetType().Name,
-                    Envelope = Envelope.Create(entity)
-                };
+            using var scope = serviceScopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
+            var lastRowKey = await dbContext.EventStreams
+                .Where(x => x.Key == streamName)
+                .MaxAsync(x => (int?)x.RowKey, token) ?? 0;
 
-                await dbContext.EventStreams.AddAsync(eventEntity, token);
-                await dbContext.SaveChangesAsync(token);
-            }
-        }
-        catch (Exception ex)
-        {
-            int i = 5;
-            throw;
+            var eventEntity = new EventStreamEntity
+            {
+                Key = streamName,
+                RowKey = lastRowKey + 1,
+                TimeStamp = DateTime.UtcNow,
+                EventType = entity.GetType().Name,
+                Envelope = Envelope.Create(entity)
+            };
+
+            await dbContext.EventStreams.AddAsync(eventEntity, token);
+            await dbContext.SaveChangesAsync(token);
         }
         finally
         {

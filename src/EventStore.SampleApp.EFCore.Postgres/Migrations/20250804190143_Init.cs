@@ -31,8 +31,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 columns: table => new
                 {
                     Key = table.Column<string>(type: "text", nullable: false),
-                    RowKey = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RowKey = table.Column<int>(type: "integer", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EventType = table.Column<string>(type: "text", nullable: false),
                     Envelope = table.Column<Envelope>(type: "jsonb", nullable: false)
