@@ -18,3 +18,4 @@ TODO List:
 - [ ] Allow for events to be upgraded
 - [x] EF Core implementation
 - [ ] Sort out config/defaults
+- [ ] DB context pooling
