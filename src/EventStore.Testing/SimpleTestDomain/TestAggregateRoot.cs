@@ -1,6 +1,6 @@
 ﻿using EventStore.Commands.AggregateRoots;
 
-namespace EventStore.Testing.BasicTestCase;
+namespace EventStore.Testing.SimpleTestDomain;
 
 public class TestAggregateRoot : AggregateRoot
 {

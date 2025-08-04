@@ -1,6 +1,6 @@
 ﻿using EventStore.Projections;
 
-namespace EventStore.Testing.BasicTestCase;
+namespace EventStore.Testing.SimpleTestDomain;
 
 public class TestProjection : IProjection
 {

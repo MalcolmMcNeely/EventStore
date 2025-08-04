@@ -1,7 +1,7 @@
 ﻿using EventStore.Projections;
 using EventStore.Testing;
-using EventStore.Testing.BasicTestCase;
 using EventStore.Testing.Configuration;
+using EventStore.Testing.SimpleTestDomain;
 
 namespace EventStore.Azure.Tests.Projections;
 

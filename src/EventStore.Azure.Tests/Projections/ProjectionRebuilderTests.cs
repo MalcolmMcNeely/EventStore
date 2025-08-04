@@ -1,8 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using EventStore.Projections;
 using EventStore.Testing;
-using EventStore.Testing.BasicTestCase;
 using EventStore.Testing.Configuration;
+using EventStore.Testing.SimpleTestDomain;
 using EventStore.Utility;
 
 namespace EventStore.Azure.Tests.Projections;

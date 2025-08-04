@@ -1,6 +1,3 @@
 ﻿namespace EventStore.Events;
 
-public interface IEvent
-{
-    
-}
+public interface IEvent;
