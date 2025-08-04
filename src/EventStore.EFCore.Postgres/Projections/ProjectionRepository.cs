@@ -2,15 +2,16 @@
 
 namespace EventStore.EFCore.Postgres.Projections;
 
-public class ProjectionRepository<T> : IProjectionRepository<T>  where T : IProjection
+public class ProjectionRepository<T>(EventStoreDbContext dbContext, ProjectionRebuilder projectionRebuilder) : IProjectionRepository<T>  where T : class, IProjection, new()
 {
-    public Task<T?> LoadAsync(string key, CancellationToken token = default)
+    public async Task<T> LoadAsync(string key, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        return await dbContext.FindAsync<T>([key], token) ?? new T();
     }
 
-    public Task SaveAsync(T projection, CancellationToken token = default)
+    public async Task SaveAsync(T projection, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        dbContext.Update(projection);
+        await dbContext.SaveChangesAsync(token);
     }
 }

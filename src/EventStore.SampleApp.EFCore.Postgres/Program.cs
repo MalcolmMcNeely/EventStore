@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
+var databaseConnectionString = hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
 
 hostBuilder.Services.AddTransient<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
 hostBuilder.Services.AddTransient<IProjection, TrafficLightProjection>();
@@ -20,7 +21,7 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
-hostBuilder.AddEFServices();
+hostBuilder.AddEFServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();
 await host.RunAsync();

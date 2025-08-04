@@ -1,22 +1,41 @@
-﻿using EventStore.Events;
+﻿using System.Runtime.CompilerServices;
+using EventStore.Events;
 using EventStore.Events.Streams;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventStore.EFCore.Postgres.Events.Streams;
 
-public class EventStream : IEventStream
+public class EventStream(EventStoreDbContext dbContext, string streamName, Lazy<IEventTypeRegistration> eventTypeRegistration) : IEventStream
 {
-    public Task PublishAsync(IEvent entity, CancellationToken token = default)
+    public async Task PublishAsync(IEvent entity, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var eventEntity = new EventStreamEntity
+        {
+            Key = streamName,
+            TimeStamp = DateTime.UtcNow.TimeOfDay,
+            EventType = entity.GetType().Name,
+            Content = entity
+        };
+
+        await dbContext.EventStreams.AddAsync(eventEntity, token);
+        await dbContext.SaveChangesAsync(token);
     }
 
-    public Task<bool> ExistsAsync(CancellationToken token = default)
+    public async Task<bool> ExistsAsync(CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        return await dbContext.EventStreams.Where(x => x.Key == streamName).AnyAsync(token);
     }
 
-    public IAsyncEnumerable<IEvent> GetAllEventsAsync(CancellationToken token = default)
+    public async IAsyncEnumerable<IEvent> GetAllEventsAsync([EnumeratorCancellation] CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var events = dbContext.EventStreams
+            .Where(x => x.Key == streamName)
+            .AsNoTracking()
+            .AsAsyncEnumerable();
+
+        await foreach (var e in events.WithCancellation(token))
+        {
+            yield return e.Content;
+        }
     }
 }
