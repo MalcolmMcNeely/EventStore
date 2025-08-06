@@ -19,3 +19,4 @@ TODO List:
 - [x] EF Core implementation
 - [ ] Sort out config/defaults
 - [ ] DB context pooling
+- [ ] Use EF interceptors to write to the all stream
