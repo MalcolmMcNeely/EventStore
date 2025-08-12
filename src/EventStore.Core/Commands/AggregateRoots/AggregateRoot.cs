@@ -7,7 +7,7 @@ public delegate void AggregateRootEventHandler<in T>(T @event) where T : IEvent;
 
 public abstract class AggregateRoot : IConcurrencyCheck
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public int RowVersion { get; set; }
     public List<(Type Type, IEvent @event)> NewEvents { get; } = new();
 

@@ -15,14 +15,8 @@ public class PrintColourBackgroundService(IServiceProvider serviceProvider) : Ba
         {
             await Task.Delay(1000, token);
 
-            var repository = serviceProvider.GetService<IProjectionRepository<TrafficLightProjection>>();
-
+            var repository = serviceProvider.GetRequiredService<IProjectionRepository<TrafficLightProjection>>();
             var projection = await repository.LoadAsync(nameof(TrafficLightProjection), token);
-
-            if (projection is null)
-            {
-                continue;
-            }
 
             if (projection.Colour == _currentColour)
             {
