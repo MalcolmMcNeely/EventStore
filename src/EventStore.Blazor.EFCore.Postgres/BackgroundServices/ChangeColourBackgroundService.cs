@@ -1,8 +1,8 @@
 ﻿using EventStore.Commands.Dispatching;
+using EventStore.SampleApp.Domain;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
-using Microsoft.Extensions.Hosting;
 
-namespace EventStore.SampleApp.Domain;
+namespace EventStore.Blazor.EFCore.Postgres.BackgroundServices;
 
 public class ChangeColourBackgroundService(ICommandDispatcher commandDispatcher) : BackgroundService
 {
