@@ -79,4 +79,27 @@ public abstract class IntegrationTest
         var truncateCommand = new NpgsqlCommand(truncateString.ToString(), connection);
         await truncateCommand.ExecuteNonQueryAsync();
     }
+
+    const string MigrationSql = @"
+    CREATE TABLE IF NOT EXISTS ""Users"" (
+        ""Id"" SERIAL PRIMARY KEY,
+        ""Username"" TEXT NOT NULL,
+        ""Email"" TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS ""Orders"" (
+        ""Id"" SERIAL PRIMARY KEY,
+        ""UserId"" INTEGER REFERENCES ""Users""(""Id""),
+        ""Total"" DECIMAL NOT NULL
+    );
+";
+
+    public static async Task ApplyManualMigrationAsync(string connectionString)
+    {
+        await using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+
+        await using var command = new NpgsqlCommand(MigrationSql, connection);
+        await command.ExecuteNonQueryAsync();
+    }
 }

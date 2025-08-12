@@ -14,7 +14,7 @@ public class ProjectionRepository<T> : IProjectionRepository<T>  where T : IProj
             return Task.FromResult(projection)!;
         }
 
-        return Task.FromResult(new T());
+        return Task.FromResult(new T { Id = id });
     }
 
     public Task SaveAsync(T projection, CancellationToken _ = default)

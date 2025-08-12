@@ -7,8 +7,8 @@ namespace EventStore.InMemory.Tests.ProjectionBuilderTests;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
-    IProjectionRepository<TestProjection> _projectionRepository;
-    
+    IProjectionRepository<TestProjection>? _projectionRepository;
+
     [OneTimeSetUp]
     public void Configure()
     {
@@ -28,10 +28,12 @@ public class ProjectionBuilderTests : IntegrationTest
     [Test]
     public async Task when_command_is_dispatched_it_updates_the_projection()
     {
+        Assert.That(_projectionRepository, Is.Not.Null);
+
         await SendEventAsync(new TestEvent { Data = "test" });
-        
+
         var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));
-        
+
         Assert.That(projection, Is.Not.Null);
         Assert.That(projection.Data, Is.EqualTo("test"));
     }
