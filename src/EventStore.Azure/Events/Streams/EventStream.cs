@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
@@ -65,7 +66,33 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
 
     public async IAsyncEnumerable<IEvent> GetAllEventsAsync(CancellationToken token = default)
     {
-        var events = _tableClient.QueryAsync<EventEntity>(x => x.PartitionKey == streamName && x.RowKey != RowKey.ForMetadata().ToString());
+        var events = _tableClient.QueryAsync<EventEntity>(x => x.PartitionKey == streamName && x.RowKey != RowKey.ForMetadata().ToString(), cancellationToken: token);
+
+        await foreach (var entity in events)
+        {
+            var eventType = eventTypeRegistration.Value.EventNameToTypeMap[entity.EventType];
+            var @event = JsonSerializer.Deserialize(entity.Content, eventType);
+
+            yield return (IEvent)@event!;
+        }
+    }
+
+    public async Task<int> GetCountAsync(CancellationToken token = default)
+    {
+        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
+
+        if (!response.HasValue || response.Value is null)
+        {
+            return 0;
+        }
+
+        return response.Value.LastEvent;
+    }
+
+    public async IAsyncEnumerable<IEvent> GetEventsSinceAsync(int fromIndex, [EnumeratorCancellation] CancellationToken token = default)
+    {
+        var queryFilter = TableClient.CreateQueryFilter($"PartitionKey eq {streamName} and RowKey gt {RowKey.ForEventStream(fromIndex).ToString()}");
+        var events = _tableClient.QueryAsync<EventEntity>(queryFilter, cancellationToken: token);
 
         await foreach (var entity in events)
         {

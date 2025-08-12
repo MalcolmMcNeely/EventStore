@@ -19,4 +19,14 @@ public class NullEventStream : IEventStream
     {
         throw new NotImplementedException();
     }
+
+    public Task<int> GetCountAsync(CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<IEvent> GetEventsSinceAsync(int fromIndex, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
 }

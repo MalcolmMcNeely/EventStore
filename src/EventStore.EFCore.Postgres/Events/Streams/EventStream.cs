@@ -65,4 +65,30 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
             yield return (IEvent)@event!;
         }
     }
+
+    public async Task<int> GetCountAsync(CancellationToken token = default)
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
+        return await dbContext.EventStreams.Where(x => x.Key == streamName).CountAsync(token);
+    }
+
+    public async IAsyncEnumerable<IEvent> GetEventsSinceAsync(int fromIndex, CancellationToken token = default)
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
+
+        var events = dbContext.EventStreams
+            .Where(x => x.Key == streamName)
+            .Skip(fromIndex)
+            .AsNoTracking()
+            .AsAsyncEnumerable();
+
+        await foreach (var entity in events.WithCancellation(token))
+        {
+            var @event = JsonSerializer.Deserialize(entity.Envelope.Body, Type.GetType(entity.Envelope.Type)!);
+
+            yield return (IEvent)@event!;
+        }
+    }
 }
