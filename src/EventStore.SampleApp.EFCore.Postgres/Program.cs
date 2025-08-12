@@ -21,7 +21,8 @@ hostBuilder.Services.AddHostedService<ChangeColourBackgroundService>();
 hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 
 hostBuilder.AddCoreServices();
-hostBuilder.AddCoreBackgroundServices();
+hostBuilder.AddEventBroadcaster();
+hostBuilder.AddEventPump();
 hostBuilder.AddEFServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();

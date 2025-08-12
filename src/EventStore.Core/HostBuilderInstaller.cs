@@ -19,9 +19,13 @@ public static class HostBuilderInstaller
         hostBuilder.Services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
     }
 
-    public static void AddCoreBackgroundServices(this IHostApplicationBuilder hostBuilder)
+    public static void AddEventBroadcaster(this IHostApplicationBuilder hostBuilder)
     {
         hostBuilder.Services.AddHostedService<EventBroadcasterBackgroundService>();
+    }
+
+    public static void AddEventPump(this IHostApplicationBuilder hostBuilder)
+    {
         hostBuilder.Services.AddHostedService<EventPumpBackgroundService>();
     }
 }
