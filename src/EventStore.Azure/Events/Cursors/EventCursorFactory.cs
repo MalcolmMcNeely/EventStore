@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using EventStore.Azure.Azure;
 
 namespace EventStore.Azure.Events.Cursors;
 

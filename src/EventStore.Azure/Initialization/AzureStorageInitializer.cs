@@ -12,7 +12,8 @@ public class AzureStorageInitializer : IStorageInitializer
     public IEnumerable<TableInitializer> TableInitializers { get; } =
     [
         new(Defaults.Cursors.TableName),
-        new(Defaults.Events.EventStoreTable)
+        new(Defaults.Events.EventStoreTable),
+        new(Defaults.Commands.CommandsTable),
     ];
 
     public IEnumerable<QueueInitializer> QueueInitializers { get; } =

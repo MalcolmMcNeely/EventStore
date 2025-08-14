@@ -1,7 +1,8 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
-using EventStore.Azure.Events;
+using EventStore.Azure.Azure;
+using EventStore.Azure.Commands.TableEntities;
 using EventStore.Azure.Events.TableEntities;
 
 namespace EventStore.Azure.Extensions;
@@ -33,5 +34,16 @@ public static class TableClientExtensions
                 RowKey = RowKey.ForMetadata().ToString()
             };
         }
+    }
+
+    public static async Task UpdateCommandAuditAsync(this TableClient tableClient, CommandEntity commandEntity, MetadataEntity metadataEntity, CancellationToken token = default)
+    {
+        var transactions = new List<TableTransactionAction>
+        {
+            new(TableTransactionActionType.Add, commandEntity),
+            new(TableTransactionActionType.UpsertReplace, metadataEntity)
+        };
+
+        await tableClient.SubmitTransactionAsync(transactions, token);
     }
 }

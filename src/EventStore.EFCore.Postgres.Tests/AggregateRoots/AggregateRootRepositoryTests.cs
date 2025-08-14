@@ -1,11 +1,10 @@
 ﻿using EventStore.AggregateRoots;
-using EventStore.Events;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.SimpleTestDomain;
 using NUnit.Framework;
 
-namespace EventStore.EFCore.Postgres.Tests.Commands.AggregateRoots;
+namespace EventStore.EFCore.Postgres.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {

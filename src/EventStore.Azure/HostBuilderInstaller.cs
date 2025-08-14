@@ -1,10 +1,13 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Azure.AggegateRoots;
+using EventStore.Azure.Azure;
+using EventStore.Azure.Commands;
 using EventStore.Azure.Events.Cursors;
 using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Events.Transport;
 using EventStore.Azure.Initialization;
 using EventStore.Azure.Projections;
+using EventStore.Commands.Dispatching;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 using EventStore.Projections;
@@ -21,6 +24,8 @@ public static class HostBuilderInstaller
 
         hostBuilder.Services.AddSingleton(azureService);
         hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+
+        hostBuilder.Services.AddSingleton<ICommandAudit, CommandAudit>();
 
         hostBuilder.Services.AddSingleton<EventCursorFactory>();
         hostBuilder.Services.AddSingleton<IEventStreamFactory, EventStreamFactory>();

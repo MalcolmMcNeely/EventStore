@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 
-namespace EventStore.Azure;
+namespace EventStore.Azure.Azure;
 
 public class AzureService(string connectionString = Defaults.Azure.AzuriteConnectionString)
 {

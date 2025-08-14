@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using EventStore.Azure.Azure;
 using EventStore.Events;
 using EventStore.Events.Streams;
 

@@ -55,7 +55,7 @@ public class TestConfigurationBuilder
         DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
         Mode = TestMode.EFCore;
         _hostBuilder.AddCoreServices();
-        _hostBuilder.AddEFServices(DatabaseConnectionString, [typeof(TestingNamespace).Assembly, withAssembly]);
+        _hostBuilder.AddPostgresServices(DatabaseConnectionString, [typeof(TestingNamespace).Assembly, withAssembly]);
         return this;
     }
 

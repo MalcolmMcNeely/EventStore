@@ -1,4 +1,5 @@
-﻿using EventStore.Utility;
+﻿using EventStore.Azure.Azure;
+using EventStore.Utility;
 using Microsoft.Extensions.Logging;
 
 namespace EventStore.Azure.Initialization;

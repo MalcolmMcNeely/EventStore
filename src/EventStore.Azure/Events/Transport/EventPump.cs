@@ -3,6 +3,7 @@ using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
+using EventStore.Azure.Azure;
 using EventStore.Azure.Events.Cursors;
 using EventStore.Azure.Events.TableEntities;
 using EventStore.Events;

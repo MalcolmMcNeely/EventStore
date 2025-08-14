@@ -23,7 +23,7 @@ hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 hostBuilder.AddCoreServices();
 hostBuilder.AddEventBroadcaster();
 hostBuilder.AddEventPump();
-hostBuilder.AddEFServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
+hostBuilder.AddPostgresServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();
 await host.RunAsync();

@@ -2,6 +2,7 @@
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using EventStore.Azure.Azure;
 using EventStore.Azure.Extensions;
 using EventStore.Projections;
 

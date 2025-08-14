@@ -1,4 +1,6 @@
-﻿namespace EventStore.Azure.Events.TableEntities;
+﻿using EventStore.Azure.Azure;
+
+namespace EventStore.Azure.Events.TableEntities;
 
 public class EventEntity : TableEntity
 {

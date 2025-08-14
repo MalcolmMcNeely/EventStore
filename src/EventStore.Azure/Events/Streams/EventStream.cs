@@ -3,6 +3,7 @@ using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using EventStore.Azure.Azure;
 using EventStore.Azure.Events.TableEntities;
 using EventStore.Azure.Extensions;
 using EventStore.Events;
@@ -30,7 +31,7 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
         {
             try
             {
-                var metadataEntity = await _tableClient.GetMetadataEntityAsync(streamName, token: token);
+                var metadataEntity = await _tableClient.GetMetadataEntityAsync(streamName, token);
                 var eventEntity = new EventEntity
                 {
                     PartitionKey = streamName,

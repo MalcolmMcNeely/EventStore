@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using EventStore.Azure.Azure;
 using EventStore.Projections;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;

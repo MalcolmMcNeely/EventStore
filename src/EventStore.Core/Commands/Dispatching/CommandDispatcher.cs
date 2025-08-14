@@ -1,6 +1,6 @@
 ﻿namespace EventStore.Commands.Dispatching;
 
-public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispatcher
+public class CommandDispatcher(IServiceProvider serviceProvider, ICommandAudit commandAudit) : ICommandDispatcher
 {
     public async Task DispatchAsync<T>(T command, CancellationToken token) where T : ICommand
     {
@@ -14,5 +14,6 @@ public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispa
 
         var handleMethod = handlerType.GetMethod("HandleAsync");
         await (Task)handleMethod!.Invoke(handler, [command, token])!;
+        await commandAudit.PublishAsync(command, token);
     }
 }

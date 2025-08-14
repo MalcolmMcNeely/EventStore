@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using EventStore.AggregateRoots;
+using EventStore.Commands.Dispatching;
 using EventStore.EFCore.Postgres.AggregateRoots;
+using EventStore.EFCore.Postgres.Commands;
 using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
@@ -13,19 +14,20 @@ using EventStore.Projections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace EventStore.EFCore.Postgres;
 
 public static class HostBuilderInstaller
 {
-    public static void AddEFServices(this IHostApplicationBuilder hostBuilder, string connectionString, params Assembly[] aggregateAssemblies)
+    public static void AddPostgresServices(this IHostApplicationBuilder hostBuilder, string connectionString, params Assembly[] aggregateAssemblies)
     {
         hostBuilder.Services.AddScoped<Assembly[]>(_ => aggregateAssemblies);
         hostBuilder.AddDatabase(connectionString, aggregateAssemblies);
 
         hostBuilder.Services.AddTransient(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+
+        hostBuilder.Services.AddSingleton<ICommandAudit, CommandAudit>();
 
         hostBuilder.Services.AddScoped<EventCursorFactory>();
         hostBuilder.Services.AddSingleton<IEventStreamFactory, EventStreamFactory>();

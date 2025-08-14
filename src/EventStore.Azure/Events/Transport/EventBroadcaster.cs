@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
+using EventStore.Azure.Azure;
 using EventStore.Events;
 using EventStore.Events.Transport;
 

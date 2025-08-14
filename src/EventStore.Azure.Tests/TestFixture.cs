@@ -1,4 +1,5 @@
-﻿using EventStore.Azure.Initialization;
+﻿using EventStore.Azure.Azure;
+using EventStore.Azure.Initialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 

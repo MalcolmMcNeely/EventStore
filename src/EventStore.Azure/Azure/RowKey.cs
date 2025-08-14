@@ -1,4 +1,4 @@
-﻿namespace EventStore.Azure.Events;
+﻿namespace EventStore.Azure.Azure;
 
 internal sealed class RowKey
 {
@@ -28,11 +28,11 @@ internal sealed class RowKey
         };
     }
 
-    public static RowKey Create(string rowPrefix, int rowNumber)
+    public static RowKey ForCommand(int rowNumber)
     {
         return new RowKey
         {
-            RowPrefix = rowPrefix,
+            RowPrefix = Defaults.Commands.CommandRowPrefix,
             RowNumber = rowNumber
         };
     }

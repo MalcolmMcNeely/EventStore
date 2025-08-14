@@ -1,23 +1,13 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Events;
 using EventStore.Testing;
-using EventStore.Testing.Configuration;
 
-namespace EventStore.Azure.Tests.Commands.AggregateRoots;
+namespace EventStore.InMemory.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {
     IAggregateRootRepository<TestAggregateRoot> _repository;
 
-    [OneTimeSetUp]
-    public void Configure()
-    {
-        TestConfiguration
-            .Configure()
-            .WithAzureServices()
-            .Build();
-    }
-    
     [SetUp]
     public void Setup()
     {
