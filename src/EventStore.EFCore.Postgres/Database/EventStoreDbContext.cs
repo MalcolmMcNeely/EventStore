@@ -15,6 +15,13 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
     public DbSet<EventStreamEntity> EventStreams { get; set; }
     public DbSet<QueuedEventEntity> QueuedEvents { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new SlowQueryInterceptor());
+
+        base.OnConfiguring(optionsBuilder);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EventStreamEntity>().HasKey(e => new { e.Key, e.RowKey });

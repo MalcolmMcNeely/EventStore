@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EventStore.EFCore.Postgres.Events.Transport;
-using EventStore.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventStore.EFCore.Postgres.Events.Streams;
