@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using EventStore.AggregateRoots;
 using EventStore.Concurrency;
+using EventStore.EFCore.Postgres.Commands;
+using EventStore.EFCore.Postgres.Events;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
 using EventStore.EFCore.Postgres.Events.Transport;
@@ -14,6 +16,7 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
     public DbSet<EventCursorEntity> EventCursorEntities { get; set; }
     public DbSet<EventStreamEntity> EventStreams { get; set; }
     public DbSet<QueuedEventEntity> QueuedEvents { get; set; }
+    public DbSet<CommandEntity> Commands { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -25,6 +28,7 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EventStreamEntity>().HasKey(e => new { e.Key, e.RowKey });
+        modelBuilder.Entity<CommandEntity>().HasKey(e => new { e.Key, e.RowKey });
 
         var aggregateTypes = aggregateAssemblies.SelectMany(x => x
             .GetTypes()

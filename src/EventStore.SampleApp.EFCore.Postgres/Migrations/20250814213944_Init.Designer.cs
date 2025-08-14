@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    [Migration("20250804191023_Init")]
+    [Migration("20250814213944_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -25,6 +25,38 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("EventStore.EFCore.Postgres.Commands.CommandEntity", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int>("RowKey")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CausationId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CommandType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Key", "RowKey");
+
+                    b.HasIndex("Key", "RowKey")
+                        .IsUnique();
+
+                    b.ToTable("Commands");
+                });
 
             modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Cursors.EventCursorEntity", b =>
                 {
@@ -43,7 +75,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.ToTable("EventCursorEntities");
                 });
 
-            modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Streams.EventStreamEntity", b =>
+            modelBuilder.Entity("EventStore.EFCore.Postgres.Events.EventStreamEntity", b =>
                 {
                     b.Property<string>("Key")
                         .HasMaxLength(128)
@@ -51,6 +83,10 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.Property<int>("RowKey")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CausationId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Envelope>("Envelope")
                         .IsRequired()

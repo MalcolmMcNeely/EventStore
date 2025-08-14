@@ -14,6 +14,22 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Commands",
+                columns: table => new
+                {
+                    Key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    RowKey = table.Column<int>(type: "integer", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CommandType = table.Column<string>(type: "text", nullable: false),
+                    CausationId = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Commands", x => new { x.Key, x.RowKey });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventCursorEntities",
                 columns: table => new
                 {
@@ -34,6 +50,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     RowKey = table.Column<int>(type: "integer", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EventType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    CausationId = table.Column<string>(type: "text", nullable: false),
                     Envelope = table.Column<Envelope>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
@@ -83,6 +100,12 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Commands_Key_RowKey",
+                table: "Commands",
+                columns: new[] { "Key", "RowKey" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EventStreams_Key_RowKey",
                 table: "EventStreams",
                 columns: new[] { "Key", "RowKey" },
@@ -92,6 +115,9 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Commands");
+
             migrationBuilder.DropTable(
                 name: "EventCursorEntities");
 

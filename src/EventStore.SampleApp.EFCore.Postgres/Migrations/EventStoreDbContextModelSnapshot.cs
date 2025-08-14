@@ -23,6 +23,38 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("EventStore.EFCore.Postgres.Commands.CommandEntity", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int>("RowKey")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CausationId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CommandType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Key", "RowKey");
+
+                    b.HasIndex("Key", "RowKey")
+                        .IsUnique();
+
+                    b.ToTable("Commands");
+                });
+
             modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Cursors.EventCursorEntity", b =>
                 {
                     b.Property<string>("CursorName")
@@ -40,7 +72,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.ToTable("EventCursorEntities");
                 });
 
-            modelBuilder.Entity("EventStore.EFCore.Postgres.Events.Streams.EventStreamEntity", b =>
+            modelBuilder.Entity("EventStore.EFCore.Postgres.Events.EventStreamEntity", b =>
                 {
                     b.Property<string>("Key")
                         .HasMaxLength(128)
@@ -48,6 +80,10 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.Property<int>("RowKey")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CausationId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Envelope>("Envelope")
                         .IsRequired()
