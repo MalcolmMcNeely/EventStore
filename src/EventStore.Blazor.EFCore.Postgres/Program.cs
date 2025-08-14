@@ -8,7 +8,6 @@ using EventStore.Projections;
 using EventStore.SampleApp.Domain;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
-using ChangeColourBackgroundService = EventStore.Blazor.EFCore.Postgres.BackgroundServices.ChangeColourBackgroundService;
 
 var builder = WebApplication.CreateBuilder(args);
 

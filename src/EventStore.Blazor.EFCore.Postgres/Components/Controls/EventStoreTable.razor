@@ -1,0 +1,55 @@
+﻿@using EventStore.Blazor.EFCore.Postgres.Components.Models
+@inject IJSRuntime JS
+
+<h3>@Stream stream</h3>
+
+<div id="@_containerId" style="height: 400px; overflow-y: auto;">
+    <MudTable Items="@Events.Where(x => x.Stream.Equals(Stream))"
+              Hover="true"
+              FixedHeader="true"
+              Dense="true"
+              Breakpoint="Breakpoint.Sm"
+              Loading="@Loading"
+              LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Time</MudTh>
+            <MudTh>Stream</MudTh>
+            <MudTh>EventType</MudTh>
+            <MudTh>Content</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Time">@context.Time</MudTd>
+            <MudTd DataLabel="Stream">@context.Stream</MudTd>
+            <MudTd DataLabel="EventType">@context.EventType</MudTd>
+            <MudTd DataLabel="Content">@context.Content</MudTd>
+        </RowTemplate>
+    </MudTable>
+</div>
+
+<MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward" OnClick="ScrollToBottomAsync">
+    Scroll to bottom
+</MudButton>
+
+<script>
+    window.scrollToBottom = (elementId) => {
+        let elem = document.getElementById(elementId);
+        if (elem) {
+            elem.scrollTop = elem.scrollHeight;
+        }
+    };
+</script>
+
+@code {
+    [Parameter] public required string Stream { get; set; }
+    [CascadingParameter(Name = "CEvents")] public List<EventModel> Events { get; set; } = new();
+    public bool Loading { get; }
+    readonly string _containerId = $"eventStoreTable{Guid.NewGuid():N}";
+
+    public async Task ScrollToBottomAsync()
+    {
+        await JS.InvokeVoidAsync("scrollToBottom", _containerId);
+    }
+
+}
