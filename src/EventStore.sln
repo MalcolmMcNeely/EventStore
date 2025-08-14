@@ -21,6 +21,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{3B696339-044C-4840-AAD8-7F26BCE69817}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
+		..\Notes.md = ..\Notes.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Testing", "EventStore.Testing\EventStore.Testing.csproj", "{3CCA0FD3-74E7-4E1F-B70C-15BABEB2823D}"
