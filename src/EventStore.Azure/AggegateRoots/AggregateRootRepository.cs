@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Azure.Storage.Blobs;
+using EventStore.AggregateRoots;
 using EventStore.Azure.Extensions;
-using EventStore.Commands.AggregateRoots;
 using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;

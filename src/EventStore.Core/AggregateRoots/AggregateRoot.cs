@@ -1,7 +1,7 @@
 ﻿using EventStore.Concurrency;
 using EventStore.Events;
 
-namespace EventStore.Commands.AggregateRoots;
+namespace EventStore.AggregateRoots;
 
 public delegate void AggregateRootEventHandler<in T>(T @event) where T : IEvent;
 

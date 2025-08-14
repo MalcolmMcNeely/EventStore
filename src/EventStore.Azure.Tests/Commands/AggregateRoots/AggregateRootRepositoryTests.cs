@@ -1,4 +1,4 @@
-﻿using EventStore.Commands.AggregateRoots;
+﻿using EventStore.AggregateRoots;
 using EventStore.Events;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;

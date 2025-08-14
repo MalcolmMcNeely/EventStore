@@ -1,10 +1,10 @@
-﻿using EventStore.Azure.AggegateRoots;
+﻿using EventStore.AggregateRoots;
+using EventStore.Azure.AggegateRoots;
 using EventStore.Azure.Events.Cursors;
 using EventStore.Azure.Events.Streams;
 using EventStore.Azure.Events.Transport;
 using EventStore.Azure.Initialization;
 using EventStore.Azure.Projections;
-using EventStore.Commands.AggregateRoots;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 using EventStore.Projections;

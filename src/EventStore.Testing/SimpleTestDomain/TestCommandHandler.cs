@@ -1,5 +1,5 @@
-﻿using EventStore.Commands;
-using EventStore.Commands.AggregateRoots;
+﻿using EventStore.AggregateRoots;
+using EventStore.Commands;
 
 namespace EventStore.Testing.SimpleTestDomain;
 

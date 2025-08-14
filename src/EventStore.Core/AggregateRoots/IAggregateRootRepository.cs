@@ -1,6 +1,6 @@
 ﻿using EventStore.Events;
 
-namespace EventStore.Commands.AggregateRoots;
+namespace EventStore.AggregateRoots;
 
 public interface IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
 {

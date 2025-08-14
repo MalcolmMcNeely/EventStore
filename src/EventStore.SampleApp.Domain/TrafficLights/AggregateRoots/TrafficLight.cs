@@ -1,4 +1,4 @@
-﻿using EventStore.Commands.AggregateRoots;
+﻿using EventStore.AggregateRoots;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Events;
 

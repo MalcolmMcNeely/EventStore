@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
-using EventStore.Commands.AggregateRoots;
+using EventStore.AggregateRoots;
 using EventStore.EFCore.Postgres.AggregateRoots;
 using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Cursors;

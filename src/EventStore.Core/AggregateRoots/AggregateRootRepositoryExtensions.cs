@@ -1,6 +1,7 @@
-﻿using EventStore.Commands.Transactions;
+﻿using EventStore.Commands;
+using EventStore.Commands.Transactions;
 
-namespace EventStore.Commands.AggregateRoots;
+namespace EventStore.AggregateRoots;
 
 public static class AggregateRootRepositoryExtensions
 {

@@ -1,4 +1,4 @@
-﻿using EventStore.Commands.AggregateRoots;
+﻿using EventStore.AggregateRoots;
 
 namespace EventStore.Testing.SimpleTestDomain;
 

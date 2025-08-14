@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using EventStore.Commands.AggregateRoots;
+using EventStore.AggregateRoots;
 using EventStore.Concurrency;
 using EventStore.EFCore.Postgres.Events.Cursors;
 using EventStore.EFCore.Postgres.Events.Streams;
