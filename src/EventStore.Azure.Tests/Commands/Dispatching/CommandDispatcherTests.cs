@@ -39,7 +39,10 @@ public class CommandDispatcherTests : IntegrationTest
         Assert.That(_counter, Is.EqualTo(2000));
     }
 
-    class TestCommand : ICommand;
+    class TestCommand : ICommand
+    {
+        public string CausationId { get; set; }
+    }
 
     class TestCommandHandler : ICommandHandler<TestCommand>
     {

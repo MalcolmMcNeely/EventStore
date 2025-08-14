@@ -7,7 +7,7 @@ public class TestCommandHandler(IAggregateRootRepository<TestAggregateRoot> repo
 {
     public async Task HandleAsync(TestCommand command, CancellationToken token)
     {
-        await repository.CreateUnitOfWork(nameof(TestAggregateRoot))
+        await repository.CreateUnitOfWork(nameof(TestAggregateRoot), command)
             .PerformAsync(x => x.OnCommand(command))
             .CompleteAsync(token);
     }

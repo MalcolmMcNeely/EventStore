@@ -15,6 +15,7 @@ public class EventStreamEntity
     public DateTime TimeStamp { get; set; }
     [MaxLength(128)]
     public required string EventType { get; set; }
+    public required string CausationId { get; set; }
     [Column(TypeName = "jsonb")]
     public required Envelope Envelope { get; set; }
 }

@@ -37,6 +37,7 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
                     RowKey = RowKey.ForEventStream(metadataEntity.LastEvent + 1).ToString(),
                     EventType = eventType.Name,
                     IsLarge = false,
+                    CausationId = entity.CausationId,
                     Content = content
                 };
                 metadataEntity.LastEvent++;

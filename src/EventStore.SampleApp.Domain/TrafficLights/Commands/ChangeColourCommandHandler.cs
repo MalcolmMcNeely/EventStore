@@ -8,7 +8,7 @@ public class ChangeColourCommandHandler(IAggregateRootRepository<TrafficLight> r
 {
     public async Task HandleAsync(ChangeColour command, CancellationToken token = default)
     {
-        await repository.CreateUnitOfWork(nameof(TrafficLight))
+        await repository.CreateUnitOfWork(nameof(TrafficLight), command)
             .PerformAsync(x => x.ChangeColourAsync(command))
             .CompleteAsync(token);
     }

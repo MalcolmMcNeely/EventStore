@@ -2,5 +2,5 @@
 
 public interface ICommand
 {
-    
+    public string CausationId { get; set; }
 }

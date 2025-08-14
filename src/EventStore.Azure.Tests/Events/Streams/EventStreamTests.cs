@@ -65,5 +65,8 @@ public class EventStreamTests : IntegrationTest
         });
     }
 
-    class EventStreamTestEvent : IEvent;
+    class EventStreamTestEvent : IEvent
+    {
+        public string CausationId { get; set; }
+    }
 }

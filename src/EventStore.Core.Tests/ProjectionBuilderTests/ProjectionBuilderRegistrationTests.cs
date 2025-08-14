@@ -38,6 +38,7 @@ public class ProjectionBuilderRegistrationTests
 
     class ProjectionBuilderRegistrationTestEvent : IEvent
     {
+        public string CausationId { get; set; }
         public required string Message { get; set; }
     }
 

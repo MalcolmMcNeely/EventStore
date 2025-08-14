@@ -29,6 +29,7 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
                 RowKey = lastRowKey + 1,
                 TimeStamp = DateTime.UtcNow,
                 EventType = entity.GetType().Name,
+                CausationId = entity.CausationId,
                 Envelope = Envelope.Create(entity)
             };
 

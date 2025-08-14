@@ -7,14 +7,16 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 {
     readonly string _key;
     readonly IAggregateRootRepository<T> _aggregateRootRepository;
+    readonly string _causationId;
     readonly List<Func<T, Task>> _actions = new();
 
     UnitOfWorkRetryOptions _retryOptions = new(TimeSpan.FromSeconds(1), 3);
 
-    internal UnitOfWork(string key, IAggregateRootRepository<T> aggregateRootRepository)
+    internal UnitOfWork(string key, IAggregateRootRepository<T> aggregateRootRepository, string causationId)
     {
         _key = key;
         _aggregateRootRepository = aggregateRootRepository;
+        _causationId = causationId;
     }
 
     public UnitOfWork<T> PerformAsync(Func<T, Task> action)
@@ -70,6 +72,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
         {
             foreach (var (_, @event) in entity.NewEvents)
             {
+                @event.CausationId = _causationId;
                 await _aggregateRootRepository.SendEventAsync(@event, _key, token);
             }
 

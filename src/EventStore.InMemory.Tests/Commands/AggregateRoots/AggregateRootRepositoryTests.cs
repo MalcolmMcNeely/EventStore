@@ -55,5 +55,8 @@ public class AggregateRootRepositoryTests : IntegrationTest
         public string Message { get; set; } = string.Empty;
     }
 
-    class TestAggregateRootEvent : IEvent;
+    class TestAggregateRootEvent : IEvent
+    {
+        public string CausationId { get; set; }
+    }
 }
