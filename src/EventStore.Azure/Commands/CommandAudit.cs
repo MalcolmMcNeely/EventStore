@@ -3,7 +3,6 @@ using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using EventStore.Azure.Azure;
-using EventStore.Azure.Commands.TableEntities;
 using EventStore.Azure.Extensions;
 using EventStore.Commands;
 using EventStore.Commands.Dispatching;

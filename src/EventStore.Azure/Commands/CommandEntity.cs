@@ -1,6 +1,6 @@
 ﻿using EventStore.Azure.Azure;
 
-namespace EventStore.Azure.Commands.TableEntities;
+namespace EventStore.Azure.Commands;
 
 public class CommandEntity : TableEntity
 {

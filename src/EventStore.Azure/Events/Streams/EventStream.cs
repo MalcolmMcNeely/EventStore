@@ -4,7 +4,6 @@ using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using EventStore.Azure.Azure;
-using EventStore.Azure.Events.TableEntities;
 using EventStore.Azure.Extensions;
 using EventStore.Events;
 using EventStore.Events.Streams;

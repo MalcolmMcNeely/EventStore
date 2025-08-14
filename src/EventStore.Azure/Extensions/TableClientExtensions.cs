@@ -2,8 +2,8 @@
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using EventStore.Azure.Azure;
-using EventStore.Azure.Commands.TableEntities;
-using EventStore.Azure.Events.TableEntities;
+using EventStore.Azure.Commands;
+using EventStore.Azure.Events;
 
 namespace EventStore.Azure.Extensions;
 

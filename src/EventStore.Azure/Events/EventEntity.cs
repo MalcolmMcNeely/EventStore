@@ -1,6 +1,6 @@
 ﻿using EventStore.Azure.Azure;
 
-namespace EventStore.Azure.Events.TableEntities;
+namespace EventStore.Azure.Events;
 
 public class EventEntity : TableEntity
 {
