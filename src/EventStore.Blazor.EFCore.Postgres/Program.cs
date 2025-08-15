@@ -1,8 +1,10 @@
 using EventStore;
-using EventStore.Azure;
 using MudBlazor.Services;
 using EventStore.Blazor.EFCore.Postgres.Components;
+using EventStore.Blazor.EFCore.Postgres.Services.Commands;
+using EventStore.Blazor.EFCore.Postgres.Services.Events;
 using EventStore.Commands;
+using EventStore.EFCore.Postgres;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.SampleApp.Domain;
@@ -10,26 +12,26 @@ using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 
 var builder = WebApplication.CreateBuilder(args);
+var databaseConnectionString = builder.Configuration["ConnectionStrings:Postgres"]!;
 
-// Add MudBlazor services
 builder.Services.AddMudServices();
-
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddTransient<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
-builder.Services.AddTransient<IProjection, TrafficLightProjection>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ICommandService, CommandService>();
 
-builder.Services.AddTransient<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
+builder.Services.AddScoped<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
+builder.Services.AddScoped<IProjection, TrafficLightProjection>();
+
+builder.Services.AddScoped<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
 
 builder.Services.AddHostedService<ChangeColourBackgroundService>();
-builder.Services.AddHostedService<PrintColourBackgroundService>();
 
 builder.AddCoreServices();
 builder.AddEventBroadcaster();
 builder.AddEventPump();
-builder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
+builder.AddPostgresServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
 
 var app = builder.Build();
 

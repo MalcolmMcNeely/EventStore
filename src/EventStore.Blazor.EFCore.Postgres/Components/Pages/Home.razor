@@ -1,20 +1,28 @@
 ﻿@page "/"
 @implements IDisposable
 @using EventStore.Blazor.EFCore.Postgres.Components.Controls
-@using EventStore.Blazor.EFCore.Postgres.Models
+@using EventStore.Blazor.EFCore.Postgres.Services.Commands
+@using EventStore.Blazor.EFCore.Postgres.Services.Events
+@using EventStore.EFCore.Postgres.Commands
+@using EventStore.EFCore.Postgres.Events
+@inject IEventService EventService
+@inject ICommandService CommandService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard</PageTitle>
 
 <CascadingValue Value="@Events" Name="CEvents">
-    <EventStoreTable Stream="$all" @ref="Table1"/>
-    <EventStoreTable Stream="$report" @ref="Table2"/>
+    <EventStoreTable Stream="$All" @ref="Table1"/>
+    <EventStoreTable Stream="TrafficLight" @ref="Table2"/>
+    <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table3"/>
 </CascadingValue>
 
 @code {
     readonly CancellationTokenSource _cancellationTokenSource = new();
-    List<EventModel> Events { get; set; } = new();
+    List<EventStreamEntity> Events { get; set; } = new();
+    List<CommandEntity> Commands { get; set; } = new();
     EventStoreTable? Table1 { get; set; }
     EventStoreTable? Table2 { get; set; }
+    EventStoreTable? Table3 { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -28,17 +36,17 @@
     {
         while (!token.IsCancellationRequested)
         {
-            var count = Events.Count;
-            var newEvent = new EventModel(count, "$all", DateTime.UtcNow.AddMinutes(count), "DummyEvent", $"{{ Data = {count} }}");
-            Events.Add(newEvent);
-            var newEvent2 = new EventModel(count, "$report", DateTime.UtcNow.AddMinutes(count), "DummyEvent", $"{{ Data = {count} }}");
-            Events.Add(newEvent2);
+            var newEvents = await EventService.GetEventsSince(Events.Count, token).ConfigureAwait(false);
+            var newCommands = await CommandService.GetCommandsSince(Commands.Count, token).ConfigureAwait(false);
 
             await InvokeAsync(async () =>
             {
+                Events.AddRange(newEvents);
+                Commands.AddRange(newCommands);
                 StateHasChanged();
                 await Table1?.ScrollToBottomAsync()!;
                 await Table2?.ScrollToBottomAsync()!;
+                await Table3?.ScrollToBottomAsync()!;
             });
 
             await Task.Delay(1000, token);

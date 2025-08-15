@@ -27,7 +27,8 @@ public class ProjectionBuilderRegistrationTests
     [Test]
     public void it_can_resolve_a_projection_builder()
     {
-        var registration = new ProjectionBuilderRegistration(_serviceProvider);
+        var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+        var registration = new ProjectionBuilderRegistration(scopeFactory);
         var projections = registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
 
         Assert.That(projections, Is.Not.Null);

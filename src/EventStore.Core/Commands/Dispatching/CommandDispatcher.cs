@@ -1,11 +1,16 @@
-﻿namespace EventStore.Commands.Dispatching;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-public class CommandDispatcher(IServiceProvider serviceProvider, ICommandAudit commandAudit) : ICommandDispatcher
+namespace EventStore.Commands.Dispatching;
+
+public class CommandDispatcher(IServiceScopeFactory scopeFactory, ICommandAudit commandAudit) : ICommandDispatcher
 {
     public async Task DispatchAsync<T>(T command, CancellationToken token) where T : ICommand
     {
+        using var scope = scopeFactory.CreateScope();
+        var scopedProvider = scope.ServiceProvider;
+
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
-        var handler = serviceProvider.GetService(handlerType);
+        var handler = scopedProvider.GetService(handlerType);
 
         if (handler is null)
         {

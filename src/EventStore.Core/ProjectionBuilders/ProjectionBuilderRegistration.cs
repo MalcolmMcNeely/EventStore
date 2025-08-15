@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.ProjectionBuilders;
 
-public class ProjectionBuilderRegistration(IServiceProvider serviceProvider) : IProjectionBuilderRegistration
+public class ProjectionBuilderRegistration(IServiceScopeFactory scopeFactory) : IProjectionBuilderRegistration
 {
-    readonly Lazy<Dictionary<Type, List<Type>>> _projectionBuilderToEventsTypeMap = new(() => RegisterProjectionBuilders(serviceProvider));
+    readonly Lazy<Dictionary<Type, List<Type>>> _projectionBuilderToEventsTypeMap = new(() => RegisterProjectionBuilders(scopeFactory));
     
     public IEnumerable<Type> ProjectionBuildersFor(Type eventType)
     {
@@ -21,15 +21,17 @@ public class ProjectionBuilderRegistration(IServiceProvider serviceProvider) : I
             .DistinctBy(x => x.AssemblyQualifiedName);
     }
 
-    static Dictionary<Type, List<Type>> RegisterProjectionBuilders(IServiceProvider serviceProvider)
+    static Dictionary<Type, List<Type>> RegisterProjectionBuilders(IServiceScopeFactory scopeFactory)
     {
+        using var scope = scopeFactory.CreateScope();
+        var scopedProvider = scope.ServiceProvider;
         var projectionBuilderToEventsTypeMap = new Dictionary<Type, List<Type>>();
-        var projectionTypes = serviceProvider.GetServices<IProjection>().Select(x => x.GetType());
+        var projectionTypes = scopedProvider.GetServices<IProjection>().Select(x => x.GetType());
 
         foreach (var projectionType in projectionTypes)
         {
             var projectionBuilderType = typeof(ProjectionBuilder<>).MakeGenericType(projectionType);
-            var projectionBuilder = serviceProvider.GetService(projectionBuilderType);
+            var projectionBuilder = scopedProvider.GetService(projectionBuilderType);
 
             if (projectionBuilder is null)
             {
