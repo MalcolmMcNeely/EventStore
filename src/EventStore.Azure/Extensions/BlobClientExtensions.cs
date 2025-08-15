@@ -16,7 +16,7 @@ public static class BlobClientExtensions
             await blobClient.UploadAsync(binaryData, new BlobUploadOptions
             {
                 Conditions = new BlobRequestConditions { IfNoneMatch = new ETag("*") }
-            }, cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobAlreadyExists)
         {
@@ -33,14 +33,14 @@ public static class BlobClientExtensions
 
         try
         {
-            lease = await leaseClient.AcquireAsync(LeaseDuration, cancellationToken: token);
+            lease = await leaseClient.AcquireAsync(LeaseDuration, cancellationToken: token).ConfigureAwait(false);
 
             var uploadOptions = new BlobUploadOptions
             {
                 Conditions = new BlobRequestConditions { LeaseId = lease.LeaseId },
             };
 
-            await blobClient.UploadAsync(binaryData, uploadOptions, token);
+            await blobClient.UploadAsync(binaryData, uploadOptions, token).ConfigureAwait(false);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.LeaseIdMismatchWithLeaseOperation ||
                                                 ex.ErrorCode == BlobErrorCode.LeaseAlreadyPresent)
@@ -51,7 +51,7 @@ public static class BlobClientExtensions
         {
             if (lease?.LeaseId is not null)
             {
-                await leaseClient.ReleaseAsync(new BlobRequestConditions { LeaseId = lease.LeaseId }, cancellationToken: token);
+                await leaseClient.ReleaseAsync(new BlobRequestConditions { LeaseId = lease.LeaseId }, cancellationToken: token).ConfigureAwait(false);
             }
         }
 

@@ -9,7 +9,7 @@ internal sealed class EventBroadcasterBackgroundService(IEventBroadcaster eventB
     {
         while (!token.IsCancellationRequested)
         {
-            await eventBroadcaster.BroadcastEventAsync(token);
+            await eventBroadcaster.BroadcastEventAsync(token).ConfigureAwait(false);
 
             await Task.Delay(100, token);
         }

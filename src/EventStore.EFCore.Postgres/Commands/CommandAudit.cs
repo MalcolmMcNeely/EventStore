@@ -15,13 +15,13 @@ public class CommandAudit(IServiceScopeFactory serviceScopeFactory) : ICommandAu
 
     public async Task PublishAsync<T>(T command, CancellationToken token) where T : ICommand
     {
-        await _semaphore.WaitAsync(token);
+        await _semaphore.WaitAsync(token).ConfigureAwait(false);
 
         try
         {
             using var scope = serviceScopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-            var lastRowKey = await dbContext.Commands.MaxAsync(x => (int?)x.RowKey, token) ?? 0;
+            var lastRowKey = await dbContext.Commands.MaxAsync(x => (int?)x.RowKey, token).ConfigureAwait(false) ?? 0;
 
             var eventEntity = new CommandEntity
             {
@@ -33,8 +33,8 @@ public class CommandAudit(IServiceScopeFactory serviceScopeFactory) : ICommandAu
                 Content = JsonSerializer.Serialize((object)command)
             };
 
-            await dbContext.Commands.AddAsync(eventEntity, token);
-            await dbContext.SaveChangesAsync(token);
+            await dbContext.Commands.AddAsync(eventEntity, token).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync(token).ConfigureAwait(false);
         }
         finally
         {

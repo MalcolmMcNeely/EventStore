@@ -9,7 +9,7 @@ public static class Wait
         var start = DateTime.UtcNow;
         timeout ??= DefaultTimeout;
 
-        while (!await condition())
+        while (!await condition().ConfigureAwait(false))
         {
             if (DateTime.UtcNow - start > timeout.Value)
             {
@@ -18,7 +18,7 @@ public static class Wait
 
             token.ThrowIfCancellationRequested();
 
-            await Task.Delay(50, token);
+            await Task.Delay(50, token).ConfigureAwait(false);
         }
     }
 }

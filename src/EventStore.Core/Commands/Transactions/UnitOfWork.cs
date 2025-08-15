@@ -37,7 +37,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
     {
         var entity = await LoadAndMergeAsync();
 
-        if (!await _aggregateRootRepository.SaveAsync(entity, _key, token))
+        if (!await _aggregateRootRepository.SaveAsync(entity, _key, token).ConfigureAwait(false))
         {
             var currentRetry = 0;
 
@@ -45,16 +45,16 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
             {
                 if (_retryOptions is ExponentialUnitOfWorkRetryOptions exponentialUnitOfWorkRetryOptions)
                 {
-                    await Task.Delay(_retryOptions.RetryInterval * currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token);
+                    await Task.Delay(_retryOptions.RetryInterval * currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token).ConfigureAwait(false);
                 }
                 else
                 {
-                    await Task.Delay(_retryOptions.RetryInterval, token);
+                    await Task.Delay(_retryOptions.RetryInterval, token).ConfigureAwait(false);
                 }
 
-                entity = await LoadAndMergeAsync();
+                entity = await LoadAndMergeAsync().ConfigureAwait(false);
 
-                if (await _aggregateRootRepository.SaveAsync(entity, _key, token))
+                if (await _aggregateRootRepository.SaveAsync(entity, _key, token).ConfigureAwait(false))
                 {
                     break;
                 }
@@ -73,7 +73,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
             foreach (var (_, @event) in entity.NewEvents)
             {
                 @event.CausationId = _causationId;
-                await _aggregateRootRepository.SendEventAsync(@event, _key, token);
+                await _aggregateRootRepository.SendEventAsync(@event, _key, token).ConfigureAwait(false);
             }
 
             entity.NewEvents.Clear();
@@ -82,7 +82,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
     async Task<T> LoadAndMergeAsync()
     {
-        var entity = await _aggregateRootRepository.LoadAsync(_key);
+        var entity = await _aggregateRootRepository.LoadAsync(_key).ConfigureAwait(false);
 
         foreach (var action in _actions)
         {

@@ -37,9 +37,9 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
         InvokeHandler(@event.GetType(), @event, projection);
 
         var eventStream = eventStreamFactory.For($"projection-{Key}");
-        await eventStream.PublishAsync(@event, token);
+        await eventStream.PublishAsync(@event, token).ConfigureAwait(false);
 
-        await repository.SaveAsync(projection, token);
+        await repository.SaveAsync(projection, token).ConfigureAwait(false);
     }
 
     public void ApplyEventToProjection(TProjection projection, IEvent @event, CancellationToken token)

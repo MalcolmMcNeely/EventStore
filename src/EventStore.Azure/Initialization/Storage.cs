@@ -21,20 +21,20 @@ public class Storage(
             {
                 var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerInitializer.Name);
 
-                if (await blobContainerClient.ExistsAsync(cancellationToken))
+                if (await blobContainerClient.ExistsAsync(cancellationToken).ConfigureAwait(false))
                 {
                     continue;
                 }
 
                 logger.LogInformation($"Creating blob container {containerInitializer.Name}");
 
-                await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
 
             foreach (var tableInitializer in initializer.TableInitializers)
             {
                 var tableClient = tableServiceClient.GetTableClient(tableInitializer.Name);
-                var response = await tableClient.CreateIfNotExistsAsync(cancellationToken);
+                var response = await tableClient.CreateIfNotExistsAsync(cancellationToken).ConfigureAwait(false);
 
                 if (response.GetRawResponse().Status == Defaults.Tables.TableCreatedResponseCode)
                 {
@@ -46,14 +46,14 @@ public class Storage(
             {
                 var queueClient = queueServiceClient.GetQueueClient(queueInitializer.Name);
 
-                if (await queueClient.ExistsAsync(cancellationToken))
+                if (await queueClient.ExistsAsync(cancellationToken).ConfigureAwait(false))
                 {
                     continue;
                 }
 
                 logger.LogInformation($"Creating queue {queueInitializer.Name}");
 
-                await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
         }
     }
@@ -70,29 +70,30 @@ public class Storage(
             {
                 var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerInitializer.Name);
 
-                if (!await blobContainerClient.ExistsAsync(cancellationToken))
+                if (!await blobContainerClient.ExistsAsync(cancellationToken).ConfigureAwait(false))
                 {
                     continue;
                 }
 
                 logger.LogInformation($"Deleting blob container {containerInitializer.Name}");
 
-                await blobContainerClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+                await blobContainerClient.DeleteIfExistsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-                await Wait.UntilAsync(async () => !await blobContainerClient.ExistsAsync(cancellationToken), token: cancellationToken);
+                await Wait.UntilAsync(async () => !await blobContainerClient.ExistsAsync(cancellationToken).ConfigureAwait(false), token: cancellationToken).ConfigureAwait(false);
             }
 
             foreach (var tableInitializer in initializer.TableInitializers)
             {
                 var tableClient = tableServiceClient.GetTableClient(tableInitializer.Name);
-                await tableClient.DeleteAsync(cancellationToken);
+                await tableClient.DeleteAsync(cancellationToken).ConfigureAwait(false);
             }
 
             await Wait.UntilAsync(async () =>
             {
                 var tables = await tableServiceClient
                     .QueryAsync(cancellationToken: cancellationToken)
-                    .ToListAsync(cancellationToken: cancellationToken);
+                    .ToListAsync(cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
 
                 return tables.Count == 0;
             }, token: cancellationToken);
@@ -101,15 +102,15 @@ public class Storage(
             {
                 var queueClient = queueServiceClient.GetQueueClient(queueInitializer.Name);
 
-                if (!await queueClient.ExistsAsync(cancellationToken))
+                if (!await queueClient.ExistsAsync(cancellationToken).ConfigureAwait(false))
                 {
                     continue;
                 }
 
                 logger.LogInformation($"Deleting queue {queueInitializer.Name}");
 
-                await queueClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
-                await Wait.UntilAsync(async () => !await queueClient.ExistsAsync(cancellationToken), token: cancellationToken);
+                await queueClient.DeleteIfExistsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                await Wait.UntilAsync(async () => !await queueClient.ExistsAsync(cancellationToken).ConfigureAwait(false), token: cancellationToken);
             }
         }
     }

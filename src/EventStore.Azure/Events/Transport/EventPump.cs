@@ -17,7 +17,7 @@ public class EventPump(AzureService azureService, EventCursorFactory eventCursor
 
     public async Task PublishEventsAsync(CancellationToken token = default)
     {
-        var cursor = await eventCursorFactory.GetOrAddCursorAsync(Defaults.Cursors.AllStreamCursor, token);
+        var cursor = await eventCursorFactory.GetOrAddCursorAsync(Defaults.Cursors.AllStreamCursor, token).ConfigureAwait(false);
         string? continuationToken = null;
         var eventCount = 0;
 
@@ -32,7 +32,7 @@ public class EventPump(AzureService azureService, EventCursorFactory eventCursor
                     var eventType = eventTypeRegistration.Value.EventNameToTypeMap[eventEntity.EventType];
                     var @event = JsonSerializer.Deserialize(eventEntity.Content, eventType);
                     var transportEnvelope = TransportEnvelope.Create(@event!);
-                    await _transportQueue.SendMessageAsync(JsonSerializer.Serialize(transportEnvelope), token);
+                    await _transportQueue.SendMessageAsync(JsonSerializer.Serialize(transportEnvelope), token).ConfigureAwait(false);
                     eventCount++;
                 }
 
@@ -41,7 +41,7 @@ public class EventPump(AzureService azureService, EventCursorFactory eventCursor
         } while (continuationToken is not null);
 
         cursor.LastSeenEvent += eventCount;
-        await eventCursorFactory.SaveCursorAsync(cursor, token);
+        await eventCursorFactory.SaveCursorAsync(cursor, token).ConfigureAwait(false);
     }
 
     async IAsyncEnumerable<Page<EventEntity>> ReceiveEventsAsync(EventCursorEntity eventCursor, string? continuationToken = null, [EnumeratorCancellation] CancellationToken token = default)

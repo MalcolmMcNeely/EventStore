@@ -24,13 +24,13 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
         var content = JsonSerializer.Serialize((object)entity);
         var currentRetry = 0;
 
-        await semaphore.WaitAsync(token);
+        await semaphore.WaitAsync(token).ConfigureAwait(false);
 
         while (currentRetry < MaxRetries)
         {
             try
             {
-                var metadataEntity = await _tableClient.GetMetadataEntityAsync(streamName, token);
+                var metadataEntity = await _tableClient.GetMetadataEntityAsync(streamName, token).ConfigureAwait(false);
                 var eventEntity = new EventEntity
                 {
                     PartitionKey = streamName,
@@ -42,7 +42,7 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
                 };
                 metadataEntity.LastEvent++;
 
-                await _tableClient.UpdateAllStreamAsync(eventEntity, metadataEntity, token);
+                await _tableClient.UpdateAllStreamAsync(eventEntity, metadataEntity, token).ConfigureAwait(false);
 
                 break;
             }
@@ -50,7 +50,7 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
             {
                 currentRetry++;
 
-                await Task.Delay(_retryInterval * currentRetry * Exponential, token);
+                await Task.Delay(_retryInterval * currentRetry * Exponential, token).ConfigureAwait(false);
             }
             finally
             {
@@ -61,11 +61,11 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
 
     public async Task<bool> ExistsAsync(CancellationToken token = default)
     {
-        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
+        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token).ConfigureAwait(false);
         return response.HasValue;
     }
 
-    public async IAsyncEnumerable<IEvent> GetAllEventsAsync(CancellationToken token = default)
+    public async IAsyncEnumerable<IEvent> GetAllEventsAsync([EnumeratorCancellation] CancellationToken token = default)
     {
         var events = _tableClient.QueryAsync<EventEntity>(x => x.PartitionKey == streamName && x.RowKey != RowKey.ForMetadata().ToString(), cancellationToken: token);
 
@@ -80,7 +80,7 @@ public class EventStream(AzureService azureService, string streamName, Semaphore
 
     public async Task<int> GetCountAsync(CancellationToken token = default)
     {
-        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
+        var response = await _tableClient.GetEntityIfExistsAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token).ConfigureAwait(false);
 
         if (!response.HasValue || response.Value is null)
         {

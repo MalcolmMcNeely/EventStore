@@ -15,9 +15,9 @@ public class EventBroadcaster(IServiceScopeFactory scopeFactory, EventDispatcher
 
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
-        await using var transaction = await scopedDbContext.Database.BeginTransactionAsync(token);
+        await using var transaction = await scopedDbContext.Database.BeginTransactionAsync(token).ConfigureAwait(false);
 
-        var queuedEvents = await scopedDbContext.QueuedEvents.ToListAsync(cancellationToken: token);
+        var queuedEvents = await scopedDbContext.QueuedEvents.ToListAsync(cancellationToken: token).ConfigureAwait(false);
 
         if (queuedEvents.Count == 0)
         {
@@ -29,12 +29,12 @@ public class EventBroadcaster(IServiceScopeFactory scopeFactory, EventDispatcher
             var envelope = queuedEvent.Envelope;
             var @event = (IEvent)JsonSerializer.Deserialize(envelope.Body, Type.GetType(envelope.Type)!)!;
             
-            await eventDispatcher.SendEventAsync(@event, token);
+            await eventDispatcher.SendEventAsync(@event, token).ConfigureAwait(false);
         }
 
         scopedDbContext.QueuedEvents.RemoveRange(queuedEvents);
 
-        await scopedDbContext.SaveChangesAsync(token);
-        await transaction.CommitAsync(token);
+        await scopedDbContext.SaveChangesAsync(token).ConfigureAwait(false);
+        await transaction.CommitAsync(token).ConfigureAwait(false);
     }
 }

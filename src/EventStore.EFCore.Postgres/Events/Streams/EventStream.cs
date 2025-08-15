@@ -13,7 +13,7 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
 {
     public async Task PublishAsync(IEvent entity, CancellationToken token = default)
     {
-        await semaphore.WaitAsync(token);
+        await semaphore.WaitAsync(token).ConfigureAwait(false);
 
         try
         {
@@ -21,7 +21,8 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
             var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
             var lastRowKey = await dbContext.EventStreams
                 .Where(x => x.Key == streamName)
-                .MaxAsync(x => (int?)x.RowKey, token) ?? 0;
+                .MaxAsync(x => (int?)x.RowKey, token)
+                .ConfigureAwait(false) ?? 0;
 
             var eventEntity = new EventStreamEntity
             {
@@ -33,8 +34,8 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
                 Envelope = Envelope.Create(entity)
             };
 
-            await dbContext.EventStreams.AddAsync(eventEntity, token);
-            await dbContext.SaveChangesAsync(token);
+            await dbContext.EventStreams.AddAsync(eventEntity, token).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync(token).ConfigureAwait(false);
         }
         finally
         {
@@ -46,7 +47,7 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
     {
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        return await dbContext.EventStreams.Where(x => x.Key == streamName).AnyAsync(token);
+        return await dbContext.EventStreams.Where(x => x.Key == streamName).AnyAsync(token).ConfigureAwait(false);
     }
 
     public async IAsyncEnumerable<IEvent> GetAllEventsAsync([EnumeratorCancellation] CancellationToken token = default)
@@ -71,7 +72,7 @@ public class EventStream(IServiceScopeFactory serviceScopeFactory, string stream
     {
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        return await dbContext.EventStreams.Where(x => x.Key == streamName).CountAsync(token);
+        return await dbContext.EventStreams.Where(x => x.Key == streamName).CountAsync(token).ConfigureAwait(false);
     }
 
     public async IAsyncEnumerable<IEvent> GetEventsSinceAsync(int fromIndex, CancellationToken token = default)

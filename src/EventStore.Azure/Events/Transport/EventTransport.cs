@@ -10,6 +10,6 @@ public class EventTransport(IEventStreamFactory eventStreamFactory) : IEventTran
 
     public async Task WriteEventAsync<T>(T @event, CancellationToken token = default) where T : class, IEvent
     {
-        await _allStream.PublishAsync(@event, token);
+        await _allStream.PublishAsync(@event, token).ConfigureAwait(false);
     }
 }

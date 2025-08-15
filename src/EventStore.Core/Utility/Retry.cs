@@ -13,7 +13,7 @@ public static class Retry
         {
             try
             {
-                return await asyncAction();
+                return await asyncAction().ConfigureAwait(false);
             }
             catch (Exception)
             {

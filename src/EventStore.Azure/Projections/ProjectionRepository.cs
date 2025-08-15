@@ -16,11 +16,11 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
     {
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{key}");
 
-        if (!await blobClient.ExistsAsync(token))
+        if (!await blobClient.ExistsAsync(token).ConfigureAwait(false))
         {
-            if (await projectionRebuilder.CanRebuildAsync(key, token))
+            if (await projectionRebuilder.CanRebuildAsync(key, token).ConfigureAwait(false))
             {
-                return await projectionRebuilder.RebuildAsync<T>(key, token);
+                return await projectionRebuilder.RebuildAsync<T>(key, token).ConfigureAwait(false);
             }
 
             return new T();
@@ -28,12 +28,12 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
 
         try
         {
-            var blobStream = await blobClient.OpenReadAsync(cancellationToken: token);
+            var blobStream = await blobClient.OpenReadAsync(cancellationToken: token).ConfigureAwait(false);
             return JsonSerializer.Deserialize<T>(blobStream)!;
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.ConditionNotMet)
         {
-            await Task.Delay(50, token); // TODO: backoff, revisit Retry logic
+            await Task.Delay(50, token).ConfigureAwait(false); // TODO: backoff, revisit Retry logic
         }
 
         return new T();
@@ -45,9 +45,9 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
         var binaryData = BinaryData.FromString(blobContent);
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(T).Name}/{projection.Id}");
 
-        if (await blobClient.ExistsAsync(token) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token))
+        if (await blobClient.ExistsAsync(token).ConfigureAwait(false) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token).ConfigureAwait(false))
         {
-            await blobClient.UploadWithLeaseAsync(binaryData, token: token);
+            await blobClient.UploadWithLeaseAsync(binaryData, token: token).ConfigureAwait(false);
         }
     }
 }

@@ -13,7 +13,7 @@ public class CommandDispatcher(IServiceProvider serviceProvider, ICommandAudit c
         }
 
         var handleMethod = handlerType.GetMethod("HandleAsync");
-        await (Task)handleMethod!.Invoke(handler, [command, token])!;
-        await commandAudit.PublishAsync(command, token);
+        await ((Task)handleMethod!.Invoke(handler, [command, token])!).ConfigureAwait(false);
+        await commandAudit.PublishAsync(command, token).ConfigureAwait(false);
     }
 }

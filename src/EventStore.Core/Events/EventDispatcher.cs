@@ -15,7 +15,7 @@ public class EventDispatcher(IServiceProvider serviceProvider, Lazy<IProjectionB
             var applyEventsMethod = projectionBuilderType.GetMethod("ApplyEventAsync");
 
             var task = (Task)applyEventsMethod!.Invoke(projectionBuilder, [@event, token])!;
-            await task;
+            await task.ConfigureAwait(false);
         }
     }
 }

@@ -24,13 +24,13 @@ public class CommandAudit(AzureService azureService) : ICommandAudit
         var content = JsonSerializer.Serialize((object)command);
         var currentRetry = 0;
 
-        await semaphore.WaitAsync(token);
+        await semaphore.WaitAsync(token).ConfigureAwait(false);
 
         while (currentRetry < MaxRetries)
         {
             try
             {
-                var metadataEntity = await _tableClient.GetMetadataEntityAsync(Defaults.Commands.CommandPartitionKey, token);
+                var metadataEntity = await _tableClient.GetMetadataEntityAsync(Defaults.Commands.CommandPartitionKey, token).ConfigureAwait(false);
                 var commandEntity = new CommandEntity
                 {
                     PartitionKey = Defaults.Commands.CommandPartitionKey,
@@ -41,7 +41,7 @@ public class CommandAudit(AzureService azureService) : ICommandAudit
                 };
                 metadataEntity.LastEvent++;
 
-                await _tableClient.UpdateCommandAuditAsync(commandEntity, metadataEntity, token);
+                await _tableClient.UpdateCommandAuditAsync(commandEntity, metadataEntity, token).ConfigureAwait(false);
 
                 break;
             }
@@ -49,7 +49,7 @@ public class CommandAudit(AzureService azureService) : ICommandAudit
             {
                 currentRetry++;
 
-                await Task.Delay(_retryInterval * currentRetry * Exponential, token);
+                await Task.Delay(_retryInterval * currentRetry * Exponential, token).ConfigureAwait(false);
             }
             finally
             {

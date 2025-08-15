@@ -17,7 +17,7 @@ public class AggregateRootRepository<TAggregateRoot>(AzureService azureService, 
     {
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(TAggregateRoot).FullName}/{key}");
 
-        if (await blobClient.ExistsAsync(token))
+        if (await blobClient.ExistsAsync(token).ConfigureAwait(false))
         {
             return JsonSerializer.Deserialize<TAggregateRoot>(await blobClient.OpenReadAsync(cancellationToken: token))!;
         }
@@ -31,9 +31,9 @@ public class AggregateRootRepository<TAggregateRoot>(AzureService azureService, 
         var binaryData = BinaryData.FromString(blobContent);
         var blobClient = _blobContainerClient.GetBlobClient($"{typeof(TAggregateRoot).FullName}/{key}");
 
-        if (await blobClient.ExistsAsync(token) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token))
+        if (await blobClient.ExistsAsync(token).ConfigureAwait(false) || !await blobClient.UploadOnlyIfNotCreated(binaryData, cancellationToken: token).ConfigureAwait(false))
         {
-            return await blobClient.UploadWithLeaseAsync(binaryData, token: token);
+            return await blobClient.UploadWithLeaseAsync(binaryData, token: token).ConfigureAwait(false);
         }
 
         return true;
@@ -43,8 +43,8 @@ public class AggregateRootRepository<TAggregateRoot>(AzureService azureService, 
     {
         // TODO: writing to aggregate root stream and all steam should be as one transaction
         var eventStream = eventStreamFactory.For($"{Defaults.AggregateRoot.AggregateRootPartitionPrefix}{key}");
-        await eventStream.PublishAsync(@event, token);
+        await eventStream.PublishAsync(@event, token).ConfigureAwait(false);
 
-        await transport.WriteEventAsync(@event, token);
+        await transport.WriteEventAsync(@event, token).ConfigureAwait(false);
     }
 }

@@ -9,7 +9,7 @@ public class ProjectionRebuilder(IEventStreamFactory eventStreamFactory, IServic
     public async Task<bool> CanRebuildAsync(string key, CancellationToken token)
     {
         var eventStream = eventStreamFactory.For($"projection-{key}");
-        return await eventStream.ExistsAsync(token);
+        return await eventStream.ExistsAsync(token).ConfigureAwait(false);
     }
 
     public async Task<T> RebuildAsync<T>(string key, CancellationToken token) where T : IProjection, new()

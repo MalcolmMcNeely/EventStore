@@ -6,7 +6,7 @@ public class EventCursorFactory(EventStoreDbContext dbContext)
 {
     internal async Task<EventCursorEntity> GetOrAddCursorAsync(string cursorName, CancellationToken token = default)
     {
-        var cursor = await dbContext.EventCursorEntities.FindAsync([cursorName], token);
+        var cursor = await dbContext.EventCursorEntities.FindAsync([cursorName], token).ConfigureAwait(false);
 
         if (cursor is not null)
         {
@@ -15,8 +15,8 @@ public class EventCursorFactory(EventStoreDbContext dbContext)
 
         cursor = new EventCursorEntity { CursorName = cursorName };
 
-        await dbContext.EventCursorEntities.AddAsync(cursor, token);
-        await dbContext.SaveChangesAsync(token);
+        await dbContext.EventCursorEntities.AddAsync(cursor, token).ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(token).ConfigureAwait(false);
 
         return cursor;
     }
@@ -24,6 +24,6 @@ public class EventCursorFactory(EventStoreDbContext dbContext)
     internal async Task SaveCursorAsync(EventCursorEntity eventCursorEntity, CancellationToken token = default)
     {
         dbContext.EventCursorEntities.Update(eventCursorEntity);
-        await dbContext.SaveChangesAsync(token);
+        await dbContext.SaveChangesAsync(token).ConfigureAwait(false);
     }
 }

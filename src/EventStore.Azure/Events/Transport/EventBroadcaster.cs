@@ -13,24 +13,24 @@ public class EventBroadcaster(AzureService azureService, EventDispatcher eventDi
 
     public async Task BroadcastEventAsync(CancellationToken token)
     {
-        var @event = await ReceiveEventAsync(token);
+        var @event = await ReceiveEventAsync(token).ConfigureAwait(false);
         
         if (@event is not null)
         {
-            await eventDispatcher.SendEventAsync(@event, token);
+            await eventDispatcher.SendEventAsync(@event, token).ConfigureAwait(false);
         }
     }
 
     async Task<IEvent?> ReceiveEventAsync(CancellationToken token)
     {
-        QueueMessage message = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
+        QueueMessage message = await _queueClient.ReceiveMessageAsync(cancellationToken: token).ConfigureAwait(false);
 
         if (message is null)
         {
             return null;
         }
 
-        await _queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, token);
+        await _queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, token).ConfigureAwait(false);
 
         if (message.MessageText is null)
         {

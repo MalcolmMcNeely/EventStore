@@ -17,14 +17,14 @@ public static class TableClientExtensions
             new(TableTransactionActionType.UpsertReplace, metadataEntity)
         };
 
-        await tableClient.SubmitTransactionAsync(transactions, token);
+        await tableClient.SubmitTransactionAsync(transactions, token).ConfigureAwait(false);
     }
 
     public static async Task<MetadataEntity> GetMetadataEntityAsync(this TableClient tableClient, string streamName, CancellationToken token = default)
     {
         try
         {
-            return await tableClient.GetEntityAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token);
+            return await tableClient.GetEntityAsync<MetadataEntity>(streamName, RowKey.ForMetadata().ToString(), cancellationToken: token).ConfigureAwait(false);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == TableErrorCode.ResourceNotFound)
         {
@@ -44,6 +44,6 @@ public static class TableClientExtensions
             new(TableTransactionActionType.UpsertReplace, metadataEntity)
         };
 
-        await tableClient.SubmitTransactionAsync(transactions, token);
+        await tableClient.SubmitTransactionAsync(transactions, token).ConfigureAwait(false);
     }
 }

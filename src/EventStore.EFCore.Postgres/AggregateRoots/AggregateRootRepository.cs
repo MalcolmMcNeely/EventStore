@@ -13,14 +13,14 @@ public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory servic
     {
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        return await dbContext.FindAsync<TAggregateRoot>([key], token) ?? new TAggregateRoot { Id = key };
+        return await dbContext.FindAsync<TAggregateRoot>([key], token).ConfigureAwait(false) ?? new TAggregateRoot { Id = key };
     }
 
     public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        await dbContext.UpsertAsync(aggregateRoot, key);
+        await dbContext.UpsertAsync(aggregateRoot, key).ConfigureAwait(false);
 
         return true;
     }
@@ -28,8 +28,8 @@ public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory servic
     public async Task SendEventAsync<TEvent>(TEvent @event, string key, CancellationToken token = default) where TEvent : class, IEvent
     {
         var eventStream = eventStreamFactory.For(key);
-        await eventStream.PublishAsync(@event, token);
+        await eventStream.PublishAsync(@event, token).ConfigureAwait(false);
 
-        await transport.WriteEventAsync(@event, token);
+        await transport.WriteEventAsync(@event, token).ConfigureAwait(false);
     }
 }

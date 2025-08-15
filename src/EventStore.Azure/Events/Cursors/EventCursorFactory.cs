@@ -9,7 +9,7 @@ public sealed class EventCursorFactory(AzureService azureService)
 
     internal async Task<EventCursorEntity> GetOrAddCursorAsync(string cursorName, CancellationToken token = default)
     {
-        var existingCursorEntity = await _tableClient.GetEntityIfExistsAsync<EventCursorEntity?>(Defaults.Cursors.PartitionKey, cursorName, cancellationToken: token);
+        var existingCursorEntity = await _tableClient.GetEntityIfExistsAsync<EventCursorEntity?>(Defaults.Cursors.PartitionKey, cursorName, cancellationToken: token).ConfigureAwait(false);
         if (existingCursorEntity.HasValue)
         {
             return existingCursorEntity.Value!;
@@ -22,13 +22,13 @@ public sealed class EventCursorFactory(AzureService azureService)
             LastSeenEvent = 0,
         };
 
-        await _tableClient.UpsertEntityAsync(eventCursorEntity, TableUpdateMode.Replace, token);
+        await _tableClient.UpsertEntityAsync(eventCursorEntity, TableUpdateMode.Replace, token).ConfigureAwait(false);
 
         return eventCursorEntity;
     }
 
     internal async Task SaveCursorAsync(EventCursorEntity eventCursorEntity, CancellationToken token = default)
     {
-        await _tableClient.UpsertEntityAsync(eventCursorEntity, TableUpdateMode.Replace, token);
+        await _tableClient.UpsertEntityAsync(eventCursorEntity, TableUpdateMode.Replace, token).ConfigureAwait(false);
     }
 }

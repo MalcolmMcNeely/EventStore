@@ -9,7 +9,7 @@ public class EventPumpBackgroundService(IEventPump eventPump): BackgroundService
     {
         while (!token.IsCancellationRequested)
         {
-            await eventPump.PublishEventsAsync(token);
+            await eventPump.PublishEventsAsync(token).ConfigureAwait(false);
 
             await Task.Delay(100, token);
         }

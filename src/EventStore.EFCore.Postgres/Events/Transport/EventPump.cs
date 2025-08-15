@@ -16,7 +16,7 @@ public class EventPump(IServiceScopeFactory scopeFactory) : IEventPump
 
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
         var scopedCursorFactory = scope.ServiceProvider.GetRequiredService<EventCursorFactory>();
-        var cursor = await scopedCursorFactory.GetOrAddCursorAsync(Defaults.Cursors.AllStreamCursor, token);
+        var cursor = await scopedCursorFactory.GetOrAddCursorAsync(Defaults.Cursors.AllStreamCursor, token).ConfigureAwait(false);
         var newEvents = ReceiveEventsAsync(scopedDbContext, cursor, token);
         var eventCount = 0;
         
@@ -33,8 +33,8 @@ public class EventPump(IServiceScopeFactory scopeFactory) : IEventPump
 
         cursor.LastSeenEvent += eventCount;
 
-        await scopedDbContext.SaveChangesAsync(token);
-        await scopedCursorFactory.SaveCursorAsync(cursor, token);
+        await scopedDbContext.SaveChangesAsync(token).ConfigureAwait(false);
+        await scopedCursorFactory.SaveCursorAsync(cursor, token).ConfigureAwait(false);
     }
 
     async IAsyncEnumerable<EventStreamEntity> ReceiveEventsAsync(EventStoreDbContext scopedDbContext, EventCursorEntity eventCursor, [EnumeratorCancellation] CancellationToken token = default)
