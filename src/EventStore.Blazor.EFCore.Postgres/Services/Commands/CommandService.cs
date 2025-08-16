@@ -6,15 +6,14 @@ namespace EventStore.Blazor.EFCore.Postgres.Services.Commands;
 
 public class CommandService(IServiceScopeFactory serviceScopeFactory) : ICommandService
 {
-    public async Task<List<CommandEntity>> GetCommandsSince(int index, CancellationToken token)
+    public async Task<List<CommandEntity>> GetCommandsSince(DateTime time, CancellationToken token)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
         return await scopedDbContext.Commands
-            .OrderBy(x => x.Key)
-            .ThenBy(x => x.RowKey)
-            .Skip(index)
+            .Where(x => x.TimeStamp > time)
+            .OrderBy(x => x.TimeStamp)
             .ToListAsync(cancellationToken: token)
             .ConfigureAwait(false);
     }

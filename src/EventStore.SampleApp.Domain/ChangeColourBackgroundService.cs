@@ -16,7 +16,7 @@ public class ChangeColourBackgroundService(ICommandDispatcher commandDispatcher)
 
             _currentColour = NextColour();
 
-            await Task.Delay(2000, token);
+            await Task.Delay(3000, token);
         }
     }
 

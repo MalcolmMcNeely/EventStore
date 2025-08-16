@@ -22,8 +22,11 @@
 
 @code {
     readonly CancellationTokenSource _cancellationTokenSource = new();
+
     List<EventStreamEntity> Events { get; set; } = new();
     List<CommandEntity> Commands { get; set; } = new();
+    DateTime _lastPoll = DateTime.MinValue;
+
     EventStoreTable? Table1 { get; set; }
     EventStoreTable? Table2 { get; set; }
     EventStoreTable? Table3 { get; set; }
@@ -40,14 +43,24 @@
     {
         while (!token.IsCancellationRequested)
         {
-            var newEvents = await EventService.GetEventsSince(Events.Count, token).ConfigureAwait(false);
-            var newCommands = await CommandService.GetCommandsSince(Commands.Count, token).ConfigureAwait(false);
-
             await InvokeAsync(async () =>
             {
+                var newEvents = await EventService.GetEventsSince(_lastPoll, token);
+                var newCommands = await CommandService.GetCommandsSince(_lastPoll, token);
+
+                _lastPoll = new[]
+                    {
+                        newEvents.LastOrDefault()?.TimeStamp,
+                        newCommands.LastOrDefault()?.TimeStamp
+                    }
+                    .Where(t => t.HasValue)
+                    .Max() ?? _lastPoll;
+
                 Events.AddRange(newEvents);
                 Commands.AddRange(newCommands);
+
                 StateHasChanged();
+
                 await Table1?.ScrollToBottomAsync()!;
                 await Table2?.ScrollToBottomAsync()!;
                 await Table3?.ScrollToBottomAsync()!;

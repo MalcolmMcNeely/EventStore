@@ -11,16 +11,16 @@
 <MudSnackbarProvider/>
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                       OnClick="@((e) => DrawerToggle())"/>
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        @* <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" *@
+        @*                OnClick="@((e) => DrawerToggle())"/> *@
+        <MudText Typo="Typo.h4" Class="ml-3">Eventstore Dashboard</MudText>
         <MudSpacer/>
-        <MudText Align="Align.Center" Typo="Typo.h4">Traffic Light is:
+        <MudText Align="Align.Center" Typo="Typo.h5">Traffic Light is:
             <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@TrafficLightColour"/>
         </MudText>
         <MudSpacer/>
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle"/>
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/>
+        @* <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/> *@
     </MudAppBar>
     @* <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2"> *@
     @*     <NavMenu/> *@
@@ -125,16 +125,20 @@
     {
         while (!token.IsCancellationRequested)
         {
-            var projection = await Repository.LoadAsync(nameof(TrafficLightProjection), token);
-
-            await InvokeAsync(() =>
+            await InvokeAsync(async () =>
             {
-                TrafficLightColour = GetColor(projection.Colour);
-                StateHasChanged();
-                return Task.CompletedTask;
+                var projection = await Repository.LoadAsync(nameof(TrafficLightProjection), token);
+                var currentColor = GetColor(projection.Colour);
+
+                if (currentColor != TrafficLightColour)
+                {
+                    Console.WriteLine($"{projection.Colour}");
+                    TrafficLightColour = currentColor;
+                    StateHasChanged();
+                }
             });
 
-            await Task.Delay(1000, token);
+            await Task.Delay(500, token);
         }
     }
 

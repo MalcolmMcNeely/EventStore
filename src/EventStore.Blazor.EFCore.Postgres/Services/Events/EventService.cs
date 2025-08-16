@@ -6,15 +6,14 @@ namespace EventStore.Blazor.EFCore.Postgres.Services.Events;
 
 public class EventService(IServiceScopeFactory serviceScopeFactory) : IEventService
 {
-    public async Task<List<EventStreamEntity>> GetEventsSince(int index, CancellationToken token)
+    public async Task<List<EventStreamEntity>> GetEventsSince(DateTime time, CancellationToken token)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
         return await scopedDbContext.EventStreams
-            .OrderBy(x => x.Key)
-            .ThenBy(x => x.RowKey)
-            .Skip(index)
+            .Where(x => x.TimeStamp > time)
+            .OrderBy(x => x.TimeStamp)
             .ToListAsync(cancellationToken: token)
             .ConfigureAwait(false);
     }
