@@ -35,22 +35,6 @@
     </MudStack>
 </div>
 
-<script>
-    window.scrollToBottom = (elementId) => {
-        let elem = document.getElementById(elementId);
-        if (elem) {
-            elem.scrollTop = elem.scrollHeight;
-        }
-    };
-
-    window.scrollToTop = (elementId) => {
-        let elem = document.getElementById(elementId);
-        if (elem) {
-            elem.scrollTop = 0;
-        }
-    };
-</script>
-
 @code {
     [Parameter] public required string TableName { get; set; }
     [Parameter] public required string Stream { get; set; }
