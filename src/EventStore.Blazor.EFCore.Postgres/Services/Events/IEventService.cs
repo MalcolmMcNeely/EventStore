@@ -4,5 +4,5 @@ namespace EventStore.Blazor.EFCore.Postgres.Services.Events;
 
 public interface IEventService
 {
-    Task<List<EventStreamEntity>> GetEventsSince(DateTime time, CancellationToken token = default);
+    Task<(bool HasNewEvents, List<EventStreamEntity> Events)> GetEventsSince(DateTime time, CancellationToken token = default);
 }

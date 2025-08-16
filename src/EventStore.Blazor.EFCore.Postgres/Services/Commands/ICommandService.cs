@@ -4,5 +4,5 @@ namespace EventStore.Blazor.EFCore.Postgres.Services.Commands;
 
 public interface ICommandService
 {
-    public Task<List<CommandEntity>> GetCommandsSince(DateTime time, CancellationToken token = default);
+    Task<(bool HasNewCommands, List<CommandEntity> Commands)> GetCommandsSince(DateTime time, CancellationToken token = default);
 }

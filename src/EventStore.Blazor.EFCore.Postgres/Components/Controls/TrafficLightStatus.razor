@@ -1,0 +1,62 @@
+﻿@using EventStore.Projections
+@using EventStore.SampleApp.Domain
+@using EventStore.SampleApp.Domain.TrafficLights.Projections
+@implements IDisposable
+@inject IProjectionRepository<TrafficLightProjection> Repository
+
+<MudText Align="Align.Center" Typo="Typo.h5">Traffic Light is:
+    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@TrafficLightColour"/>
+</MudText>
+
+@code {
+    Color TrafficLightColour { get; set; }
+
+    readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Task.Run(() => StartPollingAsync(_cancellationTokenSource.Token));
+        }
+    }
+
+    async Task StartPollingAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            await InvokeAsync(async () =>
+            {
+                var projection = await Repository.LoadAsync(nameof(TrafficLightProjection), token);
+                var currentColor = GetColor(projection.Colour);
+
+                if (currentColor != TrafficLightColour)
+                {
+                    Console.WriteLine($"{projection.Colour}");
+                    TrafficLightColour = currentColor;
+                    StateHasChanged();
+                }
+            });
+
+            await Task.Delay(500, token);
+        }
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
+    }
+
+    Color GetColor(Colour properSpelling)
+    {
+        return properSpelling switch
+        {
+            Colour.Red => Color.Error,
+            Colour.Green => Color.Success,
+            Colour.Yellow => Color.Warning,
+            _ => Color.Dark
+        };
+    }
+
+}

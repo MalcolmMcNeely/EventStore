@@ -1,79 +1,53 @@
 ﻿@page "/"
-@implements IDisposable
+@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
 @using EventStore.Blazor.EFCore.Postgres.Components.Controls
-@using EventStore.Blazor.EFCore.Postgres.Services.Commands
 @using EventStore.Blazor.EFCore.Postgres.Services.Events
-@using EventStore.EFCore.Postgres.Commands
 @using EventStore.EFCore.Postgres.Events
 @inject IEventService EventService
-@inject ICommandService CommandService
 
 <PageTitle>Dashboard</PageTitle>
+
+<MudSpacer/>
+<TrafficLightStatus/>
+<MudSpacer/>
 
 <MudPaper Outlined="true">
     <CascadingValue Value="@Events" Name="CEvents">
         <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Start">
-            <EventStoreTable Stream="$All" @ref="Table1"/>
-            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table2"/>
-            <CommandTable Commands="@Commands" @ref="Table3"/>
+            <EventStoreTable Stream="$All" @ref="AllStreamTable"/>
+            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="ProjectionTable"/>
+            <CommandTable/>
         </MudStack>
     </CascadingValue>
 </MudPaper>
 
 @code {
-    readonly CancellationTokenSource _cancellationTokenSource = new();
-
     List<EventStreamEntity> Events { get; set; } = new();
-    List<CommandEntity> Commands { get; set; } = new();
-    DateTime _lastPoll = DateTime.MinValue;
+    EventStoreTable? AllStreamTable { get; set; }
+    EventStoreTable? ProjectionTable { get; set; }
 
-    EventStoreTable? Table1 { get; set; }
-    EventStoreTable? Table2 { get; set; }
-    CommandTable? Table3 { get; set; }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Task.Run(() => StartPollingAsync(_cancellationTokenSource.Token));
-        }
-    }
-
-    async Task StartPollingAsync(CancellationToken token)
+    protected override async Task StartPollingAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {
-            await InvokeAsync(async () =>
+            var (hasNewEvents, newEvents) = await EventService.GetEventsSince(LastPoll, token).ConfigureAwait(false);
+
+            LastPoll = newEvents.LastOrDefault()?.TimeStamp ?? LastPoll;
+
+            if (hasNewEvents)
             {
-                var newEvents = await EventService.GetEventsSince(_lastPoll, token);
-                var newCommands = await CommandService.GetCommandsSince(_lastPoll, token);
-
-                _lastPoll = new[]
-                    {
-                        newEvents.LastOrDefault()?.TimeStamp,
-                        newCommands.LastOrDefault()?.TimeStamp
-                    }
-                    .Where(t => t.HasValue)
-                    .Max() ?? _lastPoll;
-
                 Events.AddRange(newEvents);
-                Commands.AddRange(newCommands);
 
-                StateHasChanged();
-
-                await Table1?.ScrollToBottomAsync()!;
-                await Table2?.ScrollToBottomAsync()!;
-                await Table3?.ScrollToBottomAsync()!;
-            });
+                await InvokeAsync(async () =>
+                {
+                    StateHasChanged();
+                    await AllStreamTable?.ScrollToBottomAsync()!;
+                    await ProjectionTable?.ScrollToBottomAsync()!;
+                });
+            }
 
             await Task.Delay(1000, token);
         }
-    }
-
-    public void Dispose()
-    {
-        _cancellationTokenSource.Cancel();
-        _cancellationTokenSource.Dispose();
     }
 
 }

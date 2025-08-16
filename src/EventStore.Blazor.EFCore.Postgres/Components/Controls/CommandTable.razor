@@ -1,5 +1,8 @@
-﻿@using EventStore.EFCore.Postgres.Commands
-@inject IJSRuntime JS
+﻿@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
+@using EventStore.Blazor.EFCore.Postgres.Services.Commands
+@using EventStore.EFCore.Postgres.Commands
+@inject IJSRuntime Js
+@inject ICommandService CommandService
 
 <div>
     <MudStack>
@@ -52,17 +55,42 @@
 </script>
 
 @code {
-    [Parameter] public List<CommandEntity> Commands { get; set; } = new();
 
     readonly string _containerId = $"commandTable{Guid.NewGuid():N}";
 
-    public async Task ScrollToBottomAsync()
+    List<CommandEntity> Commands { get; set; } = new();
+
+    async Task ScrollToBottomAsync()
     {
-        await JS.InvokeVoidAsync("scrollToBottom", _containerId);
+        await Js.InvokeVoidAsync("scrollToBottom", _containerId);
     }
 
-    public async Task ScrollToTopAsync()
+    async Task ScrollToTopAsync()
     {
-        await JS.InvokeVoidAsync("scrollToTop", _containerId);
+        await Js.InvokeVoidAsync("scrollToTop", _containerId);
     }
+
+    protected override async Task StartPollingAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            var (hasNewCommands, newCommands) = await CommandService.GetCommandsSince(LastPoll, token).ConfigureAwait(false);
+
+            LastPoll = newCommands.LastOrDefault()?.TimeStamp ?? LastPoll;
+
+            if (hasNewCommands)
+            {
+                Commands.AddRange(newCommands);
+
+                await InvokeAsync(async () =>
+                {
+                    StateHasChanged();
+                    await ScrollToBottomAsync();
+                });
+            }
+
+            await Task.Delay(1000, token);
+        }
+    }
+
 }
