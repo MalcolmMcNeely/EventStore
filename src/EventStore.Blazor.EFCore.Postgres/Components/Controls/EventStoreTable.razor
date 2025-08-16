@@ -1,10 +1,10 @@
 ﻿@using EventStore.EFCore.Postgres.Events
-@inject IJSRuntime JS
+@inject IJSRuntime Js
 
 <div>
     <MudStack>
-        <h3>@Stream stream</h3>
-
+        <MudText Typo="Typo.h6">@TableName</MudText>
+        <MudDivider/>
         <MudTable id="@_containerId"
                   Items="@Events.Where(x => x.Key.Equals(Stream))"
                   Dense="true"
@@ -16,10 +16,10 @@
                 <MudTh>Content</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="RowKey">@context.RowKey</MudTd>
-                <MudTd DataLabel="Time">@context.TimeStamp</MudTd>
-                <MudTd DataLabel="EventType">@context.EventType</MudTd>
-                <MudTd DataLabel="Content">@context.Envelope.Body</MudTd>
+                <MudTd>@context.RowKey</MudTd>
+                <MudTd>@context.TimeStamp</MudTd>
+                <MudTd>@context.EventType</MudTd>
+                <MudTd>@context.Envelope.Body</MudTd>
             </RowTemplate>
         </MudTable>
         <MudDivider/>
@@ -52,6 +52,7 @@
 </script>
 
 @code {
+    [Parameter] public required string TableName { get; set; }
     [Parameter] public required string Stream { get; set; }
     [CascadingParameter(Name = "CEvents")] public List<EventStreamEntity> Events { get; set; } = new();
 
@@ -59,11 +60,11 @@
 
     public async Task ScrollToBottomAsync()
     {
-        await JS.InvokeVoidAsync("scrollToBottom", _containerId);
+        await Js.InvokeVoidAsync("scrollToBottom", _containerId);
     }
 
     public async Task ScrollToTopAsync()
     {
-        await JS.InvokeVoidAsync("scrollToTop", _containerId);
+        await Js.InvokeVoidAsync("scrollToTop", _containerId);
     }
 }

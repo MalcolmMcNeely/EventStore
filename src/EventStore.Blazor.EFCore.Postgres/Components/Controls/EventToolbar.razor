@@ -1,0 +1,29 @@
+﻿@using EventStore.Blazor.EFCore.Postgres.BackgroundServices
+@using EventStore.Commands.Dispatching
+@using EventStore.SampleApp.Domain
+@using EventStore.SampleApp.Domain.TrafficLights.Commands
+@inject IChangeColourChannelService ChangeColourChannelService
+@inject ICommandDispatcher CommandDispatcher
+
+<MudStack Row="true" Justify="Justify.Center" Spacing="6">
+    <TrafficLightStatus/>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleAsync">Toggle automatic command dispatching</MudButton>
+    <MudButton Variant="Variant.Filled" Disabled="@(_isAutomatic)" OnClick="@(() => FireCommandAsync(Colour.Red))" Style="background-color: firebrick">Fire red</MudButton>
+    <MudButton Variant="Variant.Filled" Disabled="@(_isAutomatic)" OnClick="@(() => FireCommandAsync(Colour.Yellow))" Style="background-color: darkgoldenrod">Fire yellow</MudButton>
+    <MudButton Variant="Variant.Filled" Disabled="@(_isAutomatic)" OnClick="@(() => FireCommandAsync(Colour.Green))" Style="background-color: green">Fire green</MudButton>
+</MudStack>
+
+@code {
+    bool _isAutomatic = false;
+
+    async Task ToggleAsync()
+    {
+        _isAutomatic = !_isAutomatic;
+        await ChangeColourChannelService.ToggleBackgroundServiceAsync();
+    }
+
+    async Task FireCommandAsync(Colour colour)
+    {
+        await CommandDispatcher.DispatchAsync(new ChangeColour { Colour = colour });
+    }
+}

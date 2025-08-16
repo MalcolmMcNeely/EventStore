@@ -4,9 +4,10 @@
 @implements IDisposable
 @inject IProjectionRepository<TrafficLightProjection> Repository
 
-<MudText Align="Align.Center" Typo="Typo.h5">Traffic Light is:
+<MudStack Row="true" AlignItems="AlignItems.Center">
+    <MudText Align="Align.Center" Typo="Typo.h5">Traffic Light is:</MudText>
     <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@TrafficLightColour"/>
-</MudText>
+</MudStack>
 
 @code {
     Color TrafficLightColour { get; set; }

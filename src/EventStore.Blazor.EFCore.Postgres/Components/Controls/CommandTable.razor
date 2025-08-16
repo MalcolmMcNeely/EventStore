@@ -6,8 +6,8 @@
 
 <div>
     <MudStack>
-        <h3>Command Audit</h3>
-
+        <MudText Typo="Typo.h6">@TableName</MudText>
+        <MudDivider/>
         <MudTable id="@_containerId"
                   Items="@Commands"
                   Dense="true"
@@ -54,6 +54,8 @@
 </script>
 
 @code {
+
+    [Parameter] public required string TableName { get; set; }
 
     readonly string _containerId = $"commandTable{Guid.NewGuid():N}";
 

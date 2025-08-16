@@ -1,34 +1,28 @@
 ﻿@page "/"
 @inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
-@using EventStore.Blazor.EFCore.Postgres.BackgroundServices
 @using EventStore.Blazor.EFCore.Postgres.Components.Controls
 @using EventStore.Blazor.EFCore.Postgres.Services.Events
 @using EventStore.EFCore.Postgres.Events
 @inject IEventService EventService
-@inject IChangeColourChannelService ChangeColourChannelService
 
 <PageTitle>Dashboard</PageTitle>
-
-<MudSpacer/>
-<TrafficLightStatus/>
-<MudSpacer/>
 
 <MudPaper Outlined="true">
     <CascadingValue Value="@Events" Name="CEvents">
         <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Start">
-            <EventStoreTable Stream="$All" @ref="AllStreamTable"/>
-            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="ProjectionTable"/>
-            <CommandTable/>
+            <EventStoreTable TableName="$All stream" Stream="$All" @ref="AllStreamTable"/>
+            <EventStoreTable TableName="Projection stream" Stream="projection-TrafficLightProjection" @ref="ProjectionTable"/>
+            <EventStoreTable TableName="Aggregate root stream" Stream="TrafficLight" @ref="AggregateRootTable"/>
+            <CommandTable TableName="Command Audit"/>
         </MudStack>
     </CascadingValue>
 </MudPaper>
-
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleAsync">Primary</MudButton>
 
 @code {
     List<EventStreamEntity> Events { get; set; } = new();
     EventStoreTable? AllStreamTable { get; set; }
     EventStoreTable? ProjectionTable { get; set; }
+    EventStoreTable? AggregateRootTable { get; set; }
 
     protected override async Task StartPollingAsync(CancellationToken token)
     {
@@ -47,16 +41,11 @@
                     StateHasChanged();
                     await AllStreamTable?.ScrollToBottomAsync()!;
                     await ProjectionTable?.ScrollToBottomAsync()!;
+                    await AggregateRootTable?.ScrollToBottomAsync()!;
                 });
             }
 
             await Task.Delay(1000, token);
         }
     }
-
-    async Task ToggleAsync()
-    {
-        await ChangeColourChannelService.ToggleBackgroundServiceAsync();
-    }
-
 }
