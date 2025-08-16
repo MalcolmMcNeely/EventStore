@@ -32,6 +32,7 @@ public class EventPump(IServiceScopeFactory scopeFactory) : IEventPump
         }
 
         cursor.LastSeenEvent += eventCount;
+        cursor.Timestamp = DateTime.UtcNow;
 
         await scopedDbContext.SaveChangesAsync(token).ConfigureAwait(false);
         await scopedCursorFactory.SaveCursorAsync(cursor, token).ConfigureAwait(false);

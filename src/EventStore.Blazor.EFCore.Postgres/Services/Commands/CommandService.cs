@@ -11,6 +11,11 @@ public class CommandService(IServiceScopeFactory serviceScopeFactory) : ICommand
         using var scope = serviceScopeFactory.CreateScope();
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
-        return await scopedDbContext.Commands.Where(x => x.RowKey > index).ToListAsync(cancellationToken: token).ConfigureAwait(false);
+        return await scopedDbContext.Commands
+            .OrderBy(x => x.Key)
+            .ThenBy(x => x.RowKey)
+            .Skip(index)
+            .ToListAsync(cancellationToken: token)
+            .ConfigureAwait(false);
     }
 }

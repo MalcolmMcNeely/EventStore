@@ -11,6 +11,11 @@ public class EventService(IServiceScopeFactory serviceScopeFactory) : IEventServ
         using var scope = serviceScopeFactory.CreateScope();
         var scopedDbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
 
-        return await scopedDbContext.EventStreams.Skip(index).ToListAsync(cancellationToken: token).ConfigureAwait(false);
+        return await scopedDbContext.EventStreams
+            .OrderBy(x => x.Key)
+            .ThenBy(x => x.RowKey)
+            .Skip(index)
+            .ToListAsync(cancellationToken: token)
+            .ConfigureAwait(false);
     }
 }

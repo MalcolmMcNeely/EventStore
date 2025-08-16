@@ -4,16 +4,11 @@
 <div>
     <MudStack>
         <h3>@Stream stream</h3>
-        <MudDivider/>
+
         <MudTable id="@_containerId"
                   Items="@Events.Where(x => x.Key.Equals(Stream))"
-                  Hover="true"
-                  FixedHeader="true"
                   Dense="true"
-                  Breakpoint="Breakpoint.Sm"
-                  Loading="@Loading"
-                  LoadingProgressColor="Color.Info"
-                  @ref="TableRef">
+                  FixedHeader="true">
             <HeaderContent>
                 <MudTh>RowKey</MudTh>
                 <MudTh>Time</MudTh>
@@ -28,9 +23,15 @@
             </RowTemplate>
         </MudTable>
         <MudDivider/>
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward" OnClick="ScrollToBottomAsync">
-            Scroll to bottom
-        </MudButton>
+        <MudStack Row="true" StretchItems="StretchItems.All">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward"
+                       OnClick="ScrollToBottomAsync">
+                Scroll to bottom
+            </MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowUpward" OnClick="ScrollToTopAsync">
+                Scroll to top
+            </MudButton>
+        </MudStack>
     </MudStack>
 </div>
 
@@ -41,19 +42,29 @@
             elem.scrollTop = elem.scrollHeight;
         }
     };
+
+    window.scrollToTop = (elementId) => {
+        let elem = document.getElementById(elementId);
+        if (elem) {
+            elem.scrollTop = 0;
+        }
+    };
 </script>
 
 @code {
     [Parameter] public required string Stream { get; set; }
     [CascadingParameter(Name = "CEvents")] public List<EventStreamEntity> Events { get; set; } = new();
-    public bool Loading { get; }
-    public MudTable<EventStreamEntity> TableRef { get; set; }
 
     readonly string _containerId = $"eventStoreTable{Guid.NewGuid():N}";
 
     public async Task ScrollToBottomAsync()
     {
         await JS.InvokeVoidAsync("scrollToBottom", _containerId);
+    }
+
+    public async Task ScrollToTopAsync()
+    {
+        await JS.InvokeVoidAsync("scrollToTop", _containerId);
     }
 
 }
