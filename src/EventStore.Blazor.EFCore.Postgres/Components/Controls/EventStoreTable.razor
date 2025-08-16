@@ -1,34 +1,38 @@
 ﻿@using EventStore.EFCore.Postgres.Events
 @inject IJSRuntime JS
 
-<h3>@Stream stream</h3>
-
-<div id="@_containerId" style="height: 400px; overflow-y: auto;">
-    <MudTable Items="@Events.Where(x => x.Key.Equals(Stream))"
-              Hover="true"
-              FixedHeader="true"
-              Dense="true"
-              Breakpoint="Breakpoint.Sm"
-              Loading="@Loading"
-              LoadingProgressColor="Color.Info">
-        <HeaderContent>
-            <MudTh>RowKey</MudTh>
-            <MudTh>Time</MudTh>
-            <MudTh>EventType</MudTh>
-            <MudTh>Content</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="RowKey">@context.RowKey</MudTd>
-            <MudTd DataLabel="Time">@context.TimeStamp</MudTd>
-            <MudTd DataLabel="EventType">@context.EventType</MudTd>
-            <MudTd DataLabel="Content">@context.Envelope.Body</MudTd>
-        </RowTemplate>
-    </MudTable>
+<div>
+    <MudStack>
+        <h3>@Stream stream</h3>
+        <MudDivider/>
+        <MudTable id="@_containerId"
+                  Items="@Events.Where(x => x.Key.Equals(Stream))"
+                  Hover="true"
+                  FixedHeader="true"
+                  Dense="true"
+                  Breakpoint="Breakpoint.Sm"
+                  Loading="@Loading"
+                  LoadingProgressColor="Color.Info"
+                  @ref="TableRef">
+            <HeaderContent>
+                <MudTh>RowKey</MudTh>
+                <MudTh>Time</MudTh>
+                <MudTh>EventType</MudTh>
+                <MudTh>Content</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="RowKey">@context.RowKey</MudTd>
+                <MudTd DataLabel="Time">@context.TimeStamp</MudTd>
+                <MudTd DataLabel="EventType">@context.EventType</MudTd>
+                <MudTd DataLabel="Content">@context.Envelope.Body</MudTd>
+            </RowTemplate>
+        </MudTable>
+        <MudDivider/>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward" OnClick="ScrollToBottomAsync">
+            Scroll to bottom
+        </MudButton>
+    </MudStack>
 </div>
-
-<MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward" OnClick="ScrollToBottomAsync">
-    Scroll to bottom
-</MudButton>
 
 <script>
     window.scrollToBottom = (elementId) => {
@@ -43,6 +47,8 @@
     [Parameter] public required string Stream { get; set; }
     [CascadingParameter(Name = "CEvents")] public List<EventStreamEntity> Events { get; set; } = new();
     public bool Loading { get; }
+    public MudTable<EventStreamEntity> TableRef { get; set; }
+
     readonly string _containerId = $"eventStoreTable{Guid.NewGuid():N}";
 
     public async Task ScrollToBottomAsync()

@@ -10,11 +10,15 @@
 
 <PageTitle>Dashboard</PageTitle>
 
-<CascadingValue Value="@Events" Name="CEvents">
-    <EventStoreTable Stream="$All" @ref="Table1"/>
-    <EventStoreTable Stream="TrafficLight" @ref="Table2"/>
-    <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table3"/>
-</CascadingValue>
+<MudPaper Outlined="true">
+    <CascadingValue Value="@Events" Name="CEvents">
+        <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Start">
+            <EventStoreTable Stream="$All" @ref="Table1"/>
+            <EventStoreTable Stream="TrafficLight" @ref="Table2"/>
+            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table3"/>
+        </MudStack>
+    </CascadingValue>
+</MudPaper>
 
 @code {
     readonly CancellationTokenSource _cancellationTokenSource = new();
@@ -58,4 +62,5 @@
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
     }
+
 }
