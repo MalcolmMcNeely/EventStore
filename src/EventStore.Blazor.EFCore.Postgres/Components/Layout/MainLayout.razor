@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using EventStore.Projections
+@using EventStore.SampleApp.Domain
+@using EventStore.SampleApp.Domain.TrafficLights.Projections
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject IProjectionRepository<TrafficLightProjection> Repository
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode"/>
 <MudPopoverProvider/>
@@ -6,8 +11,13 @@
 <MudSnackbarProvider/>
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                       OnClick="@((e) => DrawerToggle())"/>
         <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudSpacer/>
+        <MudText Align="Align.Center" Typo="Typo.h4">Traffic Light is:
+            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@TrafficLightColour"/>
+        </MudText>
         <MudSpacer/>
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle"/>
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/>
@@ -28,9 +38,13 @@
 </div>
 
 @code {
-    private bool _drawerOpen = true;
-    private bool _isDarkMode = true;
-    private MudTheme? _theme = null;
+    public Color TrafficLightColour { get; set; }
+
+    readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    bool _drawerOpen = true;
+    bool _isDarkMode = true;
+    MudTheme? _theme = null;
 
     protected override void OnInitialized()
     {
@@ -42,6 +56,14 @@
             PaletteDark = _darkPalette,
             LayoutProperties = new LayoutProperties()
         };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Task.Run(() => StartPollingAsync(_cancellationTokenSource.Token));
+        }
     }
 
     private void DrawerToggle()
@@ -98,5 +120,39 @@
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,
     };
+
+    async Task StartPollingAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            var projection = await Repository.LoadAsync(nameof(TrafficLightProjection), token);
+
+            await InvokeAsync(() =>
+            {
+                TrafficLightColour = GetColor(projection.Colour);
+                StateHasChanged();
+                return Task.CompletedTask;
+            });
+
+            await Task.Delay(1000, token);
+        }
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
+    }
+
+    Color GetColor(Colour properSpelling)
+    {
+        return properSpelling switch
+        {
+            Colour.Red => Color.Error,
+            Colour.Green => Color.Success,
+            Colour.Yellow => Color.Warning,
+            _ => Color.Dark
+        };
+    }
 
 }

@@ -13,7 +13,22 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\EventStore.EFCore.Postgres\EventStore.EFCore.Postgres.csproj" />
-      <ProjectReference Include="..\EventStore.SampleApp.Domain\EventStore.SampleApp.Domain.csproj" />
+        <ProjectReference Include="..\EventStore.EFCore.Postgres\EventStore.EFCore.Postgres.csproj"/>
+        <ProjectReference Include="..\EventStore.SampleApp.Domain\EventStore.SampleApp.Domain.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>
