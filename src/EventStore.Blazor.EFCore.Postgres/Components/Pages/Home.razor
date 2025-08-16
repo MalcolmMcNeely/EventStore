@@ -1,9 +1,11 @@
 ﻿@page "/"
 @inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
+@using EventStore.Blazor.EFCore.Postgres.BackgroundServices
 @using EventStore.Blazor.EFCore.Postgres.Components.Controls
 @using EventStore.Blazor.EFCore.Postgres.Services.Events
 @using EventStore.EFCore.Postgres.Events
 @inject IEventService EventService
+@inject IChangeColourChannelService ChangeColourChannelService
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -20,6 +22,8 @@
         </MudStack>
     </CascadingValue>
 </MudPaper>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleAsync">Primary</MudButton>
 
 @code {
     List<EventStreamEntity> Events { get; set; } = new();
@@ -48,6 +52,11 @@
 
             await Task.Delay(1000, token);
         }
+    }
+
+    async Task ToggleAsync()
+    {
+        await ChangeColourChannelService.ToggleBackgroundServiceAsync();
     }
 
 }
