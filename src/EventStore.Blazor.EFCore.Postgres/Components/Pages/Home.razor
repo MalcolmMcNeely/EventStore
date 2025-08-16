@@ -14,8 +14,8 @@
     <CascadingValue Value="@Events" Name="CEvents">
         <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Start">
             <EventStoreTable Stream="$All" @ref="Table1"/>
-            <EventStoreTable Stream="TrafficLight" @ref="Table2"/>
-            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table3"/>
+            <EventStoreTable Stream="projection-TrafficLightProjection" @ref="Table2"/>
+            <CommandTable Commands="@Commands" @ref="Table3"/>
         </MudStack>
     </CascadingValue>
 </MudPaper>
@@ -29,7 +29,7 @@
 
     EventStoreTable? Table1 { get; set; }
     EventStoreTable? Table2 { get; set; }
-    EventStoreTable? Table3 { get; set; }
+    CommandTable? Table3 { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {

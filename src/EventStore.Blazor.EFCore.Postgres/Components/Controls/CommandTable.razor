@@ -1,25 +1,25 @@
-﻿@using EventStore.EFCore.Postgres.Events
+﻿@using EventStore.EFCore.Postgres.Commands
 @inject IJSRuntime JS
 
 <div>
     <MudStack>
-        <h3>@Stream stream</h3>
+        <h3>Command Audit</h3>
 
         <MudTable id="@_containerId"
-                  Items="@Events.Where(x => x.Key.Equals(Stream))"
+                  Items="@Commands"
                   Dense="true"
                   FixedHeader="true">
             <HeaderContent>
                 <MudTh>RowKey</MudTh>
                 <MudTh>Time</MudTh>
-                <MudTh>EventType</MudTh>
+                <MudTh>CommandType</MudTh>
                 <MudTh>Content</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="RowKey">@context.RowKey</MudTd>
                 <MudTd DataLabel="Time">@context.TimeStamp</MudTd>
-                <MudTd DataLabel="EventType">@context.EventType</MudTd>
-                <MudTd DataLabel="Content">@context.Envelope.Body</MudTd>
+                <MudTd DataLabel="CommandType">@context.CommandType</MudTd>
+                <MudTd DataLabel="Content">@context.Content</MudTd>
             </RowTemplate>
         </MudTable>
         <MudDivider/>
@@ -52,10 +52,9 @@
 </script>
 
 @code {
-    [Parameter] public required string Stream { get; set; }
-    [CascadingParameter(Name = "CEvents")] public List<EventStreamEntity> Events { get; set; } = new();
+    [Parameter] public List<CommandEntity> Commands { get; set; } = new();
 
-    readonly string _containerId = $"eventStoreTable{Guid.NewGuid():N}";
+    readonly string _containerId = $"commandTable{Guid.NewGuid():N}";
 
     public async Task ScrollToBottomAsync()
     {
