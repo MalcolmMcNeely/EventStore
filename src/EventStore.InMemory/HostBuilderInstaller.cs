@@ -1,7 +1,9 @@
 ﻿using EventStore.AggregateRoots;
+using EventStore.Commands.Dispatching;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 using EventStore.InMemory.AggregateRoots;
+using EventStore.InMemory.Commands;
 using EventStore.InMemory.Events.Streams;
 using EventStore.InMemory.Events.Transport;
 using EventStore.InMemory.Projections;
@@ -16,6 +18,7 @@ public static class HostBuilderInstaller
     public static void AddInMemoryServices(this IHostApplicationBuilder hostBuilder)
     {
         hostBuilder.Services.AddSingleton(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+        hostBuilder.Services.AddSingleton<ICommandAudit, CommandAudit>();
         hostBuilder.Services.AddSingleton<IEventStreamFactory, NullEventStreamFactory>();
         hostBuilder.Services.AddSingleton<IEventBroadcaster, EventBroadcaster>();
         hostBuilder.Services.AddSingleton<IEventPump, EventPump>();
