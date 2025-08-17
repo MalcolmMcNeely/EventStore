@@ -26,4 +26,19 @@ public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 
         return new EventStoreDbContext(optionsBuilder.Options, assemblies);
     }
+
+    public void EnsureDatabaseIsMigrated(string connectionString)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<EventStoreDbContext>();
+        optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly(typeof(DbContextFactory).Assembly.GetName().Name));
+
+        var assemblies = new[]
+        {
+            typeof(AppDomainNamespace).Assembly,
+            typeof(EventStoreDbContext).Assembly
+        };
+
+        var dbContext = new EventStoreDbContext(optionsBuilder.Options, assemblies);
+        dbContext.Database.Migrate();
+    }
 }

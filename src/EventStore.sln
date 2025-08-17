@@ -18,12 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleApps", "SampleApps", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.SampleApp.InMemory", "EventStore.SampleApp.InMemory\EventStore.SampleApp.InMemory.csproj", "{42B4E49D-2C66-4958-82FA-6193A53E5E83}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{3B696339-044C-4840-AAD8-7F26BCE69817}"
-	ProjectSection(SolutionItems) = preProject
-		..\README.md = ..\README.md
-		..\Notes.md = ..\Notes.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Testing", "EventStore.Testing\EventStore.Testing.csproj", "{3CCA0FD3-74E7-4E1F-B70C-15BABEB2823D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.InMemory.Tests", "EventStore.InMemory.Tests\EventStore.InMemory.Tests.csproj", "{6D6CA516-9572-47ED-B6E3-AD81CBBEC98D}"
@@ -37,6 +31,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.EFCore.Postgres.Tests", "EventStore.EFCore.Postgres.Tests\EventStore.EFCore.Postgres.Tests.csproj", "{F9F49ED9-3E3B-42C6-91FA-E188D7C3D6E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.Blazor.EFCore.Postgres", "EventStore.Blazor.EFCore.Postgres\EventStore.Blazor.EFCore.Postgres.csproj", "{91DE1690-DDFA-4FE6-8243-C3683DED05E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7D1A96E5-F86C-483A-8947-E3C788B83637}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+		..\Notes.md = ..\Notes.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,5 @@
 using EventStore;
+using EventStore.Blazor.EFCore.Postgres;
 using EventStore.Blazor.EFCore.Postgres.BackgroundServices;
 using MudBlazor.Services;
 using EventStore.Blazor.EFCore.Postgres.Components;
@@ -11,7 +12,6 @@ using EventStore.Projections;
 using EventStore.SampleApp.Domain;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
-using ChangeColourBackgroundService = EventStore.Blazor.EFCore.Postgres.BackgroundServices.ChangeColourBackgroundService;
 
 var builder = WebApplication.CreateBuilder(args);
 var databaseConnectionString = builder.Configuration["ConnectionStrings:Postgres"]!;
@@ -35,11 +35,11 @@ builder.AddPostgresServices(databaseConnectionString, typeof(AppDomainNamespace)
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+new DbContextFactory().EnsureDatabaseIsMigrated(databaseConnectionString);
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

@@ -1,0 +1,24 @@
+﻿services:
+  database:
+    image: postgres
+    container_name: eventstore.blazor.database
+    environment:
+      - POSTGRES_DB=EventStore
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+
+  blazor:
+    image: eventstore.blazor
+    container_name: eventstore.blazor.app
+    depends_on:
+      - database
+    build:
+      context: .
+      dockerfile: EventStore.Blazor.EFCore.Postgres/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Postgres=Server=database;Port=5432;Database=EventStore;User ID=postgres;Password=password;
+    ports:
+      - 5256:80
