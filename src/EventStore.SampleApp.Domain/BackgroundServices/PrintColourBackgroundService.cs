@@ -3,7 +3,7 @@ using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EventStore.SampleApp.Domain;
+namespace EventStore.SampleApp.Domain.BackgroundServices;
 
 public class PrintColourBackgroundService(IServiceProvider serviceProvider) : BackgroundService
 {

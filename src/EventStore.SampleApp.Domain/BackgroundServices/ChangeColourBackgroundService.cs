@@ -2,7 +2,7 @@
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using Microsoft.Extensions.Hosting;
 
-namespace EventStore.SampleApp.Domain;
+namespace EventStore.SampleApp.Domain.BackgroundServices;
 
 public class ChangeColourBackgroundService(ICommandDispatcher commandDispatcher) : BackgroundService
 {

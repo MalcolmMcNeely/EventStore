@@ -5,6 +5,7 @@ using EventStore.Commands;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.SampleApp.Domain;
+using EventStore.SampleApp.Domain.BackgroundServices;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
