@@ -9,6 +9,7 @@ using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Defaults = EventStore.Azure.Defaults;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 

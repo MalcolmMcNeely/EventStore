@@ -1,5 +1,4 @@
 ﻿using EventStore.AggregateRoots;
-using EventStore.Events;
 
 namespace EventStore.Commands.Transactions;
 
@@ -43,14 +42,7 @@ public class UnitOfWork<T> where T : AggregateRoot, new()
 
             while (currentRetry < _retryOptions.MaxRetries)
             {
-                if (_retryOptions is ExponentialUnitOfWorkRetryOptions exponentialUnitOfWorkRetryOptions)
-                {
-                    await Task.Delay(_retryOptions.RetryInterval * currentRetry * exponentialUnitOfWorkRetryOptions.Exponential, token).ConfigureAwait(false);
-                }
-                else
-                {
-                    await Task.Delay(_retryOptions.RetryInterval, token).ConfigureAwait(false);
-                }
+                await Task.Delay(_retryOptions.GetDelay(currentRetry), token).ConfigureAwait(false);
 
                 entity = await LoadAndMergeAsync().ConfigureAwait(false);
 

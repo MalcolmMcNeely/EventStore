@@ -1,4 +1,6 @@
-﻿using EventStore.AggregateRoots;
+﻿using Azure;
+using Azure.Storage.Blobs.Models;
+using EventStore.AggregateRoots;
 using EventStore.Azure.AggegateRoots;
 using EventStore.Azure.Azure;
 using EventStore.Azure.Commands;
@@ -13,6 +15,9 @@ using EventStore.Events.Transport;
 using EventStore.Projections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
+using Polly.Fallback;
+using Polly.Retry;
 
 namespace EventStore.Azure;
 
@@ -39,5 +44,17 @@ public static class HostBuilderInstaller
 
         hostBuilder.Services.AddSingleton<ProjectionRebuilder>();
         hostBuilder.Services.AddSingleton(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
+
+        hostBuilder.Services.AddResiliencePipeline(Defaults.Resilience.DefaultAzurePipeline, x =>
+        {
+            x.AddRetry(new RetryStrategyOptions
+            {
+                ShouldHandle = new PredicateBuilder().Handle<RequestFailedException>(ex => ex.ErrorCode == BlobErrorCode.ConditionNotMet),
+                Delay = TimeSpan.FromMilliseconds(100),
+                MaxRetryAttempts = 2,
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true,
+            });
+        });
     }
 }

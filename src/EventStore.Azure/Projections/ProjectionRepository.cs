@@ -5,12 +5,16 @@ using Azure.Storage.Blobs.Models;
 using EventStore.Azure.Azure;
 using EventStore.Azure.Extensions;
 using EventStore.Projections;
+using Polly;
+using Polly.Registry;
+using Polly.Retry;
 
 namespace EventStore.Azure.Projections;
 
-public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder) : IProjectionRepository<T>  where T : IProjection, new()
+public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder, ResiliencePipelineProvider<string> resiliencePipelineProvider) : IProjectionRepository<T>  where T : IProjection, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
+    readonly ResiliencePipeline _pipeline = resiliencePipelineProvider.GetPipeline(Defaults.Resilience.DefaultAzurePipeline);
 
     public async Task<T> LoadAsync(string key, CancellationToken token = default)
     {
@@ -28,15 +32,15 @@ public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuil
 
         try
         {
-            var blobStream = await blobClient.OpenReadAsync(cancellationToken: token).ConfigureAwait(false);
+            var blobStream = await _pipeline.ExecuteAsync(
+                static async (bc, ct) => await bc.OpenReadAsync(cancellationToken: ct).ConfigureAwait(false), blobClient, token)
+                .ConfigureAwait(false);
             return JsonSerializer.Deserialize<T>(blobStream)!;
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.ConditionNotMet)
         {
-            await Task.Delay(50, token).ConfigureAwait(false); // TODO: backoff, revisit Retry logic
+            return new T();
         }
-
-        return new T();
     }
 
     public async Task SaveAsync(T projection, CancellationToken token = default)

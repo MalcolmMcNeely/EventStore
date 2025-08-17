@@ -55,5 +55,10 @@ public static class Defaults
         public const string EventStreamRowPrefix = "A";
         public const string MetadataRowPrefix = "$";
     }
+
+    public static class Resilience
+    {
+        public const string DefaultAzurePipeline = "default-azure-pipeline";
+    }
 }
 

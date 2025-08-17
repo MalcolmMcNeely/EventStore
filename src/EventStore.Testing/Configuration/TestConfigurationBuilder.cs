@@ -9,7 +9,6 @@ using EventStore.Testing.SimpleTestDomain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Defaults = EventStore.Azure.Defaults;
 
 namespace EventStore.Testing.Configuration;
 
@@ -46,7 +45,7 @@ public class TestConfigurationBuilder
     {
         Mode = TestMode.Azure;
         _hostBuilder.AddCoreServices();
-        _hostBuilder.AddAzureServices(Defaults.Azure.AzuriteConnectionString);
+        _hostBuilder.AddAzureServices(EventStore.Azure.Defaults.Azure.AzuriteConnectionString);
         return this;
     }
 
