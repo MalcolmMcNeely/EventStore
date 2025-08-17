@@ -19,10 +19,10 @@
                 <MudTh>Content</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="RowKey">@context.RowKey</MudTd>
-                <MudTd DataLabel="Time">@context.TimeStamp</MudTd>
-                <MudTd DataLabel="CommandType">@context.CommandType</MudTd>
-                <MudTd DataLabel="Content">@context.Content</MudTd>
+                <MudTd>@context.RowKey</MudTd>
+                <MudTd>@context.TimeStamp.ToString("MM-dd HH:mm:ss")</MudTd>
+                <MudTd>@context.CommandType</MudTd>
+                <MudTd>@context.Content</MudTd>
             </RowTemplate>
         </MudTable>
         <MudDivider/>

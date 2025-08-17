@@ -17,7 +17,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.RowKey</MudTd>
-                <MudTd>@context.TimeStamp</MudTd>
+                <MudTd>@context.TimeStamp.ToString("MM-dd HH:mm:ss")</MudTd>
                 <MudTd>@context.EventType</MudTd>
                 <MudTd>@context.Envelope.Body</MudTd>
             </RowTemplate>
