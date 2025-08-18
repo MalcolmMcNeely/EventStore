@@ -9,7 +9,7 @@ public class TrafficLightProjectionBuilder : ProjectionBuilder<TrafficLightProje
 {
     public TrafficLightProjectionBuilder(IProjectionRepository<TrafficLightProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
     {
-        WithKey(nameof(TrafficLightProjection));
+        WithDefaultKey(nameof(TrafficLightProjection));
         Handles<ColourChanged>(OnColourChanged);
     }
 

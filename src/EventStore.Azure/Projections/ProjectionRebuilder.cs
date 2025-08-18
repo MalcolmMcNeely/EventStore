@@ -27,7 +27,7 @@ public class ProjectionRebuilder(IEventStreamFactory eventStreamFactory, IServic
 
         await foreach (var @event in events)
         {
-            projectionBuilder.ApplyEventToProjection(projection, @event, token);
+            projectionBuilder.ApplyEventToProjection(projection, @event);
         }
 
         return projection;

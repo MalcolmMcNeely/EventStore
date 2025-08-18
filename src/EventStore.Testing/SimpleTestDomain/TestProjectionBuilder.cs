@@ -8,7 +8,7 @@ public class TestProjectionBuilder : ProjectionBuilder<TestProjection>
 {
     public TestProjectionBuilder(IProjectionRepository<TestProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
     {
-        WithKey(nameof(TestProjection));
+        WithDefaultKey(nameof(TestProjection));
         Handles<TestEvent>(OnEvent);
     }
 

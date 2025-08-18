@@ -8,7 +8,7 @@ TODO List:
 - [x] Also publish events to specific Projection streams
 - [x] Rebuild Projections based on their speicific Projection streams on demand
 - [ ] Rebuild AggregateRoots based on their specific AggregateRoot streams on demand
-- [ ] Key building for projections
+- [x] Key building for projections
 - [ ] Also allow for commands on the message transport ?
 - [ ] Allow for events to be upgraded
 - [x] EF Core implementation

@@ -5,6 +5,7 @@ using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.Testing;
+using EventStore.Testing.SimpleTestDomain;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;
@@ -17,50 +18,23 @@ public class ProjectionBuilderRegistrationTests
     public void Setup()
     {
         _serviceProvider = new ServiceCollection()
-            .AddTransient<IProjectionRepository<ProjectionBuilderRegistrationTestProjection>, ProjectionRepository<ProjectionBuilderRegistrationTestProjection>>()
-            .AddTransient<ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>, ProjectionBuilderRegistrationTestProjectionBuilder>()
-            .AddTransient<IProjection, ProjectionBuilderRegistrationTestProjection>()
+            .AddTransient<IProjectionRepository<TestProjection>, ProjectionRepository<TestProjection>>()
+            .AddTransient<ProjectionBuilder<TestProjection>, TestProjectionBuilder>()
+            .AddTransient<IProjection, TestProjection>()
             .AddSingleton<IEventStreamFactory, NullEventStreamFactory>()
             .BuildServiceProvider();
     }
+
+    [TearDown]
+    public void TearDown() => _serviceProvider.Dispose();
 
     [Test]
     public void it_can_resolve_a_projection_builder()
     {
         var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
         var registration = new ProjectionBuilderRegistration(scopeFactory);
-        var projections = registration.ProjectionBuildersFor(typeof(ProjectionBuilderRegistrationTestEvent));
+        var projections = registration.ProjectionBuildersFor(typeof(TestEvent));
 
         Assert.That(projections, Is.Not.Null);
-    }
-
-    [TearDown]
-    public void TearDown() => _serviceProvider.Dispose();
-
-    class ProjectionBuilderRegistrationTestEvent : IEvent
-    {
-        public string CausationId { get; set; }
-        public required string Message { get; set; }
-    }
-
-    class ProjectionBuilderRegistrationTestProjection : IProjection
-    {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-        public int RowVersion { get; set; }
-        public string? Message { get; set; }
-    }
-
-    class ProjectionBuilderRegistrationTestProjectionBuilder : ProjectionBuilder<ProjectionBuilderRegistrationTestProjection>
-    {
-        public ProjectionBuilderRegistrationTestProjectionBuilder(IProjectionRepository<ProjectionBuilderRegistrationTestProjection> repository,
-            IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
-        {
-            Handles<ProjectionBuilderRegistrationTestEvent>(OnEvent);
-        }
-
-        void OnEvent(ProjectionBuilderRegistrationTestEvent @event, ProjectionBuilderRegistrationTestProjection projection)
-        {
-            projection.Message = @event.Message;
-        }
     }
 }

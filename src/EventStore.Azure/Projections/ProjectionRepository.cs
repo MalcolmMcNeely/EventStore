@@ -7,7 +7,6 @@ using EventStore.Azure.Extensions;
 using EventStore.Projections;
 using Polly;
 using Polly.Registry;
-using Polly.Retry;
 
 namespace EventStore.Azure.Projections;
 

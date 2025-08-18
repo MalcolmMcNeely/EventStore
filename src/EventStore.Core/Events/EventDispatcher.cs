@@ -15,11 +15,8 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory, Lazy<IProjection
 
         foreach (var projectionBuilderType in projectionBuilderTypes)
         {
-            var projectionBuilder = scopedProvider.GetService(projectionBuilderType)!;
-            var applyEventsMethod = projectionBuilderType.GetMethod("ApplyEventAsync");
-
-            var task = (Task)applyEventsMethod!.Invoke(projectionBuilder, [@event, token])!;
-            await task.ConfigureAwait(false);
+            var projectionBuilder = (IProjectionBuilder)scopedProvider.GetRequiredService(projectionBuilderType)!;
+            await projectionBuilder.ApplyEventAsync(@event, token).ConfigureAwait(false);
         }
     }
 }

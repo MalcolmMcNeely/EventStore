@@ -8,20 +8,52 @@ public delegate void ProjectionBuilderEventHandler<in TEvent, in TProjection>(TE
     where TEvent : IEvent
     where TProjection : IProjection;
 
-public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository, IEventStreamFactory eventStreamFactory) where TProjection : IProjection, new()
-{
-    Dictionary<Type, Delegate> Handlers { get; } = new();
-    string Key { get; set; } = string.Empty;
+public delegate string KeyBuilder<in TEvent>(TEvent @event)
+    where TEvent : IEvent;
 
-    protected void WithKey(string key)
+public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProjection> repository, IEventStreamFactory eventStreamFactory) : IProjectionBuilder 
+    where TProjection : IProjection, new()
+{
+    Dictionary<Type, Action<IEvent, TProjection>> Handlers { get; } = new();
+    Dictionary<Type, Func<IEvent, string>> KeyBuilders { get; } = new();
+
+    string? DefaultKey { get; set; }
+
+    protected void WithDefaultKey(string key)
     {
-        Key = key;
+        DefaultKey = key;
     }
 
-    protected void Handles<TEvent>(ProjectionBuilderEventHandler<TEvent, TProjection> eventHandler)
-        where TEvent : IEvent
+    protected void Handles<TEvent>(ProjectionBuilderEventHandler<TEvent, TProjection> handler) where TEvent : IEvent
     {
-        Handlers[typeof(TEvent)] = eventHandler;
+        if (DefaultKey is null)
+        {
+            throw new ProjectionBuilderException($"{typeof(TProjection).Name} builder has no default key");
+        }
+
+        KeyBuilders[typeof(TEvent)] = KeyBuilderWrapper;
+        Handlers[typeof(TEvent)] = HandlerWrapper;
+
+        return;
+
+        string KeyBuilderWrapper(IEvent x) => DefaultKey;
+        void HandlerWrapper(IEvent x, TProjection y) => handler((TEvent)x, y);
+    }
+
+    protected void Handles<TEvent>(KeyBuilder<TEvent> keyBuilder, ProjectionBuilderEventHandler<TEvent, TProjection> handler) where TEvent : IEvent
+    {
+        if (DefaultKey is not null)
+        {
+            throw new ProjectionBuilderException($"{typeof(TProjection).Name} builder has no default key");
+        }
+
+        KeyBuilders[typeof(TEvent)] = KeyBuilderWrapper;
+        Handlers[typeof(TEvent)] = HandlerWrapper;
+
+        return;
+
+        string KeyBuilderWrapper(IEvent x) => keyBuilder((TEvent)x);
+        void HandlerWrapper(IEvent x, TProjection y) => handler((TEvent)x, y);
     }
 
     public IEnumerable<Type> GetEventTypes()
@@ -29,34 +61,45 @@ public abstract class ProjectionBuilder<TProjection>(IProjectionRepository<TProj
         return Handlers.Keys;
     }
 
-    public async Task ApplyEventAsync(IEvent @event, CancellationToken token)
+    public async Task ApplyEventAsync<TEvent>(TEvent @event, CancellationToken token) where TEvent : IEvent
     {
-        var key = Key; // need options for key building
-        var projection = await repository.LoadAsync(key, token);
+        var key = GetKeyFor(@event);
+        var projection = await repository.LoadAsync(key, token).ConfigureAwait(false);
 
-        InvokeHandler(@event.GetType(), @event, projection);
+        InvokeHandlerFor(@event, projection);
 
-        var eventStream = eventStreamFactory.For($"projection-{Key}");
+        var eventStream = eventStreamFactory.For($"projection-{key}");
         await eventStream.PublishAsync(@event, token).ConfigureAwait(false);
 
         await repository.SaveAsync(projection, token).ConfigureAwait(false);
     }
 
-    public void ApplyEventToProjection(TProjection projection, IEvent @event, CancellationToken token)
+    public void ApplyEventToProjection(TProjection projection, IEvent @event)
     {
-        InvokeHandler(@event.GetType(), @event, projection);
+        InvokeHandlerFor(@event, projection);
     }
 
-    void InvokeHandler<TEvent>(Type type, TEvent @event, TProjection projection)
+    string GetKeyFor<TEvent>(TEvent @event) where TEvent : IEvent
     {
-        if (Handlers.TryGetValue(type, out var @delegate))
+        var eventType = @event.GetType();
+
+        if (!KeyBuilders.TryGetValue(eventType, out var keyBuilder))
         {
-            var invokeMethod = @delegate.GetType().GetMethod("Invoke");
-            invokeMethod!.Invoke(@delegate, [@event, projection]);
+            throw new ProjectionBuilderException($"{typeof(TProjection).Name} builder does not have key builder for event {eventType.Name}");
         }
-        else
+
+        return keyBuilder(@event);
+    }
+
+    void InvokeHandlerFor<TEvent>(TEvent @event, TProjection projection) where TEvent : IEvent
+    {
+        var eventType = @event.GetType();
+
+        if (!Handlers.TryGetValue(eventType, out var handler))
         {
-            throw new ProjectionBuilderException($"No builder registered for event type {typeof(TEvent).Name}");
+            throw new ProjectionBuilderException($"{typeof(TProjection).Name} builder does not have handler for event {eventType.Name}");
         }
+
+        handler(@event, projection);
     }
 }
