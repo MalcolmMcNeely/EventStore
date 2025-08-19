@@ -4,6 +4,6 @@ namespace EventStore.Testing.TestDomains.SimpleTestDomain;
 
 public class TestCommand : ICommand
 {
-    public required string CausationId { get; set; }
+    public string CausationId { get; set; } = Guid.NewGuid().ToString();
     public required string Data { get; set; }
 }
