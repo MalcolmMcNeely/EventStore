@@ -10,7 +10,7 @@ using Polly.Registry;
 
 namespace EventStore.Azure.Projections;
 
-public class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder, ResiliencePipelineProvider<string> resiliencePipelineProvider) : IProjectionRepository<T>  where T : IProjection, new()
+public sealed class ProjectionRepository<T>(AzureService azureService, ProjectionRebuilder projectionRebuilder, ResiliencePipelineProvider<string> resiliencePipelineProvider) : IProjectionRepository<T>  where T : IProjection, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
     readonly ResiliencePipeline _pipeline = resiliencePipelineProvider.GetPipeline(Defaults.Resilience.DefaultAzurePipeline);

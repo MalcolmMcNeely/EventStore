@@ -16,4 +16,9 @@ public static class Defaults
     {
         public const string AllStreamPartition = "$All";
     }
+
+    public static class Resilience
+    {
+        public const string DefaultEFPipeline = "default-ef-pipeline";
+    }
 }

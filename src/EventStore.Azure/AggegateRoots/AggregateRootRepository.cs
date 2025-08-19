@@ -9,7 +9,7 @@ using EventStore.Events.Transport;
 
 namespace EventStore.Azure.AggegateRoots;
 
-public class AggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
+public sealed class AggregateRootRepository<TAggregateRoot>(AzureService azureService, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
 {
     readonly BlobContainerClient _blobContainerClient = azureService.BlobServiceClient.GetBlobContainerClient(Defaults.AggregateRoot.ContainerName);
 

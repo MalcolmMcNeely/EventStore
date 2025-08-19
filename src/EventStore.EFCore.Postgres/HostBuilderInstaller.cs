@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using EventStore.AggregateRoots;
+﻿using EventStore.AggregateRoots;
 using EventStore.Commands.Dispatching;
 using EventStore.EFCore.Postgres.AggregateRoots;
 using EventStore.EFCore.Postgres.Commands;

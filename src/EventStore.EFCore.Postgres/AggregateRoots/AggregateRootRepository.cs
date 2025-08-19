@@ -7,10 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.EFCore.Postgres.AggregateRoots;
 
-public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory serviceScopeFactory, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
+public sealed class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory serviceScopeFactory, IEventTransport transport, IEventStreamFactory eventStreamFactory) : IAggregateRootRepository<TAggregateRoot>  where TAggregateRoot : AggregateRoot, new()
 {
     public async Task<TAggregateRoot> LoadAsync(string key, CancellationToken token = default)
     {
+        using var semaphorePool = await DbSemaphoreSlimPool.AcquireAsync(token);
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
         return await dbContext.FindAsync<TAggregateRoot>([key], token).ConfigureAwait(false) ?? new TAggregateRoot { Id = key };
@@ -18,9 +19,10 @@ public class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory servic
 
     public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
     {
+        using var semaphorePool = await DbSemaphoreSlimPool.AcquireAsync(token);
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        await dbContext.UpsertAsync(aggregateRoot, key).ConfigureAwait(false);
+        await dbContext.UpsertAsync(aggregateRoot, [key], token).ConfigureAwait(false);
 
         return true;
     }
