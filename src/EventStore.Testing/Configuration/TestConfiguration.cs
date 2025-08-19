@@ -4,7 +4,8 @@ namespace EventStore.Testing.Configuration;
 
 public static class TestConfiguration
 {
-    public static string DatabaseConnectionString => _testConfigurationBuilder.DatabaseConnectionString;
+    public static string DatabaseConnectionString { set; get; } // => _testConfigurationBuilder.DatabaseConnectionString;
+
     public static bool IsEFCoreTest => _testConfigurationBuilder?.Mode == TestMode.EFCore;
 
     static bool IsConfigured => _testConfigurationBuilder?.ServiceHost is not null;
@@ -12,7 +13,7 @@ public static class TestConfiguration
 
     public static TestConfigurationBuilder Configure()
     {
-        _testConfigurationBuilder = new();
+        _testConfigurationBuilder = new(DatabaseConnectionString);
         return _testConfigurationBuilder;
     }
 

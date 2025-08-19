@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.AggregateRoots;
 
-public class AggregateRootRepositoryTests : IntegrationTest
+public class AggregateRootRepositoryTests : PostgresIntegrationTest
 {
     IAggregateRootRepository<TestAggregateRoot> _repository;
 

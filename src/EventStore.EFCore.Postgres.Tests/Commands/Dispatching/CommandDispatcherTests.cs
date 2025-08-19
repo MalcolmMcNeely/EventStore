@@ -1,12 +1,11 @@
 ﻿using EventStore.Commands;
-using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.Utility;
 using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.Commands.Dispatching;
 
-public class CommandDispatcherTests : IntegrationTest
+public class CommandDispatcherTests : PostgresIntegrationTest
 {
     static int _counter;
 

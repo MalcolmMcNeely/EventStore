@@ -1,6 +1,4 @@
-﻿using EventStore.Events;
-using EventStore.Events.Streams;
-using EventStore.Testing;
+﻿using EventStore.Events.Streams;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.SimpleTestDomain;
 using EventStore.Testing.Utility;
@@ -8,7 +6,7 @@ using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.Events.Streams;
 
-public class EventStreamTests : IntegrationTest
+public class EventStreamTests : PostgresIntegrationTest
 {
     IEventStreamFactory _eventStreamFactory;
 
@@ -60,9 +58,4 @@ public class EventStreamTests : IntegrationTest
             Assert.That(events, Has.Count.EqualTo(2000));
         });
     }
-
-    // class EventStreamTestEvent : IEvent
-    // {
-    //     public string CausationId { get; set; } = Guid.NewGuid().ToString();
-    // }
 }

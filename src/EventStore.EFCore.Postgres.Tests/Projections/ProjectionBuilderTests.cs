@@ -1,12 +1,11 @@
 ﻿using EventStore.Projections;
-using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.SimpleTestDomain;
 using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.Projections;
 
-public class ProjectionBuilderTests : IntegrationTest
+public class ProjectionBuilderTests : PostgresIntegrationTest
 {
     IProjectionRepository<TestProjection> _projectionRepository;
 

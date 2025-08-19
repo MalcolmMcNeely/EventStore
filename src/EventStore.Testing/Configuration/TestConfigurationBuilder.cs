@@ -22,11 +22,11 @@ public enum TestMode
     EFCore
 }
 
-public class TestConfigurationBuilder
+public class TestConfigurationBuilder(string? databaseConnectionString = null)
 {
     public IHost? ServiceHost { get; private set; }
     public TestMode Mode = TestMode.NotSet;
-    public string? DatabaseConnectionString { get; private set; }
+    public string? DatabaseConnectionString { get; set; } = databaseConnectionString;
 
     readonly HostApplicationBuilder _hostBuilder = Host.CreateApplicationBuilder([]);
 
@@ -48,7 +48,7 @@ public class TestConfigurationBuilder
 
     public TestConfigurationBuilder WithEFCoreServices(params Assembly[] additionalAssemblies)
     {
-        DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
+        //DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
         Mode = TestMode.EFCore;
         _hostBuilder.AddCoreServices();
         _hostBuilder.AddPostgresServices(x =>
