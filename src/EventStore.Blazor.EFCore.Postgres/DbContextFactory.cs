@@ -18,12 +18,15 @@ public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
         var optionsBuilder = new DbContextOptionsBuilder<EventStoreDbContext>();
         optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly(typeof(DbContextFactory).Assembly.GetName().Name));
 
-        var assemblies = new[]
+        var dbContextAssemblyProvider = new DbContextAssemblyProvider
         {
-            typeof(AppDomainNamespace).Assembly,
-            typeof(EventStoreDbContext).Assembly
+            AggregateAssemblies = new[]
+            {
+                typeof(AppDomainNamespace).Assembly,
+                typeof(EventStoreDbContext).Assembly
+            }
         };
 
-        return new EventStoreDbContext(optionsBuilder.Options, assemblies);
+        return new EventStoreDbContext(optionsBuilder.Options, dbContextAssemblyProvider);
     }
 }

@@ -15,7 +15,7 @@ public class CommandDispatcherTests : IntegrationTest
     {
         TestConfiguration
             .Configure()
-            .WithEFCoreServices()
+            .WithEFCoreServices(typeof(CommandDispatcherTests).Assembly)
             .With<ICommandHandler<TestCommand>, TestCommandHandler>()
             .Build();
     }
@@ -42,7 +42,7 @@ public class CommandDispatcherTests : IntegrationTest
 
     class TestCommand : ICommand
     {
-        public string CausationId { get; set; }
+        public string CausationId { get; set; } = Guid.NewGuid().ToString();
     }
 
     class TestCommandHandler : ICommandHandler<TestCommand>

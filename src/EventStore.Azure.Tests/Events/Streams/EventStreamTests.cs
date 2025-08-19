@@ -6,6 +6,7 @@ using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
+using EventStore.Testing.SimpleTestDomain;
 using EventStore.Testing.Utility;
 
 namespace EventStore.Azure.Tests.Events.Streams;
@@ -37,7 +38,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "oneStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 1);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 1);
 
         var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
         var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
@@ -45,7 +46,7 @@ public class EventStreamTests : IntegrationTest
         Assert.Multiple(() =>
         {
             Assert.That(metadataEntity.LastEvent, Is.EqualTo(1));
-            Assert.That(events.Count, Is.EqualTo(2));
+            Assert.That(events.Count, Is.EqualTo(2)); // includes metadata row
         });
     }
 
@@ -54,7 +55,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "anotherStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 2000);
 
         var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
         var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
@@ -62,12 +63,7 @@ public class EventStreamTests : IntegrationTest
         Assert.Multiple(() =>
         {
             Assert.That(metadataEntity.LastEvent, Is.EqualTo(2000));
-            Assert.That(events.Count, Is.EqualTo(2001));
+            Assert.That(events.Count, Is.EqualTo(2001)); // includes metadata row
         });
-    }
-
-    class EventStreamTestEvent : IEvent
-    {
-        public string CausationId { get; set; }
     }
 }

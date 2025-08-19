@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventStore.EFCore.Postgres.Database;
 
-public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, params Assembly[] aggregateAssemblies) : DbContext(options)
+public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, IDbContextAssemblyProvider assemblyProvider) : DbContext(options)
 {
     public DbSet<EventCursorEntity> EventCursorEntities { get; set; }
     public DbSet<EventStreamEntity> EventStreams { get; set; }
@@ -30,7 +30,7 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
         modelBuilder.Entity<EventStreamEntity>().HasKey(e => new { e.Key, e.RowKey });
         modelBuilder.Entity<CommandEntity>().HasKey(e => new { e.Key, e.RowKey });
 
-        var aggregateTypes = aggregateAssemblies.SelectMany(x => x
+        var aggregateTypes = assemblyProvider.AggregateAssemblies.SelectMany(x => x
             .GetTypes()
             .Where(t => !t.IsAbstract && typeof(AggregateRoot).IsAssignableFrom(t)));
 
@@ -49,7 +49,7 @@ public class EventStoreDbContext(DbContextOptions<EventStoreDbContext> options, 
             }
         }
 
-        var projectionTypes = aggregateAssemblies.SelectMany(x => x
+        var projectionTypes = assemblyProvider.AggregateAssemblies.SelectMany(x => x
             .GetTypes()
             .Where(t => !t.IsAbstract && typeof(IProjection).IsAssignableFrom(t)));
 

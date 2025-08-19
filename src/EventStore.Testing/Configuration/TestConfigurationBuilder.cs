@@ -2,10 +2,12 @@
 using EventStore.Azure;
 using EventStore.Commands;
 using EventStore.EFCore.Postgres;
+using EventStore.EFCore.Postgres.Database;
 using EventStore.InMemory;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.Testing.SimpleTestDomain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -22,16 +24,11 @@ public enum TestMode
 
 public class TestConfigurationBuilder
 {
-    public IHost? ServiceHost { get; set; }
+    public IHost? ServiceHost { get; private set; }
     public TestMode Mode = TestMode.NotSet;
-    public string DatabaseConnectionString { get; set; }
+    public string? DatabaseConnectionString { get; private set; }
 
-    readonly HostApplicationBuilder _hostBuilder;
-
-    public TestConfigurationBuilder()
-    {
-        _hostBuilder = Host.CreateApplicationBuilder([]);
-    }
+    readonly HostApplicationBuilder _hostBuilder = Host.CreateApplicationBuilder([]);
 
     public TestConfigurationBuilder WithInMemoryServices()
     {
@@ -54,7 +51,17 @@ public class TestConfigurationBuilder
         DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
         Mode = TestMode.EFCore;
         _hostBuilder.AddCoreServices();
-        _hostBuilder.AddPostgresServices(DatabaseConnectionString, null, new[] {typeof(TestingNamespace).Assembly}.Union(additionalAssemblies).ToArray());
+        _hostBuilder.AddPostgresServices(x =>
+        {
+            x.ConnectionString = DatabaseConnectionString;
+            x.AggregateAssemblies = new[] { typeof(TestingNamespace).Assembly }.Union(additionalAssemblies).ToArray();
+        });
+
+        using var scope = _hostBuilder.Services.BuildServiceProvider().CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
+        dbContext.Database.EnsureDeleted();
+        dbContext.Database.Migrate();
+
         return this;
     }
 
@@ -73,17 +80,20 @@ public class TestConfigurationBuilder
 
     public TestConfigurationBuilder WithTestDomain()
     {
-        if (Mode == TestMode.EFCore)
+        switch (Mode)
         {
-            _hostBuilder.Services.AddScoped<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
-            _hostBuilder.Services.AddScoped<IProjection, TestProjection>();
-            _hostBuilder.Services.AddScoped<ICommandHandler<TestCommand>, TestCommandHandler>();
-        }
-        else
-        {
-            _hostBuilder.Services.AddTransient<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
-            _hostBuilder.Services.AddTransient<IProjection, TestProjection>();
-            _hostBuilder.Services.AddTransient<ICommandHandler<TestCommand>, TestCommandHandler>();
+            case TestMode.NotSet:
+                throw new TestConfigurationException("Must set test mode before adding test domain");
+            case TestMode.EFCore:
+                _hostBuilder.Services.AddScoped<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
+                _hostBuilder.Services.AddScoped<IProjection, TestProjection>();
+                _hostBuilder.Services.AddScoped<ICommandHandler<TestCommand>, TestCommandHandler>();
+                break;
+            default:
+                _hostBuilder.Services.AddTransient<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
+                _hostBuilder.Services.AddTransient<IProjection, TestProjection>();
+                _hostBuilder.Services.AddTransient<ICommandHandler<TestCommand>, TestCommandHandler>();
+                break;
         }
 
         return this;

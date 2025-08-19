@@ -1,11 +1,8 @@
-﻿using Azure.Data.Tables;
-using EventStore.Azure.Azure;
-using EventStore.Azure.Events;
-using EventStore.Azure.Extensions;
-using EventStore.Events;
+﻿using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
+using EventStore.Testing.SimpleTestDomain;
 using EventStore.Testing.Utility;
 using NUnit.Framework;
 
@@ -13,7 +10,6 @@ namespace EventStore.EFCore.Postgres.Tests.Events.Streams;
 
 public class EventStreamTests : IntegrationTest
 {
-    TableClient _eventStoreTable;
     IEventStreamFactory _eventStreamFactory;
 
     [OneTimeSetUp]
@@ -21,15 +17,13 @@ public class EventStreamTests : IntegrationTest
     {
         TestConfiguration
             .Configure()
-            .WithEFCoreServices()
+            .WithEFCoreServices(typeof(EventStreamTests).Assembly)
             .Build();
     }
 
     [SetUp]
     public void Setup()
     {
-        var azureService = GetService<AzureService>();
-        _eventStoreTable = azureService.TableServiceClient.GetTableClient(Azure.Defaults.Events.EventStoreTable);
         _eventStreamFactory = GetService<IEventStreamFactory>();
     }
 
@@ -38,15 +32,15 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "oneStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 1);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 1);
 
-        var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
-        var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
+        var numberOfEvents = await _eventStreamFactory.For(streamName).GetCountAsync();
+        var events = await _eventStreamFactory.For(streamName).GetAllEventsAsync().ToListAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(metadataEntity.LastEvent, Is.EqualTo(1));
-            Assert.That(events.Count, Is.EqualTo(2));
+            Assert.That(numberOfEvents, Is.EqualTo(1));
+            Assert.That(events, Has.Count.EqualTo(1));
         });
     }
 
@@ -55,20 +49,20 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "anotherStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new EventStreamTestEvent()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 2000);
 
-        var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
-        var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
+        var numberOfEvents = await _eventStreamFactory.For(streamName).GetCountAsync();
+        var events = await _eventStreamFactory.For(streamName).GetAllEventsAsync().ToListAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(metadataEntity.LastEvent, Is.EqualTo(2000));
-            Assert.That(events.Count, Is.EqualTo(2001));
+            Assert.That(numberOfEvents, Is.EqualTo(2000));
+            Assert.That(events, Has.Count.EqualTo(2000));
         });
     }
 
-    class EventStreamTestEvent : IEvent
-    {
-        public string CausationId { get; set; }
-    }
+    // class EventStreamTestEvent : IEvent
+    // {
+    //     public string CausationId { get; set; } = Guid.NewGuid().ToString();
+    // }
 }

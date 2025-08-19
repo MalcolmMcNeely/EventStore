@@ -15,7 +15,7 @@ public class ProjectionBuilderTests : IntegrationTest
     {
         TestConfiguration
             .Configure()
-            .WithEFCoreServices()
+            .WithEFCoreServices(typeof(ProjectionBuilderTests).Assembly)
             .WithTestDomain()
             .Build();
     }

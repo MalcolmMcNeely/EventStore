@@ -40,7 +40,7 @@ public abstract class IntegrationTest
         }
     }
 
-    protected T? GetService<T>() where T : class => TestConfiguration.Resolve<T>();
+    protected T GetService<T>() where T : class => TestConfiguration.Resolve<T>();
 
     protected async Task DispatchCommandAsync(ICommand command) => await _commandDispatcher.DispatchAsync(command);
 

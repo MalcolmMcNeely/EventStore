@@ -6,8 +6,8 @@ public static class TestConfiguration
 {
     public static string DatabaseConnectionString => _testConfigurationBuilder.DatabaseConnectionString;
     public static bool IsEFCoreTest => _testConfigurationBuilder?.Mode == TestMode.EFCore;
-    public static bool IsConfigured => _testConfigurationBuilder?.ServiceHost is not null;
 
+    static bool IsConfigured => _testConfigurationBuilder?.ServiceHost is not null;
     static TestConfigurationBuilder? _testConfigurationBuilder;
 
     public static TestConfigurationBuilder Configure()
@@ -16,13 +16,13 @@ public static class TestConfiguration
         return _testConfigurationBuilder;
     }
 
-    public static T? Resolve<T>() where T : class
+    public static T Resolve<T>() where T : class
     {
-        if (IsConfigured is false)
+        if (IsConfigured is false || _testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
         {
             throw new TestConfigurationException("TestConfiguration has not been configured");
         }
 
-        return _testConfigurationBuilder?.ServiceHost?.Services.GetService<T>();
+        return _testConfigurationBuilder.ServiceHost.Services.GetRequiredService<T>();
     }
 }
