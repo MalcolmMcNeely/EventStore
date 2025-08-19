@@ -1,5 +1,4 @@
 ﻿using EventStore.AggregateRoots;
-using EventStore.Events;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains.SimpleTestDomain;
@@ -18,7 +17,7 @@ public class AggregateRootRepositoryTests : IntegrationTest
             .WithAzureServices()
             .Build();
     }
-    
+
     [SetUp]
     public void Setup()
     {
@@ -30,8 +29,9 @@ public class AggregateRootRepositoryTests : IntegrationTest
     {
         await Task.WhenAll(GenerateTasks(1));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(endValue!.Data, Is.EqualTo("0"));
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        await Verify(aggregateRoot);
     }
 
     [Test]
@@ -39,15 +39,18 @@ public class AggregateRootRepositoryTests : IntegrationTest
     {
         Assert.DoesNotThrowAsync(async () => await Task.WhenAll(GenerateTasks(2000)));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(string.IsNullOrWhiteSpace(endValue!.Data), Is.False);
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        var verifySettings = new VerifySettings();
+        verifySettings.ScrubMember("Data");
+        await Verify(aggregateRoot, verifySettings);
     }
 
     IEnumerable<Task> GenerateTasks(int numberOfTasks)
     {
         for (var i = 0; i < numberOfTasks; i++)
         {
-            yield return _repository.SaveAsync(new TestAggregateRoot { Data = $"{i}" }, "test");// Write($"{i}");
+            yield return _repository.SaveAsync(new TestAggregateRoot { Id = "test", Data = $"{i}" }, "test"); // Write($"{i}");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using EventStore.AggregateRoots;
-using EventStore.Events;
 using EventStore.Testing;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 
 namespace EventStore.Core.Tests.AggregateRoots;
 
@@ -19,8 +19,9 @@ public class AggregateRootRepositoryTests : IntegrationTest
     {
         await Task.WhenAll(GenerateTasks(1));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(endValue!.Message, Is.EqualTo("0"));
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        await Verify(aggregateRoot);
     }
 
     [Test]
@@ -28,8 +29,9 @@ public class AggregateRootRepositoryTests : IntegrationTest
     {
         Assert.DoesNotThrowAsync(async () => await Task.WhenAll(GenerateTasks(2000)));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(string.IsNullOrWhiteSpace(endValue!.Message), Is.False);
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        await Verify(aggregateRoot);
     }
 
     IEnumerable<Task> GenerateTasks(int numberOfTasks)
@@ -42,21 +44,6 @@ public class AggregateRootRepositoryTests : IntegrationTest
 
     async Task Write(string message)
     {
-        await _repository.SaveAsync(new TestAggregateRoot { Message = message }, "test");
-    }
-    
-    class TestAggregateRoot : AggregateRoot
-    {
-        public TestAggregateRoot()
-        {
-            NewEvents.Add((typeof(TestAggregateRootEvent), new TestAggregateRootEvent()));
-        }
-    
-        public string Message { get; set; } = string.Empty;
-    }
-
-    class TestAggregateRootEvent : IEvent
-    {
-        public string CausationId { get; set; }
+        await _repository.SaveAsync(new TestAggregateRoot { Id = "test", Data = message }, "test");
     }
 }

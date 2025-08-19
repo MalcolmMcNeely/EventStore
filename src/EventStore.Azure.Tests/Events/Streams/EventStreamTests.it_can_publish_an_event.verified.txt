@@ -1,0 +1,19 @@
+﻿[
+  {
+    IsLarge: false,
+    PartitionKey: oneStream,
+    RowKey: $0000000000,
+    Timestamp: DateTimeOffset_1,
+    ETag: {}
+  },
+  {
+    EventType: TestEvent,
+    IsLarge: false,
+    CausationId: Guid_1,
+    Content: {"Id":"Guid_2","CausationId":"Guid_1","Data":"Guid_3"},
+    PartitionKey: oneStream,
+    RowKey: A0000000001,
+    Timestamp: DateTimeOffset_2,
+    ETag: {}
+  }
+]

@@ -20,7 +20,7 @@ public class AggregateRootRepositoryTests : PostgresIntegrationTest
             .WithSimpleTestDomain()
             .Build();
     }
-    
+
     [SetUp]
     public void Setup()
     {
@@ -32,17 +32,23 @@ public class AggregateRootRepositoryTests : PostgresIntegrationTest
     {
         await Task.WhenAll(GenerateTasks(1));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(endValue!.Data, Is.EqualTo("0"));
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        var verifySettings = new VerifySettings();
+        verifySettings.ScrubMember("RowVersion");
+        await Verify(aggregateRoot, verifySettings);
     }
 
     [Test]
     public async Task when_everyone_is_trying_to_update_the_same_aggregate_root()
     {
-         Assert.DoesNotThrowAsync(async () => await Task.WhenAll(GenerateTasks(2000)));
+        Assert.DoesNotThrowAsync(async () => await Task.WhenAll(GenerateTasks(2000)));
 
-        var endValue = await _repository.LoadAsync("test");
-        Assert.That(string.IsNullOrWhiteSpace(endValue!.Data), Is.False);
+        var aggregateRoot = await _repository.LoadAsync("test");
+
+        var verifySettings = new VerifySettings();
+        verifySettings.ScrubMember("RowVersion");
+        await Verify(aggregateRoot, verifySettings);
     }
 
     IEnumerable<Task> GenerateTasks(int numberOfTasks)

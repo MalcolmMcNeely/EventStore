@@ -1,0 +1,4 @@
+﻿{
+  Id: TestProjection,
+  Data: test
+}

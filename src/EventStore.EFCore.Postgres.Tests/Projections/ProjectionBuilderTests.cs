@@ -32,8 +32,7 @@ public class ProjectionBuilderTests : PostgresIntegrationTest
         await SendEventAsync(new TestEvent { Data = "test" });
 
         var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));
-
-        Assert.That(projection, Is.Not.Null);
-        Assert.That(projection.Data, Is.EqualTo("test"));
+        
+        await Verify(projection);
     }
 }

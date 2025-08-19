@@ -14,6 +14,6 @@ TODO List:
 - [x] EF Core implementation
 - [x] DB Pooling
 - [ ] Use EF interceptors to write to the all stream ?
-- [ ] Write some tests using [Verify](https://github.com/VerifyTests/Verify)
+- [x] Write some tests using [Verify](https://github.com/VerifyTests/Verify)
 - [ ] Code generation to help out JsonSerializable ?
 - [x] [Test Containers](https://testcontainers.com/)

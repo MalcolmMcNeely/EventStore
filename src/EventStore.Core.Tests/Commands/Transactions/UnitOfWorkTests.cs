@@ -1,7 +1,4 @@
 ﻿using EventStore.AggregateRoots;
-using EventStore.Commands;
-using EventStore.Events;
-using EventStore.InMemory.AggregateRoots;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
@@ -28,10 +25,10 @@ public class UnitOfWorkTests : IntegrationTest
     }
 
     [Test]
-    public async Task Test()
+    public async Task when_unit_of_work_is_completed()
     {
         var savedAggregateRoot = await _repository.LoadAsync(nameof(TestAggregateRoot));
 
-        Assert.That(savedAggregateRoot!.Data, Is.EqualTo(_command.Data));
+        await Verify(savedAggregateRoot);
     }
 }

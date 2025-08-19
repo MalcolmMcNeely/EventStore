@@ -15,6 +15,7 @@ public class EventStreamTests : IntegrationTest
 {
     TableClient _eventStoreTable;
     IEventStreamFactory _eventStreamFactory;
+    readonly VerifySettings _verifySettings = new();
 
     [OneTimeSetUp]
     public void Configure()
@@ -23,6 +24,8 @@ public class EventStreamTests : IntegrationTest
             .Configure()
             .WithAzureServices()
             .Build();
+
+        _verifySettings.ScrubInlineGuids();
     }
 
     [SetUp]
@@ -40,14 +43,9 @@ public class EventStreamTests : IntegrationTest
 
         await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 1);
 
-        var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
-        var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
+        var eventAndMetadataRows = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(metadataEntity.LastEvent, Is.EqualTo(1));
-            Assert.That(events.Count, Is.EqualTo(2)); // includes metadata row
-        });
+        await Verify(eventAndMetadataRows, _verifySettings);
     }
 
     [Test]
@@ -57,13 +55,8 @@ public class EventStreamTests : IntegrationTest
 
         await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 2000);
 
-        var metadataEntity = await _eventStoreTable.GetMetadataEntityAsync(streamName);
-        var events = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
+        var eventAndMetadataRows = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(metadataEntity.LastEvent, Is.EqualTo(2000));
-            Assert.That(events.Count, Is.EqualTo(2001)); // includes metadata row
-        });
+        await Verify(eventAndMetadataRows, _verifySettings);
     }
 }

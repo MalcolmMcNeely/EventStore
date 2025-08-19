@@ -26,7 +26,7 @@ public class CommandDispatcherTests : PostgresIntegrationTest
 
         await DispatchCommandAsync(new TestCommand());
 
-        Assert.That(_counter, Is.EqualTo(1));
+        await Verify(_counter);
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class CommandDispatcherTests : PostgresIntegrationTest
 
         await TestUtility.InvokeManyAsync(async () => await DispatchCommandAsync(new TestCommand()), 2000);
 
-        Assert.That(_counter, Is.EqualTo(2000));
+        await Verify(_counter);
     }
 
     class TestCommand : ICommand

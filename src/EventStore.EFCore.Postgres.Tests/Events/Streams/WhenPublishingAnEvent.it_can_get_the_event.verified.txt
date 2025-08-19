@@ -1,0 +1,12 @@
+﻿[
+  {
+    Id: Guid_1,
+    CausationId: Guid_2,
+    Data: Guid_3
+  },
+  {
+    Id: Guid_4,
+    CausationId: Guid_5,
+    Data: Guid_6
+  }
+]

@@ -56,3 +56,7 @@ nunit-*.xml
 # Rider
 .idea/
 *.DotSettings.user
+
+# Verify
+*.received.*
+*.received/

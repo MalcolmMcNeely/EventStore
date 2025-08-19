@@ -33,7 +33,6 @@ public class ProjectionBuilderTests : IntegrationTest
 
         var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));
 
-        Assert.That(projection, Is.Not.Null);
-        Assert.That(projection.Data, Is.EqualTo("test"));
+        await Verify(projection);
     }
 }

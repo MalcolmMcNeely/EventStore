@@ -12,7 +12,6 @@ namespace EventStore.Azure.Tests.Projections;
 public class ProjectionRebuilderTests : IntegrationTest
 {
     IProjectionRepository<TestProjection> _projectionRepository;
-    TestProjection _initialProjection;
     BlobClient _blobClient;
 
     [OneTimeSetUp]
@@ -28,13 +27,11 @@ public class ProjectionRebuilderTests : IntegrationTest
     [SetUp]
     public async Task Setup()
     {
-        _projectionRepository = GetService<IProjectionRepository<TestProjection>>();
-        var blobContainerClient = GetService<AzureService>().BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
-        _blobClient = blobContainerClient.GetBlobClient($"{nameof(TestProjection)}/{nameof(TestProjection)}");
-
         await SendEventAsync(new TestEvent { Data = "test" });
 
-        _initialProjection = (await _projectionRepository.LoadAsync(nameof(TestProjection)))!;
+        var blobContainerClient = GetService<AzureService>().BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
+        _blobClient = blobContainerClient.GetBlobClient($"{nameof(TestProjection)}/{nameof(TestProjection)}");
+        await Wait.UntilAsync(async () => await _blobClient.ExistsAsync());
     }
 
     [Test]
@@ -43,8 +40,9 @@ public class ProjectionRebuilderTests : IntegrationTest
         await _blobClient.DeleteAsync();
         await Wait.UntilAsync(async () => !await _blobClient.ExistsAsync());
 
-        var newProjection = (await _projectionRepository.LoadAsync(nameof(TestProjection)))!;
+        _projectionRepository = GetService<IProjectionRepository<TestProjection>>();
+        var rebuiltProjection = (await _projectionRepository.LoadAsync(nameof(TestProjection)))!;
 
-        Assert.That(newProjection.Data, Is.EqualTo(_initialProjection.Data));
+        await Verify(rebuiltProjection);
     }
 }
