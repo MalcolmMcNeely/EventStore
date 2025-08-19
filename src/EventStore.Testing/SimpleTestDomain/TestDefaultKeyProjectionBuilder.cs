@@ -4,9 +4,9 @@ using EventStore.Projections;
 
 namespace EventStore.Testing.SimpleTestDomain;
 
-public class TestProjectionBuilder : ProjectionBuilder<TestProjection>
+public class TestDefaultKeyProjectionBuilder : ProjectionBuilder<TestProjection>
 {
-    public TestProjectionBuilder(IProjectionRepository<TestProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
+    public TestDefaultKeyProjectionBuilder(IProjectionRepository<TestProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
     {
         WithDefaultKey(nameof(TestProjection));
         Handles<TestEvent>(OnEvent);

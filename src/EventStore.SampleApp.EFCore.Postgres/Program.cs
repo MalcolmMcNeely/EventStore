@@ -7,6 +7,7 @@ using EventStore.SampleApp.Domain;
 using EventStore.SampleApp.Domain.BackgroundServices;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
+using EventStore.SampleApp.EFCore.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -24,7 +25,7 @@ hostBuilder.Services.AddHostedService<PrintColourBackgroundService>();
 hostBuilder.AddCoreServices();
 hostBuilder.AddEventBroadcaster();
 hostBuilder.AddEventPump();
-hostBuilder.AddPostgresServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
+hostBuilder.AddPostgresServices(databaseConnectionString, typeof(DbContextFactory).Assembly, typeof(AppDomainNamespace).Assembly);
 
 var host = hostBuilder.Build();
 await host.RunAsync();

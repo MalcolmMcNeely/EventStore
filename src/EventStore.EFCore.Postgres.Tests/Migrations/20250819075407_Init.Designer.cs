@@ -4,17 +4,20 @@ using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EventStore.SampleApp.EFCore.Postgres.Migrations
+namespace EventStore.EFCore.Postgres.Tests.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    partial class EventStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250819075407_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,9 +137,12 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.AggregateRoots.Account", b =>
+            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestAggregateRoot", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
                         .HasColumnType("text");
 
                     b.Property<int>("RowVersion")
@@ -144,12 +150,15 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("TestAggregateRoots", (string)null);
                 });
 
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.Projection", b =>
+            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestProjection", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
                         .HasColumnType("text");
 
                     b.Property<int>("RowVersion")
@@ -157,74 +166,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projections", (string)null);
-
-                    b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.TrafficLights.AggregateRoots.TrafficLight", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("RowVersion")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TrafficLights", (string)null);
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.TrafficLights.Projections.TrafficLightProjection", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Colour")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RowVersion")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TrafficLightProjections", (string)null);
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", b =>
-                {
-                    b.HasBaseType("EventStore.SampleApp.Domain.Accounts.Projections.Projection");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.ToTable("IndividualAccountProjections", (string)null);
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", b =>
-                {
-                    b.HasBaseType("EventStore.SampleApp.Domain.Accounts.Projections.Projection");
-
-                    b.ToTable("TotalBusinessAccountProjections", (string)null);
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", b =>
-                {
-                    b.HasOne("EventStore.SampleApp.Domain.Accounts.Projections.Projection", null)
-                        .WithOne()
-                        .HasForeignKey("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", b =>
-                {
-                    b.HasOne("EventStore.SampleApp.Domain.Accounts.Projections.Projection", null)
-                        .WithOne()
-                        .HasForeignKey("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("TestProjections", (string)null);
                 });
 #pragma warning restore 612, 618
         }

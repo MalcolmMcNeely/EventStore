@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EventStore.SampleApp.EFCore.Postgres.Migrations
+namespace EventStore.EFCore.Postgres.Tests.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration
@@ -20,7 +20,7 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     Key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     RowKey = table.Column<int>(type: "integer", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CommandType = table.Column<string>(type: "text", nullable: false),
+                    CommandType = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     CausationId = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false)
                 },
@@ -75,28 +75,29 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TrafficLightProjections",
+                name: "TestAggregateRoots",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    RowVersion = table.Column<int>(type: "integer", nullable: false),
-                    Colour = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrafficLightProjections", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrafficLights",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true),
                     RowVersion = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TrafficLights", x => x.Id);
+                    table.PrimaryKey("PK_TestAggregateRoots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestProjections", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
@@ -128,10 +129,10 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                 name: "QueuedEvents");
 
             migrationBuilder.DropTable(
-                name: "TrafficLightProjections");
+                name: "TestAggregateRoots");
 
             migrationBuilder.DropTable(
-                name: "TrafficLights");
+                name: "TestProjections");
         }
     }
 }

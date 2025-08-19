@@ -12,6 +12,7 @@ using EventStore.Events.Streams;
 using EventStore.Events.Transport;
 using EventStore.Projections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
@@ -20,10 +21,14 @@ namespace EventStore.EFCore.Postgres;
 
 public static class HostBuilderInstaller
 {
-    public static void AddPostgresServices(this IHostApplicationBuilder hostBuilder, string connectionString, params Assembly[] aggregateAssemblies)
+    public static void AddPostgresServices(
+        this IHostApplicationBuilder hostBuilder,
+        string connectionString,
+        Assembly? migrationsAssembly,
+        params Assembly[] aggregateAssemblies)
     {
         hostBuilder.Services.AddScoped<Assembly[]>(_ => aggregateAssemblies);
-        hostBuilder.AddDatabase(connectionString, aggregateAssemblies);
+        hostBuilder.AddDatabase(connectionString, migrationsAssembly, aggregateAssemblies);
 
         hostBuilder.Services.AddTransient(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 
@@ -40,17 +45,31 @@ public static class HostBuilderInstaller
         hostBuilder.Services.AddScoped(typeof(IProjectionRepository<>), typeof(ProjectionRepository<>));
     }
 
-    static void AddDatabase(this IHostApplicationBuilder hostBuilder, string connectionString, params Assembly[] aggregateAssemblies)
+    static void AddDatabase(
+        this IHostApplicationBuilder hostBuilder,
+        string connectionString,
+        Assembly? migrationsAssembly,
+        params Assembly[] aggregateAssemblies)
     {
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.EnableDynamicJson();
         var dataSource = dataSourceBuilder.Build();
         hostBuilder.Services.AddSingleton(dataSource);
 
+        migrationsAssembly ??= aggregateAssemblies.FirstOrDefault(a => a.GetTypes().Any(t => typeof(Migration).IsAssignableFrom(t))) ?? aggregateAssemblies.FirstOrDefault();
+
+        if (migrationsAssembly is null)
+        {
+            throw new StartupException("Could not find migrations assembly");
+        }
+        
         hostBuilder.Services.AddDbContext<EventStoreDbContext>((serviceProvider, options) =>
         {
             var npgsqlDataSource = serviceProvider.GetRequiredService<NpgsqlDataSource>();
-            options.UseNpgsql(npgsqlDataSource);
+            options.UseNpgsql(npgsqlDataSource, npgsql =>
+            {
+                npgsql.MigrationsAssembly(migrationsAssembly.FullName);
+            });
         });
 
         hostBuilder.Services.AddScoped(provider =>
@@ -58,5 +77,9 @@ public static class HostBuilderInstaller
             var options = provider.GetRequiredService<DbContextOptions<EventStoreDbContext>>();
             return new EventStoreDbContext(options, aggregateAssemblies);
         });
+        
+        using var scope = hostBuilder.Services.BuildServiceProvider().CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
+        dbContext.Database.Migrate();
     }
 }

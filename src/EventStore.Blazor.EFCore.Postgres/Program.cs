@@ -14,6 +14,7 @@ using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 var databaseConnectionString = builder.Configuration["ConnectionStrings:Postgres"]!;
 
 builder.Services.AddMudServices();
@@ -31,11 +32,9 @@ builder.AddBackgroundServices();
 builder.AddCoreServices();
 builder.AddEventBroadcaster();
 builder.AddEventPump();
-builder.AddPostgresServices(databaseConnectionString, typeof(AppDomainNamespace).Assembly);
+builder.AddPostgresServices(databaseConnectionString, typeof(DbContextFactory).Assembly, typeof(AppDomainNamespace).Assembly);
 
 var app = builder.Build();
-
-new DbContextFactory().EnsureDatabaseIsMigrated(databaseConnectionString);
 
 if (!app.Environment.IsDevelopment())
 {

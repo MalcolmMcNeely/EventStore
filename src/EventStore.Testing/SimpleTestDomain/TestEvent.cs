@@ -4,6 +4,7 @@ namespace EventStore.Testing.SimpleTestDomain;
 
 public class TestEvent : IEvent
 {
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string CausationId { get; set; }
     public required string Data { get; set; }
 }

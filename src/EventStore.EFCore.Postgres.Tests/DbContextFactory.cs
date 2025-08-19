@@ -1,9 +1,10 @@
 ﻿using EventStore.EFCore.Postgres.Database;
-using EventStore.SampleApp.Domain;
+using EventStore.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
-namespace EventStore.Blazor.EFCore.Postgres;
+namespace EventStore.EFCore.Postgres.Tests;
 
 public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 {
@@ -20,7 +21,7 @@ public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 
         var assemblies = new[]
         {
-            typeof(AppDomainNamespace).Assembly,
+            typeof(TestingNamespace).Assembly,
             typeof(EventStoreDbContext).Assembly
         };
 

@@ -2,8 +2,9 @@
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.Utility;
+using NUnit.Framework;
 
-namespace EventStore.InMemory.Tests.Commands.Dispatching;
+namespace EventStore.EFCore.Postgres.Tests.Commands.Dispatching;
 
 public class CommandDispatcherTests : IntegrationTest
 {
@@ -14,7 +15,7 @@ public class CommandDispatcherTests : IntegrationTest
     {
         TestConfiguration
             .Configure()
-            .WithInMemoryServices()
+            .WithEFCoreServices()
             .With<ICommandHandler<TestCommand>, TestCommandHandler>()
             .Build();
     }

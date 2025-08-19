@@ -2,7 +2,7 @@
 using EventStore.Events;
 using EventStore.Testing;
 
-namespace EventStore.InMemory.Tests.AggregateRoots;
+namespace EventStore.Core.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {

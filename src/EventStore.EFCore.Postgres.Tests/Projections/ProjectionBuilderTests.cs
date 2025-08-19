@@ -2,20 +2,21 @@
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.SimpleTestDomain;
+using NUnit.Framework;
 
-namespace EventStore.InMemory.Tests.ProjectionBuilderTests;
+namespace EventStore.EFCore.Postgres.Tests.Projections;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
-    IProjectionRepository<TestProjection>? _projectionRepository;
+    IProjectionRepository<TestProjection> _projectionRepository;
 
     [OneTimeSetUp]
     public void Configure()
     {
         TestConfiguration
             .Configure()
-            .WithInMemoryServices()
-            .WithBasicTestCase()
+            .WithEFCoreServices()
+            .WithTestDomain()
             .Build();
     }
 
@@ -28,8 +29,6 @@ public class ProjectionBuilderTests : IntegrationTest
     [Test]
     public async Task when_command_is_dispatched_it_updates_the_projection()
     {
-        Assert.That(_projectionRepository, Is.Not.Null);
-
         await SendEventAsync(new TestEvent { Data = "test" });
 
         var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));

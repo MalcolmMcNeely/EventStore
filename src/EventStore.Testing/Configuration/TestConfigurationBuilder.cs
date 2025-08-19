@@ -49,12 +49,12 @@ public class TestConfigurationBuilder
         return this;
     }
 
-    public TestConfigurationBuilder WithEFCoreServices(Assembly withAssembly)
+    public TestConfigurationBuilder WithEFCoreServices(params Assembly[] additionalAssemblies)
     {
         DatabaseConnectionString = _hostBuilder.Configuration["ConnectionStrings:Postgres"]!;
         Mode = TestMode.EFCore;
         _hostBuilder.AddCoreServices();
-        _hostBuilder.AddPostgresServices(DatabaseConnectionString, [typeof(TestingNamespace).Assembly, withAssembly]);
+        _hostBuilder.AddPostgresServices(DatabaseConnectionString, null, new[] {typeof(TestingNamespace).Assembly}.Union(additionalAssemblies).ToArray());
         return this;
     }
 
@@ -71,17 +71,17 @@ public class TestConfigurationBuilder
         return this;
     }
 
-    public TestConfigurationBuilder WithBasicTestCase()
+    public TestConfigurationBuilder WithTestDomain()
     {
         if (Mode == TestMode.EFCore)
         {
-            _hostBuilder.Services.AddScoped<ProjectionBuilder<TestProjection>, TestProjectionBuilder>();
+            _hostBuilder.Services.AddScoped<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
             _hostBuilder.Services.AddScoped<IProjection, TestProjection>();
             _hostBuilder.Services.AddScoped<ICommandHandler<TestCommand>, TestCommandHandler>();
         }
         else
         {
-            _hostBuilder.Services.AddTransient<ProjectionBuilder<TestProjection>, TestProjectionBuilder>();
+            _hostBuilder.Services.AddTransient<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>();
             _hostBuilder.Services.AddTransient<IProjection, TestProjection>();
             _hostBuilder.Services.AddTransient<ICommandHandler<TestCommand>, TestCommandHandler>();
         }

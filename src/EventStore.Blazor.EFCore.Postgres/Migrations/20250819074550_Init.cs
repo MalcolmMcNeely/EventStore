@@ -14,6 +14,18 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Commands",
                 columns: table => new
                 {
@@ -59,6 +71,18 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Projections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QueuedEvents",
                 columns: table => new
                 {
@@ -99,6 +123,41 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                     table.PrimaryKey("PK_TrafficLights", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "IndividualAccountProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IndividualAccountProjections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IndividualAccountProjections_Projections_Id",
+                        column: x => x.Id,
+                        principalTable: "Projections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TotalBusinessAccountProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TotalBusinessAccountProjections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TotalBusinessAccountProjections_Projections_Id",
+                        column: x => x.Id,
+                        principalTable: "Projections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Commands_Key_RowKey",
                 table: "Commands",
@@ -116,6 +175,9 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
                 name: "Commands");
 
             migrationBuilder.DropTable(
@@ -125,13 +187,22 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                 name: "EventStreams");
 
             migrationBuilder.DropTable(
+                name: "IndividualAccountProjections");
+
+            migrationBuilder.DropTable(
                 name: "QueuedEvents");
+
+            migrationBuilder.DropTable(
+                name: "TotalBusinessAccountProjections");
 
             migrationBuilder.DropTable(
                 name: "TrafficLightProjections");
 
             migrationBuilder.DropTable(
                 name: "TrafficLights");
+
+            migrationBuilder.DropTable(
+                name: "Projections");
         }
     }
 }

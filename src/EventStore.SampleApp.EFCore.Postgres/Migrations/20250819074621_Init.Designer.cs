@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    [Migration("20250814213944_Init")]
+    [Migration("20250819074621_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -41,7 +41,8 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
 
                     b.Property<string>("CommandType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -136,6 +137,34 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.AggregateRoots.Account", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Accounts", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.Projection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projections", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
             modelBuilder.Entity("EventStore.SampleApp.Domain.TrafficLights.AggregateRoots.TrafficLight", b =>
                 {
                     b.Property<string>("Id")
@@ -163,6 +192,42 @@ namespace EventStore.SampleApp.EFCore.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TrafficLightProjections", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", b =>
+                {
+                    b.HasBaseType("EventStore.SampleApp.Domain.Accounts.Projections.Projection");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("IndividualAccountProjections", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", b =>
+                {
+                    b.HasBaseType("EventStore.SampleApp.Domain.Accounts.Projections.Projection");
+
+                    b.ToTable("TotalBusinessAccountProjections", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", b =>
+                {
+                    b.HasOne("EventStore.SampleApp.Domain.Accounts.Projections.Projection", null)
+                        .WithOne()
+                        .HasForeignKey("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", b =>
+                {
+                    b.HasOne("EventStore.SampleApp.Domain.Accounts.Projections.Projection", null)
+                        .WithOne()
+                        .HasForeignKey("EventStore.SampleApp.Domain.Accounts.Projections.TotalBusinessAccountProjection", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

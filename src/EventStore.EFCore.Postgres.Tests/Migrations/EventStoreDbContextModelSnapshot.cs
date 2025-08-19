@@ -4,20 +4,17 @@ using EventStore.EFCore.Postgres.Database;
 using EventStore.EFCore.Postgres.Events.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EventStore.Blazor.EFCore.Postgres.Migrations
+namespace EventStore.EFCore.Postgres.Tests.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    [Migration("20250816143613_Init")]
-    partial class Init
+    partial class EventStoreDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +134,12 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
-            modelBuilder.Entity("EventStore.SampleApp.Domain.TrafficLights.AggregateRoots.TrafficLight", b =>
+            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestAggregateRoot", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
                         .HasColumnType("text");
 
                     b.Property<int>("RowVersion")
@@ -147,23 +147,23 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TrafficLights", (string)null);
+                    b.ToTable("TestAggregateRoots", (string)null);
                 });
 
-            modelBuilder.Entity("EventStore.SampleApp.Domain.TrafficLights.Projections.TrafficLightProjection", b =>
+            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestProjection", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<int>("Colour")
-                        .HasColumnType("integer");
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
 
                     b.Property<int>("RowVersion")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TrafficLightProjections", (string)null);
+                    b.ToTable("TestProjections", (string)null);
                 });
 #pragma warning restore 612, 618
         }
