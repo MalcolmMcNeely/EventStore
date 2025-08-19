@@ -23,7 +23,7 @@ public class ProjectionBuilderTests : IntegrationTest
     [SetUp]
     public void Setup()
     {
-        _projectionRepository = GetService<IProjectionRepository<TestProjection>>();
+        _projectionRepository = GetScopedService<IProjectionRepository<TestProjection>>();
     }
 
     [Test]

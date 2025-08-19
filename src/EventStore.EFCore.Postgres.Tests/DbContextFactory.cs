@@ -21,11 +21,11 @@ public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 
         var dbContextAssemblyProvider = new DbContextAssemblyProvider
         {
-            AggregateAssemblies = new[]
-            {
+            AggregateAssemblies =
+            [
                 typeof(TestingNamespace).Assembly,
                 typeof(EventStoreDbContext).Assembly
-            }
+            ]
         };
 
         return new EventStoreDbContext(optionsBuilder.Options, dbContextAssemblyProvider);

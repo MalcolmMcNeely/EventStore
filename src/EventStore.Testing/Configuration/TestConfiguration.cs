@@ -25,4 +25,15 @@ public static class TestConfiguration
 
         return _testConfigurationBuilder.ServiceHost.Services.GetRequiredService<T>();
     }
+
+    public static T ResolveScoped<T>() where T : class
+    {
+        if (IsConfigured is false || _testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
+        {
+            throw new TestConfigurationException("TestConfiguration has not been configured");
+        }
+
+        var scope = _testConfigurationBuilder.ServiceHost.Services.CreateScope();
+        return scope.ServiceProvider.GetRequiredService<T>();
+    }
 }

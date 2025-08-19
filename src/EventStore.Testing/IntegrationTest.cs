@@ -1,15 +1,14 @@
 ﻿using System.Text;
 using EventStore.Commands;
 using EventStore.Commands.Dispatching;
-using EventStore.EFCore.Postgres.Database;
 using EventStore.Events;
 using EventStore.Events.Transport;
 using EventStore.Testing.Configuration;
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace EventStore.Testing;
 
+[Parallelizable(ParallelScope.None)]
 public abstract class IntegrationTest
 {
     ICommandDispatcher _commandDispatcher;
@@ -20,10 +19,7 @@ public abstract class IntegrationTest
     [OneTimeSetUp]
     public void DefaultConfiguration()
     {
-        TestConfiguration
-            .Configure()
-            .WithInMemoryServices()
-            .Build();
+        TestConfiguration.Configure().Build();
     }
 
     [SetUp]
@@ -40,7 +36,8 @@ public abstract class IntegrationTest
         }
     }
 
-    protected T GetService<T>() where T : class => TestConfiguration.Resolve<T>();
+    protected static T GetService<T>() where T : class => TestConfiguration.Resolve<T>();
+    protected static T GetScopedService<T>() where T : class => TestConfiguration.ResolveScoped<T>();
 
     protected async Task DispatchCommandAsync(ICommand command) => await _commandDispatcher.DispatchAsync(command);
 
@@ -51,6 +48,7 @@ public abstract class IntegrationTest
         await _eventBroadcaster.BroadcastEventAsync();
     }
 
+    // TODO: Use Test Containers
     async Task DeleteAllRowsFromAllTablesAsync()
     {
         await using var connection = new NpgsqlConnection(TestConfiguration.DatabaseConnectionString);
@@ -75,31 +73,8 @@ public abstract class IntegrationTest
         var truncateString = new StringBuilder("TRUNCATE ");
         truncateString.AppendJoin(", ", tableNames.Select(name => $"\"{name}\""));
         truncateString.Append(" RESTART IDENTITY CASCADE;");
-
-        var truncateCommand = new NpgsqlCommand(truncateString.ToString(), connection);
+        
+        await using var truncateCommand = new NpgsqlCommand(truncateString.ToString(), connection);
         await truncateCommand.ExecuteNonQueryAsync();
-    }
-
-    const string MigrationSql = @"
-    CREATE TABLE IF NOT EXISTS ""Users"" (
-        ""Id"" SERIAL PRIMARY KEY,
-        ""Username"" TEXT NOT NULL,
-        ""Email"" TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS ""Orders"" (
-        ""Id"" SERIAL PRIMARY KEY,
-        ""UserId"" INTEGER REFERENCES ""Users""(""Id""),
-        ""Total"" DECIMAL NOT NULL
-    );
-";
-
-    public static async Task ApplyManualMigrationAsync(string connectionString)
-    {
-        await using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync();
-
-        await using var command = new NpgsqlCommand(MigrationSql, connection);
-        await command.ExecuteNonQueryAsync();
     }
 }

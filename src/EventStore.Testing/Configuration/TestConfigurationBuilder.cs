@@ -42,7 +42,7 @@ public class TestConfigurationBuilder
     {
         Mode = TestMode.Azure;
         _hostBuilder.AddCoreServices();
-        _hostBuilder.AddAzureServices(EventStore.Azure.Defaults.Azure.AzuriteConnectionString);
+        _hostBuilder.AddAzureServices(Azure.Defaults.Azure.AzuriteConnectionString);
         return this;
     }
 

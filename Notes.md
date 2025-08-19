@@ -12,6 +12,8 @@ TODO List:
 - [ ] Also allow for commands on the message transport ?
 - [ ] Allow for events to be upgraded
 - [x] EF Core implementation
+- [x] DB Pooling
 - [ ] Use EF interceptors to write to the all stream ?
 - [ ] Write some tests using [Verify](https://github.com/VerifyTests/Verify)
 - [ ] Code generation to help out JsonSerializable ?
+- [ ] [Test Containers](https://testcontainers.com/)
