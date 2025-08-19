@@ -2,7 +2,7 @@
 using EventStore.Events;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 

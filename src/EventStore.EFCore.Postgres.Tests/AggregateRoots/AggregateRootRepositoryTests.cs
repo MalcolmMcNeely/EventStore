@@ -1,7 +1,8 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.AggregateRoots;
@@ -16,7 +17,7 @@ public class AggregateRootRepositoryTests : PostgresIntegrationTest
         TestConfiguration
             .Configure()
             .WithEFCoreServices(typeof(AggregateRootRepositoryTests).Assembly)
-            .WithTestDomain()
+            .WithSimpleTestDomain()
             .Build();
     }
     

@@ -3,7 +3,8 @@ using EventStore.Azure.Azure;
 using EventStore.Projections;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 using EventStore.Utility;
 
 namespace EventStore.Azure.Tests.Projections;
@@ -20,7 +21,7 @@ public class ProjectionRebuilderTests : IntegrationTest
         TestConfiguration
             .Configure()
             .WithAzureServices()
-            .WithTestDomain()
+            .WithSimpleTestDomain()
             .Build();
     }
 

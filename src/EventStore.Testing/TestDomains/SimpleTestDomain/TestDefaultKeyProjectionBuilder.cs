@@ -2,7 +2,7 @@
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 
-namespace EventStore.Testing.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.SimpleTestDomain;
 
 public class TestDefaultKeyProjectionBuilder : ProjectionBuilder<TestProjection>
 {

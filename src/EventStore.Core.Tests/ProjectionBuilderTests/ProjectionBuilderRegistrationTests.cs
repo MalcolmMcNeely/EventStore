@@ -5,7 +5,7 @@ using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.Testing;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;

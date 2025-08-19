@@ -1,7 +1,8 @@
 ﻿using EventStore.Projections;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;
 
@@ -15,7 +16,7 @@ public class ProjectionBuilderTests : IntegrationTest
         TestConfiguration
             .Configure()
             .WithInMemoryServices()
-            .WithTestDomain()
+            .WithSimpleTestDomain()
             .Build();
     }
 

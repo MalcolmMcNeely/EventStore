@@ -6,7 +6,7 @@ using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 using EventStore.Testing.Utility;
 
 namespace EventStore.Azure.Tests.Events.Streams;

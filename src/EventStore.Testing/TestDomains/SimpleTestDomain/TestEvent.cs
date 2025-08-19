@@ -1,6 +1,6 @@
 ﻿using EventStore.Events;
 
-namespace EventStore.Testing.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.SimpleTestDomain;
 
 public class TestEvent : IEvent
 {

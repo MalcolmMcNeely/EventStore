@@ -1,7 +1,7 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Commands;
 
-namespace EventStore.Testing.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.SimpleTestDomain;
 
 public class TestCommandHandler(IAggregateRootRepository<TestAggregateRoot> repository) : ICommandHandler<TestCommand>
 {

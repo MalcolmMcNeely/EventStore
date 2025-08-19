@@ -6,7 +6,6 @@ using EventStore.Testing.Configuration;
 
 namespace EventStore.Testing;
 
-[Parallelizable(ParallelScope.None)]
 public abstract class IntegrationTest
 {
     ICommandDispatcher _commandDispatcher;
@@ -21,7 +20,7 @@ public abstract class IntegrationTest
     }
 
     [SetUp]
-    public async Task DefaultSetup()
+    public void DefaultSetup()
     {
         _commandDispatcher = GetService<ICommandDispatcher>()!;
         _eventBroadcaster = GetService<IEventBroadcaster>()!;

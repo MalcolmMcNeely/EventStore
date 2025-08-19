@@ -1,6 +1,7 @@
 ﻿using EventStore.Projections;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.SimpleTestDomain;
+using EventStore.Testing.TestDomains;
+using EventStore.Testing.TestDomains.SimpleTestDomain;
 using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.Projections;
@@ -15,7 +16,7 @@ public class ProjectionBuilderTests : PostgresIntegrationTest
         TestConfiguration
             .Configure()
             .WithEFCoreServices(typeof(ProjectionBuilderTests).Assembly)
-            .WithTestDomain()
+            .WithSimpleTestDomain()
             .Build();
     }
 

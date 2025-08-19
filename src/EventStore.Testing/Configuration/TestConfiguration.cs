@@ -4,11 +4,8 @@ namespace EventStore.Testing.Configuration;
 
 public static class TestConfiguration
 {
-    public static string DatabaseConnectionString { set; get; } // => _testConfigurationBuilder.DatabaseConnectionString;
+    public static string DatabaseConnectionString { set; get; } = string.Empty;
 
-    public static bool IsEFCoreTest => _testConfigurationBuilder?.Mode == TestMode.EFCore;
-
-    static bool IsConfigured => _testConfigurationBuilder?.ServiceHost is not null;
     static TestConfigurationBuilder? _testConfigurationBuilder;
 
     public static TestConfigurationBuilder Configure()
@@ -19,7 +16,7 @@ public static class TestConfiguration
 
     public static T Resolve<T>() where T : class
     {
-        if (IsConfigured is false || _testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
+        if (_testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
         {
             throw new TestConfigurationException("TestConfiguration has not been configured");
         }
@@ -29,7 +26,7 @@ public static class TestConfiguration
 
     public static T ResolveScoped<T>() where T : class
     {
-        if (IsConfigured is false || _testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
+        if (_testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
         {
             throw new TestConfigurationException("TestConfiguration has not been configured");
         }

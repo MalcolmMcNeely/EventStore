@@ -1,6 +1,6 @@
 ﻿using EventStore.Commands;
 
-namespace EventStore.Testing.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.SimpleTestDomain;
 
 public class TestCommand : ICommand
 {
