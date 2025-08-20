@@ -17,3 +17,4 @@ TODO List:
 - [x] Write some tests using [Verify](https://github.com/VerifyTests/Verify)
 - [ ] Code generation to help out JsonSerializable ?
 - [x] [Test Containers](https://testcontainers.com/)
+- [ ] TUnit (when rider can discover tests)

@@ -2,13 +2,13 @@
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
-    IProjectionRepository<TestProjection>? _projectionRepository;
+    IProjectionRepository<SimpleProjection>? _projectionRepository;
 
     [OneTimeSetUp]
     public void Configure()
@@ -16,14 +16,14 @@ public class ProjectionBuilderTests : IntegrationTest
         TestConfiguration
             .Configure()
             .WithInMemoryServices()
-            .WithSimpleTestDomain()
+            .WithSimpleDomain()
             .Build();
     }
 
     [SetUp]
     public void Setup()
     {
-        _projectionRepository = GetService<IProjectionRepository<TestProjection>>();
+        _projectionRepository = GetService<IProjectionRepository<SimpleProjection>>();
     }
 
     [Test]
@@ -31,9 +31,9 @@ public class ProjectionBuilderTests : IntegrationTest
     {
         Assert.That(_projectionRepository, Is.Not.Null);
 
-        await SendEventAsync(new TestEvent { Data = "test" });
+        await SendEventAsync(new SimpleEvent { Data = "test" });
 
-        var projection = await _projectionRepository.LoadAsync(nameof(TestProjection));
+        var projection = await _projectionRepository.LoadAsync(nameof(SimpleProjection));
 
         await Verify(projection);
     }

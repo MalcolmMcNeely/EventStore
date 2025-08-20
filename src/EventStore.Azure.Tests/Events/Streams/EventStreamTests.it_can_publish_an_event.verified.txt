@@ -7,7 +7,7 @@
     ETag: {}
   },
   {
-    EventType: TestEvent,
+    EventType: SimpleEvent,
     IsLarge: false,
     CausationId: Guid_1,
     Content: {"Id":"Guid_2","CausationId":"Guid_1","Data":"Guid_3"},

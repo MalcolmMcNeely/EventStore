@@ -2,14 +2,14 @@
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : PostgresIntegrationTest
 {
-    IAggregateRootRepository<TestAggregateRoot> _repository;
+    IAggregateRootRepository<SimpleAggregateRoot> _repository;
 
     [OneTimeSetUp]
     public void Configure()
@@ -17,14 +17,14 @@ public class AggregateRootRepositoryTests : PostgresIntegrationTest
         TestConfiguration
             .Configure()
             .WithEFCoreServices(typeof(AggregateRootRepositoryTests).Assembly)
-            .WithSimpleTestDomain()
+            .WithSimpleDomain()
             .Build();
     }
 
     [SetUp]
     public void Setup()
     {
-        _repository = GetService<IAggregateRootRepository<TestAggregateRoot>>();
+        _repository = GetService<IAggregateRootRepository<SimpleAggregateRoot>>();
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class AggregateRootRepositoryTests : PostgresIntegrationTest
     {
         for (var i = 0; i < numberOfTasks; i++)
         {
-            yield return _repository.SaveAsync(new TestAggregateRoot { Id = "test", Data = $"{i}" }, "test");
+            yield return _repository.SaveAsync(new SimpleAggregateRoot { Id = "test", Data = $"{i}" }, "test");
         }
     }
 }

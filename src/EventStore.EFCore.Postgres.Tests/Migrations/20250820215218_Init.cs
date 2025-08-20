@@ -59,6 +59,32 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FirstKeyedProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FirstKeyedProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MultiStreamProjectionAggregateRoots",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MultiStreamProjectionAggregateRoots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QueuedEvents",
                 columns: table => new
                 {
@@ -75,20 +101,7 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestAggregateRoots",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Data = table.Column<string>(type: "text", nullable: true),
-                    RowVersion = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestAggregateRoots", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestProjections",
+                name: "SecondKeyedProjections",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -97,7 +110,33 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestProjections", x => x.Id);
+                    table.PrimaryKey("PK_SecondKeyedProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimpleAggregateRoots",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimpleAggregateRoots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimpleProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimpleProjections", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
@@ -126,13 +165,22 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                 name: "EventStreams");
 
             migrationBuilder.DropTable(
+                name: "FirstKeyedProjections");
+
+            migrationBuilder.DropTable(
+                name: "MultiStreamProjectionAggregateRoots");
+
+            migrationBuilder.DropTable(
                 name: "QueuedEvents");
 
             migrationBuilder.DropTable(
-                name: "TestAggregateRoots");
+                name: "SecondKeyedProjections");
 
             migrationBuilder.DropTable(
-                name: "TestProjections");
+                name: "SimpleAggregateRoots");
+
+            migrationBuilder.DropTable(
+                name: "SimpleProjections");
         }
     }
 }

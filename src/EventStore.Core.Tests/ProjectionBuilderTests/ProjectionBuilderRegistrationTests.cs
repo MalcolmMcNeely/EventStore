@@ -5,7 +5,7 @@ using EventStore.InMemory.Projections;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.Testing;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Core.Tests.ProjectionBuilderTests;
@@ -18,9 +18,9 @@ public class ProjectionBuilderRegistrationTests
     public void Setup()
     {
         _serviceProvider = new ServiceCollection()
-            .AddTransient<IProjectionRepository<TestProjection>, ProjectionRepository<TestProjection>>()
-            .AddTransient<ProjectionBuilder<TestProjection>, TestDefaultKeyProjectionBuilder>()
-            .AddTransient<IProjection, TestProjection>()
+            .AddTransient<IProjectionRepository<SimpleProjection>, ProjectionRepository<SimpleProjection>>()
+            .AddTransient<ProjectionBuilder<SimpleProjection>, SimpleProjectionBuilder>()
+            .AddTransient<IProjection, SimpleProjection>()
             .AddSingleton<IEventStreamFactory, NullEventStreamFactory>()
             .BuildServiceProvider();
     }
@@ -33,7 +33,7 @@ public class ProjectionBuilderRegistrationTests
     {
         var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
         var registration = new ProjectionBuilderRegistration(scopeFactory);
-        var projections = registration.ProjectionBuildersFor(typeof(TestEvent));
+        var projections = registration.ProjectionBuildersFor(typeof(SimpleEvent));
 
         Assert.That(projections, Is.Not.Null);
     }

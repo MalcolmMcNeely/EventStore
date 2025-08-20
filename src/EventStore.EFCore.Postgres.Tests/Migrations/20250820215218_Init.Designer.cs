@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventStore.EFCore.Postgres.Tests.Migrations
 {
     [DbContext(typeof(EventStoreDbContext))]
-    [Migration("20250819075407_Init")]
+    [Migration("20250820215218_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -137,7 +137,7 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
-            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestAggregateRoot", b =>
+            modelBuilder.Entity("EventStore.Testing.TestDomains.MultiStreamProjection.FirstKeyedProjection", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -150,10 +150,10 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TestAggregateRoots", (string)null);
+                    b.ToTable("FirstKeyedProjections", (string)null);
                 });
 
-            modelBuilder.Entity("EventStore.Testing.SimpleTestDomain.TestProjection", b =>
+            modelBuilder.Entity("EventStore.Testing.TestDomains.MultiStreamProjection.MultiStreamProjectionAggregateRoot", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -166,7 +166,55 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TestProjections", (string)null);
+                    b.ToTable("MultiStreamProjectionAggregateRoots", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.Testing.TestDomains.MultiStreamProjection.SecondKeyedProjection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecondKeyedProjections", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.Testing.TestDomains.Simple.SimpleAggregateRoot", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SimpleAggregateRoots", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.Testing.TestDomains.Simple.SimpleProjection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SimpleProjections", (string)null);
                 });
 #pragma warning restore 612, 618
         }

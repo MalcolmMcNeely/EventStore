@@ -1,4 +1,4 @@
 ﻿{
   Data: Hello,
-  Id: TestAggregateRoot
+  Id: SimpleAggregateRoot
 }

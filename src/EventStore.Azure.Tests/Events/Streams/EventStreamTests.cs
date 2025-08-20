@@ -6,7 +6,7 @@ using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 using EventStore.Testing.Utility;
 
 namespace EventStore.Azure.Tests.Events.Streams;
@@ -41,7 +41,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "oneStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 1);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new SimpleEvent()), 1);
 
         var eventAndMetadataRows = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
 
@@ -53,7 +53,7 @@ public class EventStreamTests : IntegrationTest
     {
         var streamName = "anotherStream";
 
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new TestEvent()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(streamName).PublishAsync(new SimpleEvent()), 2000);
 
         var eventAndMetadataRows = await _eventStoreTable.QueryAsync<EventEntity>(x => x.PartitionKey == streamName).ToListAsync();
 

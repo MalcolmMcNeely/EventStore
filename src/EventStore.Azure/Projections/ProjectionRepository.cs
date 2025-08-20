@@ -26,7 +26,7 @@ public sealed class ProjectionRepository<T>(AzureService azureService, Projectio
                 return await projectionRebuilder.RebuildAsync<T>(key, token).ConfigureAwait(false);
             }
 
-            return new T();
+            return new T { Id = key };
         }
 
         try
@@ -38,7 +38,7 @@ public sealed class ProjectionRepository<T>(AzureService azureService, Projectio
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.ConditionNotMet)
         {
-            return new T();
+            return new T { Id = key };
         }
     }
 

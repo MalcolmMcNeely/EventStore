@@ -1,8 +1,8 @@
 ﻿using EventStore.Events;
 
-namespace EventStore.Testing.TestDomains.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.Simple;
 
-public class TestEvent : IEvent
+public class SimpleEvent : IEvent
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string CausationId { get; set; } = Guid.NewGuid().ToString();

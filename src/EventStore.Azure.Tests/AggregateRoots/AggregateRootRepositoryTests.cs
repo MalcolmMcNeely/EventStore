@@ -1,13 +1,13 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 
 namespace EventStore.Azure.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {
-    IAggregateRootRepository<TestAggregateRoot> _repository;
+    IAggregateRootRepository<SimpleAggregateRoot> _repository;
 
     [OneTimeSetUp]
     public void Configure()
@@ -21,7 +21,7 @@ public class AggregateRootRepositoryTests : IntegrationTest
     [SetUp]
     public void Setup()
     {
-        _repository = GetService<IAggregateRootRepository<TestAggregateRoot>>();
+        _repository = GetService<IAggregateRootRepository<SimpleAggregateRoot>>();
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class AggregateRootRepositoryTests : IntegrationTest
     {
         for (var i = 0; i < numberOfTasks; i++)
         {
-            yield return _repository.SaveAsync(new TestAggregateRoot { Id = "test", Data = $"{i}" }, "test"); // Write($"{i}");
+            yield return _repository.SaveAsync(new SimpleAggregateRoot { Id = "test", Data = $"{i}" }, "test"); // Write($"{i}");
         }
     }
 }

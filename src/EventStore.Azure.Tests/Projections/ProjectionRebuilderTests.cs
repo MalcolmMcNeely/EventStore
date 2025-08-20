@@ -4,14 +4,14 @@ using EventStore.Projections;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 using EventStore.Utility;
 
 namespace EventStore.Azure.Tests.Projections;
 
 public class ProjectionRebuilderTests : IntegrationTest
 {
-    IProjectionRepository<TestProjection> _projectionRepository;
+    IProjectionRepository<SimpleProjection> _projectionRepository;
     BlobClient _blobClient;
 
     [OneTimeSetUp]
@@ -20,17 +20,17 @@ public class ProjectionRebuilderTests : IntegrationTest
         TestConfiguration
             .Configure()
             .WithAzureServices()
-            .WithSimpleTestDomain()
+            .WithSimpleDomain()
             .Build();
     }
 
     [SetUp]
     public async Task Setup()
     {
-        await SendEventAsync(new TestEvent { Data = "test" });
+        await SendEventAsync(new SimpleEvent { Data = "test" });
 
         var blobContainerClient = GetService<AzureService>().BlobServiceClient.GetBlobContainerClient(Defaults.Projections.ContainerName);
-        _blobClient = blobContainerClient.GetBlobClient($"{nameof(TestProjection)}/{nameof(TestProjection)}");
+        _blobClient = blobContainerClient.GetBlobClient($"{nameof(SimpleProjection)}/{nameof(SimpleProjection)}");
         await Wait.UntilAsync(async () => await _blobClient.ExistsAsync());
     }
 
@@ -40,8 +40,8 @@ public class ProjectionRebuilderTests : IntegrationTest
         await _blobClient.DeleteAsync();
         await Wait.UntilAsync(async () => !await _blobClient.ExistsAsync());
 
-        _projectionRepository = GetService<IProjectionRepository<TestProjection>>();
-        var rebuiltProjection = (await _projectionRepository.LoadAsync(nameof(TestProjection)))!;
+        _projectionRepository = GetService<IProjectionRepository<SimpleProjection>>();
+        var rebuiltProjection = (await _projectionRepository.LoadAsync(nameof(SimpleProjection)))!;
 
         await Verify(rebuiltProjection);
     }

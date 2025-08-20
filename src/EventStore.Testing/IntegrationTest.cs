@@ -31,7 +31,12 @@ public abstract class IntegrationTest
     public static T GetService<T>() where T : class => TestConfiguration.Resolve<T>();
     public static T GetScopedService<T>() where T : class => TestConfiguration.ResolveScoped<T>();
 
-    public async Task DispatchCommandAsync(ICommand command) => await _commandDispatcher.DispatchAsync(command);
+    public async Task DispatchCommandAsync(ICommand command)
+    {
+        await _commandDispatcher.DispatchAsync(command);
+        await _eventPump.PublishEventsAsync();
+        await _eventBroadcaster.BroadcastEventAsync();
+    }
 
     public async Task SendEventAsync(IEvent @event)
     {

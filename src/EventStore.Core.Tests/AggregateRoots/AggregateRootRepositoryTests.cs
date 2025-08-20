@@ -1,17 +1,17 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Testing;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 
 namespace EventStore.Core.Tests.AggregateRoots;
 
 public class AggregateRootRepositoryTests : IntegrationTest
 {
-    IAggregateRootRepository<TestAggregateRoot> _repository;
+    IAggregateRootRepository<SimpleAggregateRoot> _repository;
 
     [SetUp]
     public void Setup()
     {
-        _repository = GetService<IAggregateRootRepository<TestAggregateRoot>>();
+        _repository = GetService<IAggregateRootRepository<SimpleAggregateRoot>>();
     }
 
     [Test]
@@ -44,6 +44,6 @@ public class AggregateRootRepositoryTests : IntegrationTest
 
     async Task Write(string message)
     {
-        await _repository.SaveAsync(new TestAggregateRoot { Id = "test", Data = message }, "test");
+        await _repository.SaveAsync(new SimpleAggregateRoot { Id = "test", Data = message }, "test");
     }
 }

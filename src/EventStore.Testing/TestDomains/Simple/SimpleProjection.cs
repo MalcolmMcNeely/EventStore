@@ -1,8 +1,8 @@
 ﻿using EventStore.Projections;
 
-namespace EventStore.Testing.TestDomains.SimpleTestDomain;
+namespace EventStore.Testing.TestDomains.Simple;
 
-public class TestProjection : IProjection
+public class SimpleProjection : IProjection
 {
     public string? Id { get; set; }
     public int RowVersion { get; set; }

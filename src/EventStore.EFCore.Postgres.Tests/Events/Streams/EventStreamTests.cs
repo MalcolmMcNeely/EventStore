@@ -1,6 +1,6 @@
 ﻿using EventStore.Events.Streams;
 using EventStore.Testing.Configuration;
-using EventStore.Testing.TestDomains.SimpleTestDomain;
+using EventStore.Testing.TestDomains.Simple;
 using EventStore.Testing.Utility;
 using NUnit.Framework;
 
@@ -27,7 +27,7 @@ public class WhenPublishingAnEvent : EventStreamTest
     public async Task Setup()
     {
         _eventStreamFactory = GetService<IEventStreamFactory>();
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new TestEvent()), 1);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new SimpleEvent()), 1);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class WhenPublishingManyEvents : EventStreamTest
     public async Task Setup()
     {
         _eventStreamFactory = GetService<IEventStreamFactory>();
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new TestEvent()), 2000);
+        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new SimpleEvent()), 2000);
     }
 
 
