@@ -1,7 +1,6 @@
 ﻿using EventStore.Events.Streams;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
-using EventStore.Testing.TestDomains.Simple;
 
 namespace EventStore.Testing.TestDomains.MultiStreamProjection;
 
@@ -9,10 +8,10 @@ public class FirstKeyedProjectionBuilder : ProjectionBuilder<FirstKeyedProjectio
 {
     public FirstKeyedProjectionBuilder(IProjectionRepository<FirstKeyedProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
     {
-        Handles<SimpleEvent>(x => x.Id, OnEvent);
+        Handles<MultiStreamProjectionEvent>(x => x.Id, OnEvent);
     }
 
-    void OnEvent(SimpleEvent @event, FirstKeyedProjection projection)
+    void OnEvent(MultiStreamProjectionEvent @event, FirstKeyedProjection projection)
     {
         projection.Data = @event.Data;
     }
