@@ -13,8 +13,8 @@ public class Account : AggregateRoot
     {
         Handles<AccountOpened>(OnAccountOpened);
         Handles<AccountClosed>(OnAccountClosed);
-        Handles<AccountClosed>(_ => { });
-        Handles<AccountClosed>(_ => { });
+        Handles<AccountCredited>(_ => { });
+        Handles<AccountDebited>(_ => { });
     }
 
     void OnAccountClosed(AccountClosed @event)
@@ -43,7 +43,7 @@ public class Account : AggregateRoot
     {
         if (_accountModel is not null && !_isClosed)
         {
-            Update(new AccountClosed { AccountModel = _accountModel!, User = command.User });
+            Update(new AccountClosed { AccountName = _accountModel.Name, User = command.User });
         }
 
         return Task.CompletedTask;

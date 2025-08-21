@@ -1,5 +1,4 @@
 using EventStore;
-using EventStore.Blazor.EFCore.Postgres;
 using EventStore.Blazor.EFCore.Postgres.BackgroundServices;
 using MudBlazor.Services;
 using EventStore.Blazor.EFCore.Postgres.Components;
@@ -10,6 +9,8 @@ using EventStore.EFCore.Postgres;
 using EventStore.ProjectionBuilders;
 using EventStore.Projections;
 using EventStore.SampleApp.Domain;
+using EventStore.SampleApp.Domain.Accounts.Commands;
+using EventStore.SampleApp.Domain.Accounts.Projections;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
 
@@ -22,9 +23,21 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICommandService, CommandService>();
+
 builder.Services.AddScoped<ProjectionBuilder<TrafficLightProjection>, TrafficLightProjectionBuilder>();
 builder.Services.AddScoped<IProjection, TrafficLightProjection>();
 builder.Services.AddScoped<ICommandHandler<ChangeColour>, ChangeColourCommandHandler>();
+
+// TODO register better
+builder.Services.AddScoped<ProjectionBuilder<IndividualAccountProjection>, IndividualAccountProjectionBuilder>();
+builder.Services.AddScoped<IProjection, IndividualAccountProjection>();
+builder.Services.AddScoped<ProjectionBuilder<TotalBusinessAccountProjection>, TotalBusinessAccountProjectionBuilder>();
+builder.Services.AddScoped<IProjection, TotalBusinessAccountProjection>();
+
+builder.Services.AddScoped<ICommandHandler<OpenAccount>, AccountsCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CloseAccount>, AccountsCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreditAccount>, AccountsCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DebitAccount>, AccountsCommandHandler>();
 
 builder.AddBackgroundServices();
 

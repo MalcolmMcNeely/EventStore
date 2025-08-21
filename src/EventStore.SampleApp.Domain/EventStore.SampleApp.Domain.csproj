@@ -7,7 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EventStore.Core\EventStore.Core.csproj" />
+        <ProjectReference Include="..\EventStore.Core\EventStore.Core.csproj"/>
+        <ProjectReference Include="..\EventStore.EFCore.Postgres\EventStore.EFCore.Postgres.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>        
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.7"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

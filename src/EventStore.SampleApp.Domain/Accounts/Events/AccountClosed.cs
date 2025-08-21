@@ -2,5 +2,5 @@
 
 public class AccountClosed : Event
 {
-    public required AccountModel AccountModel { get; set; }
+    public required string AccountName { get; set; }
 }

@@ -10,24 +10,24 @@ public class IndividualAccountProjectionBuilder : ProjectionBuilder<IndividualAc
     public IndividualAccountProjectionBuilder(IProjectionRepository<IndividualAccountProjection> repository, IEventStreamFactory eventStreamFactory) : base(repository, eventStreamFactory)
     {
         Handles<AccountOpened>(x => x.AccountModel.Name, OnAccountOpened);
-        Handles<AccountClosed>(x => x.AccountModel.Name, OnAccountClosed);
+        Handles<AccountClosed>(x => x.AccountName, OnAccountClosed);
         Handles<AccountCredited>(x => x.AccountName, OnAccountCredited);
         Handles<AccountDebited>(x => x.AccountName, OnAccountDebited);
     }
 
     void OnAccountDebited(AccountDebited @event, IndividualAccountProjection projection)
     {
-        throw new NotImplementedException();
+        projection.Balance += @event.Amount;
     }
 
     void OnAccountCredited(AccountCredited @event, IndividualAccountProjection projection)
     {
-        throw new NotImplementedException();
+        projection.Balance -= @event.Amount;
     }
 
     void OnAccountClosed(AccountClosed @event, IndividualAccountProjection projection)
     {
-        throw new NotImplementedException();
+        projection.IsClosed = true;
     }
 
     void OnAccountOpened(AccountOpened @event, IndividualAccountProjection projection)

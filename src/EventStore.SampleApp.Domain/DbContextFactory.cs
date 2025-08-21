@@ -1,9 +1,9 @@
 ﻿using EventStore.EFCore.Postgres.Database;
-using EventStore.SampleApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
-namespace EventStore.Blazor.EFCore.Postgres;
+namespace EventStore.SampleApp.Domain;
 
 public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 {

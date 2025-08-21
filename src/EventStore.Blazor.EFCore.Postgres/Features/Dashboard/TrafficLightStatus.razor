@@ -1,7 +1,8 @@
 ﻿@using EventStore.Projections
 @using EventStore.SampleApp.Domain
 @using EventStore.SampleApp.Domain.TrafficLights.Projections
-@implements IDisposable
+@using MudBlazor
+@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
 @inject IProjectionRepository<TrafficLightProjection> Repository
 
 <MudStack Row="true" AlignItems="AlignItems.Center">
@@ -12,17 +13,7 @@
 @code {
     Color TrafficLightColour { get; set; }
 
-    readonly CancellationTokenSource _cancellationTokenSource = new();
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Task.Run(() => StartPollingAsync(_cancellationTokenSource.Token));
-        }
-    }
-
-    async Task StartPollingAsync(CancellationToken token)
+    protected override async Task StartPollingAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {
@@ -40,12 +31,6 @@
 
             await Task.Delay(500, token);
         }
-    }
-
-    public void Dispose()
-    {
-        _cancellationTokenSource.Cancel();
-        _cancellationTokenSource.Dispose();
     }
 
     Color GetColor(Colour properSpelling)

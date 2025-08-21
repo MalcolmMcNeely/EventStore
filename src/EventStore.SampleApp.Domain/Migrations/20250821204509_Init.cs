@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using EventStore.EFCore.Postgres.Events.Transport;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EventStore.Blazor.EFCore.Postgres.Migrations
+namespace EventStore.SampleApp.Domain.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration
@@ -128,7 +129,9 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    IsClosed = table.Column<bool>(type: "boolean", nullable: false),
+                    Balance = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,7 +148,9 @@ namespace EventStore.Blazor.EFCore.Postgres.Migrations
                 name: "TotalBusinessAccountProjections",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Accounts = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Balance = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {

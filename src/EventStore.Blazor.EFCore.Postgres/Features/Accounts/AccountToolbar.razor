@@ -1,0 +1,53 @@
+﻿@using EventStore.Commands.Dispatching
+@using EventStore.SampleApp.Domain.Accounts.Commands
+@using MudBlazor
+@inject ICommandDispatcher CommandDispatcher
+
+<MudStack>
+    <MudStack Row="true">
+        <MudNumericField @bind-Value="CreditValue" 
+                         Variant="Variant.Text" 
+                         Adornment="Adornment.Start" 
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" 
+                         Step="1.0M" 
+                         Min="0.0M"/>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@CreditAsync">
+            Credit
+        </MudButton>
+    </MudStack>
+
+    <MudStack Row="true">
+        <MudNumericField @bind-Value="DebitValue" 
+                         Variant="Variant.Text" 
+                         Adornment="Adornment.Start" 
+                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" 
+                         Step="1.0M" 
+                         Min="0.0M"/>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Secondary"
+                   OnClick="@DebitAsync">
+            Debit
+        </MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] public required string AccountName { get; set; }
+    [Parameter] public EventCallback<AccountChangedEventArgs> OnChanged { get; set; }
+    decimal CreditValue { get; set; }
+    decimal DebitValue { get; set; }
+
+    async Task CreditAsync()
+    {
+        await CommandDispatcher.DispatchAsync(new CreditAccount { AccountName = AccountName, Amount = CreditValue, User = "user" });
+        await OnChanged.InvokeAsync(new AccountChangedEventArgs(AccountName, CreditValue));
+    }
+
+    async Task DebitAsync()
+    {
+        await CommandDispatcher.DispatchAsync(new DebitAccount { AccountName = AccountName, Amount = DebitValue, User = "user" });
+        await OnChanged.InvokeAsync(new AccountChangedEventArgs(AccountName, -DebitValue));
+    }
+}

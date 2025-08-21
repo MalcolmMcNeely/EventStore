@@ -19,14 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -36,6 +28,21 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Features\Dashboard\CommandTable.razor" />
+      <AdditionalFiles Include="Features\Dashboard\EventStoreTable.razor" />
+      <AdditionalFiles Include="Features\Dashboard\TrafficLightStatus.razor" />
+      <AdditionalFiles Include="Features\Dashboard\TrafficLightToolbar.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Controls\Accounts\AccountToolbar.razor" />
     </ItemGroup>
 
 </Project>

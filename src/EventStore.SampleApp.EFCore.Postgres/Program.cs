@@ -7,7 +7,6 @@ using EventStore.SampleApp.Domain;
 using EventStore.SampleApp.Domain.BackgroundServices;
 using EventStore.SampleApp.Domain.TrafficLights.Commands;
 using EventStore.SampleApp.Domain.TrafficLights.Projections;
-using EventStore.SampleApp.EFCore.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

@@ -1,8 +1,8 @@
-﻿@page "/"
-@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
-@using EventStore.Blazor.EFCore.Postgres.Components.Controls
+﻿@using EventStore.Blazor.EFCore.Postgres.Features.Dashboard
 @using EventStore.Blazor.EFCore.Postgres.Services.Events
 @using EventStore.EFCore.Postgres.Events
+@page "/"
+@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
 @inject IEventService EventService
 
 <PageTitle>Dashboard</PageTitle>

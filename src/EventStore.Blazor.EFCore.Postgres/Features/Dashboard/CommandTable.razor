@@ -1,6 +1,8 @@
-﻿@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
-@using EventStore.Blazor.EFCore.Postgres.Services.Commands
+﻿@using EventStore.Blazor.EFCore.Postgres.Services.Commands
 @using EventStore.EFCore.Postgres.Commands
+@using Microsoft.JSInterop
+@using MudBlazor
+@inherits EventStore.Blazor.EFCore.Postgres.Components.BaseControls.PollingComponentBase
 @inject IJSRuntime Js
 @inject ICommandService CommandService
 
