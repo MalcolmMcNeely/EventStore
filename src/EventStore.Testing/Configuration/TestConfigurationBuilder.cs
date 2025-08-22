@@ -18,13 +18,14 @@ public enum TestMode
     EFCore
 }
 
-public class TestConfigurationBuilder(string databaseConnectionString = "")
+public class TestConfigurationBuilder(string databaseConnectionString = "", string azuriteConnectionString = "")
 {
     public HostApplicationBuilder HostBuilder { get; } = Host.CreateApplicationBuilder([]);
     public IHost? ServiceHost { get; private set; }
 
     TestMode _mode = TestMode.NotSet;
     string DatabaseConnectionString { get; } = databaseConnectionString;
+    string AzuriteConnectionString { get; } = azuriteConnectionString;
 
     public TestConfigurationBuilder WithInMemoryServices()
     {
@@ -38,7 +39,7 @@ public class TestConfigurationBuilder(string databaseConnectionString = "")
     {
         _mode = TestMode.Azure;
         HostBuilder.AddCoreServices();
-        HostBuilder.AddAzureServices(Azure.Defaults.Azure.AzuriteConnectionString);
+        HostBuilder.AddAzureServices(AzuriteConnectionString);
         return this;
     }
 

@@ -1,0 +1,10 @@
+﻿{
+  NumberOfEvents: 1,
+  Events: [
+    {
+      Id: Guid_1,
+      CausationId: Guid_2,
+      Data: Guid_3
+    }
+  ]
+}

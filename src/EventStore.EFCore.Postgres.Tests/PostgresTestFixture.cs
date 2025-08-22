@@ -1,11 +1,10 @@
-﻿using EventStore.Testing;
-using EventStore.Testing.Configuration;
-using NUnit.Framework;
+﻿using EventStore.Testing.Configuration;
 using Testcontainers.PostgreSql;
 
 namespace EventStore.EFCore.Postgres.Tests;
 
-public class PostgresIntegrationTest : IntegrationTest
+[SetUpFixture]
+public class PostgresTestFixture
 {
     readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithDatabase("EventStore")

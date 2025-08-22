@@ -1,8 +1,6 @@
 ﻿using Azure.Data.Tables;
 using EventStore.Azure.Azure;
 using EventStore.Azure.Events;
-using EventStore.Azure.Extensions;
-using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Testing;
 using EventStore.Testing.Configuration;

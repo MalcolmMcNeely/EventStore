@@ -1,4 +1,5 @@
 ﻿using EventStore.Events.Streams;
+using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains.Simple;
 using EventStore.Testing.Utility;
@@ -6,69 +7,42 @@ using NUnit.Framework;
 
 namespace EventStore.EFCore.Postgres.Tests.Events.Streams;
 
-public abstract class EventStreamTest : PostgresIntegrationTest
+public class EventStreamTests : IntegrationTest
 {
     [OneTimeSetUp]
     public void Configure()
     {
         TestConfiguration
             .Configure()
-            .WithEFCoreServices(typeof(EventStreamTest).Assembly)
+            .WithEFCoreServices(typeof(EventStreamTests).Assembly)
             .Build();
     }
-}
 
-public class WhenPublishingAnEvent : EventStreamTest
-{
-    IEventStreamFactory _eventStreamFactory;
-    const string StreamName = "oneStream";
-
-    [SetUp]
-    public async Task Setup()
+    [Test]
+    public async Task it_can_publish_an_event()
     {
-        _eventStreamFactory = GetService<IEventStreamFactory>();
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new SimpleEvent()), 1);
+        var streamName = "oneStream";
+        var eventStreamFactory = GetService<IEventStreamFactory>();
+        
+        await TestUtility.InvokeManyAsync(async () => await eventStreamFactory.For(streamName).PublishAsync(new SimpleEvent()), 1);
+
+        var numberOfEvents = await eventStreamFactory.For(streamName).GetCountAsync();
+        var events = await eventStreamFactory.For(streamName).GetAllEventsAsync().ToListAsync();
+
+        await Verify(new { NumberOfEvents = numberOfEvents, Events = events });
     }
 
     [Test]
-    public async Task it_can_count_one_event()
+    public async Task it_can_publish_many_events()
     {
-        var numberOfEvents = await _eventStreamFactory.For(StreamName).GetCountAsync();
-        await Verify(numberOfEvents);
-    }
+        var streamName = "anotherStream";
+        var eventStreamFactory = GetService<IEventStreamFactory>();
 
-    [Test]
-    public async Task it_can_get_the_event()
-    {
-        var events = await _eventStreamFactory.For(StreamName).GetAllEventsAsync().ToListAsync();
-        await Verify(events);
-    }
-}
+        await TestUtility.InvokeManyAsync(async () => await eventStreamFactory.For(streamName).PublishAsync(new SimpleEvent()), 2000);
 
-public class WhenPublishingManyEvents : EventStreamTest
-{
-    IEventStreamFactory _eventStreamFactory;
-    const string StreamName = "anotherStream";
+        var numberOfEvents = await eventStreamFactory.For(streamName).GetCountAsync();
+        var events = await eventStreamFactory.For(streamName).GetAllEventsAsync().ToListAsync();
 
-    [SetUp]
-    public async Task Setup()
-    {
-        _eventStreamFactory = GetService<IEventStreamFactory>();
-        await TestUtility.InvokeManyAsync(async () => await _eventStreamFactory.For(StreamName).PublishAsync(new SimpleEvent()), 2000);
-    }
-
-
-    [Test]
-    public async Task it_can_count_all_events()
-    {
-        var numberOfEvents = await _eventStreamFactory.For(StreamName).GetCountAsync();
-        await Verify(numberOfEvents);
-    }
-
-    [Test]
-    public async Task it_can_get_all_events()
-    {
-        var events = await _eventStreamFactory.For(StreamName).GetAllEventsAsync().ToListAsync();
-        await Verify(events);
+        await Verify(new { NumberOfEvents = numberOfEvents, Events = events });
     }
 }

@@ -5,12 +5,13 @@ namespace EventStore.Testing.Configuration;
 public static class TestConfiguration
 {
     public static string DatabaseConnectionString { set; get; } = string.Empty;
+    public static string AzuriteConnectionString { set; get; } = string.Empty;
 
     static TestConfigurationBuilder? _testConfigurationBuilder;
 
     public static TestConfigurationBuilder Configure()
     {
-        _testConfigurationBuilder = new(DatabaseConnectionString);
+        _testConfigurationBuilder = new(DatabaseConnectionString, AzuriteConnectionString);
         return _testConfigurationBuilder;
     }
 

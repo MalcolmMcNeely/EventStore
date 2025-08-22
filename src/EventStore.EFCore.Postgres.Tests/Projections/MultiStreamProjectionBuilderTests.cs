@@ -1,11 +1,12 @@
 ﻿using EventStore.Projections;
+using EventStore.Testing;
 using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
 using EventStore.Testing.TestDomains.MultiStreamProjection;
 
 namespace EventStore.EFCore.Postgres.Tests.Projections;
 
-public class MultiStreamProjectionBuilderTests : PostgresIntegrationTest
+public class MultiStreamProjectionBuilderTests : IntegrationTest
 {
     [OneTimeSetUp]
     public void Configure()

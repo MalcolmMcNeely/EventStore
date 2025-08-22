@@ -7,7 +7,7 @@ using EventStore.Testing.TestDomains.Idempotency;
 
 namespace EventStore.EFCore.Postgres.Tests.Commands;
 
-public class CommandHandlerIdempotencyTests : PostgresIntegrationTest
+public class CommandHandlerIdempotencyTests : IntegrationTest
 {
     [OneTimeSetUp]
     public void Configure()
