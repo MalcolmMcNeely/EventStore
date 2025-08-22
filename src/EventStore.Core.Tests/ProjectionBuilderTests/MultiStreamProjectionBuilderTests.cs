@@ -4,7 +4,7 @@ using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains;
 using EventStore.Testing.TestDomains.MultiStreamProjection;
 
-namespace EventStore.Azure.Tests.Projections;
+namespace EventStore.Core.Tests.ProjectionBuilderTests;
 
 public class MultiStreamProjectionBuilderTests : IntegrationTest
 {
@@ -13,7 +13,7 @@ public class MultiStreamProjectionBuilderTests : IntegrationTest
     {
         TestConfiguration
             .Configure()
-            .WithAzureServices()
+            .WithInMemoryServices()
             .WithMultiStreamProjectionDomain()
             .Build();
     }

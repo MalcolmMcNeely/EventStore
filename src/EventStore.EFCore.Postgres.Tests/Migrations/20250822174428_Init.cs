@@ -72,6 +72,33 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IdempotencyAggregateRoots",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Created = table.Column<bool>(type: "boolean", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdempotencyAggregateRoots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IdempotencyProjections",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RowVersion = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdempotencyProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MultiStreamProjectionAggregateRoots",
                 columns: table => new
                 {
@@ -166,6 +193,12 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
 
             migrationBuilder.DropTable(
                 name: "FirstKeyedProjections");
+
+            migrationBuilder.DropTable(
+                name: "IdempotencyAggregateRoots");
+
+            migrationBuilder.DropTable(
+                name: "IdempotencyProjections");
 
             migrationBuilder.DropTable(
                 name: "MultiStreamProjectionAggregateRoots");

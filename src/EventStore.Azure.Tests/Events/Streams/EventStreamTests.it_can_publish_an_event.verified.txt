@@ -3,7 +3,7 @@
     IsLarge: false,
     PartitionKey: oneStream,
     RowKey: $0000000000,
-    Timestamp: DateTimeOffset_1,
+    Timestamp: {Scrubbed},
     ETag: {}
   },
   {
@@ -13,7 +13,7 @@
     Content: {"Id":"Guid_2","CausationId":"Guid_1","Data":"Guid_3"},
     PartitionKey: oneStream,
     RowKey: A0000000001,
-    Timestamp: DateTimeOffset_2,
+    Timestamp: {Scrubbed},
     ETag: {}
   }
 ]

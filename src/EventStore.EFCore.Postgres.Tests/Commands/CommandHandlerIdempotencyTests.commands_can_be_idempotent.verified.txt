@@ -1,0 +1,13 @@
+﻿{
+  First: {
+    Created: true,
+    Data: data,
+    Id: testStream,
+    RowVersion: {Scrubbed}
+  },
+  Second: {
+    RowVersion: {Scrubbed},
+    Id: testStream,
+    Data: data
+  }
+}

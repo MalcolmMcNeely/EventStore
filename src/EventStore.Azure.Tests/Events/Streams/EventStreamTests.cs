@@ -26,6 +26,7 @@ public class EventStreamTests : IntegrationTest
             .Build();
 
         _verifySettings.ScrubInlineGuids();
+        _verifySettings.ScrubMember("Timestamp");
     }
 
     [SetUp]

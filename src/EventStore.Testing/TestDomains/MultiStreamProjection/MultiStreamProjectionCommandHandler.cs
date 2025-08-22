@@ -7,7 +7,7 @@ public class MultiStreamProjectionCommandHandler(IAggregateRootRepository<MultiS
 {
     public async Task HandleAsync(MultiStreamProjectionCommand command, CancellationToken token)
     {
-        await repository.CreateUnitOfWork(nameof(MultiStreamProjectionAggregateRoot), command)
+        await repository.CreateUnitOfWork(command.Stream, command)
             .PerformAsync(x => x.OnCommand(command))
             .CompleteAsync(token);
     }

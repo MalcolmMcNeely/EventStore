@@ -134,6 +134,43 @@ namespace EventStore.EFCore.Postgres.Tests.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
+            modelBuilder.Entity("EventStore.Testing.TestDomains.Idempotency.IdempotencyAggregateRoot", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Created")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdempotencyAggregateRoots", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.Testing.TestDomains.Idempotency.IdempotencyProjection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdempotencyProjections", (string)null);
+                });
+
             modelBuilder.Entity("EventStore.Testing.TestDomains.MultiStreamProjection.FirstKeyedProjection", b =>
                 {
                     b.Property<string>("Id")

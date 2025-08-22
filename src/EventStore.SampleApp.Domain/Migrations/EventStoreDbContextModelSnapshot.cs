@@ -135,15 +135,43 @@ namespace EventStore.SampleApp.Domain.Migrations
                     b.ToTable("QueuedEvents");
                 });
 
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.AccountModel", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("AccountModel");
+                });
+
             modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.AggregateRoots.Account", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<string>("AccountModelName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("RowVersion")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountModelName");
 
                     b.ToTable("Accounts", (string)null);
                 });
@@ -221,6 +249,15 @@ namespace EventStore.SampleApp.Domain.Migrations
                         .HasColumnType("numeric");
 
                     b.ToTable("TotalBusinessAccountProjections", (string)null);
+                });
+
+            modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.AggregateRoots.Account", b =>
+                {
+                    b.HasOne("EventStore.SampleApp.Domain.Accounts.AccountModel", "AccountModel")
+                        .WithMany()
+                        .HasForeignKey("AccountModelName");
+
+                    b.Navigation("AccountModel");
                 });
 
             modelBuilder.Entity("EventStore.SampleApp.Domain.Accounts.Projections.IndividualAccountProjection", b =>

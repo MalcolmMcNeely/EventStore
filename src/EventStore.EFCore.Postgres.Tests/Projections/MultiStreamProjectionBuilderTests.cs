@@ -25,10 +25,18 @@ public class MultiStreamProjectionBuilderTests : PostgresIntegrationTest
         var firstProjection = await GetScopedService<IProjectionRepository<FirstKeyedProjection>>().LoadAsync("testStream");
         var secondProjection = await GetScopedService<IProjectionRepository<SecondKeyedProjection>>().LoadAsync("testStream");
 
-        await Verify(new
-        {
-            First = firstProjection,
-            Second = secondProjection
-        });
+        await Verify(new { First = firstProjection, Second = secondProjection });
+    }
+
+    [Test]
+    public async Task when_two_commands_are_dispatched_it_updates_both_projections()
+    {
+        await DispatchCommandAsync(new MultiStreamProjectionCommand { Stream = "testStream", Data = "test" });
+        await DispatchCommandAsync(new MultiStreamProjectionCommand { Stream = "testStream2", Data = "test" });
+
+        var firstProjection = await GetScopedService<IProjectionRepository<FirstKeyedProjection>>().LoadAsync("testStream");
+        var secondProjection = await GetScopedService<IProjectionRepository<SecondKeyedProjection>>().LoadAsync("testStream2");
+
+        await Verify(new { First = firstProjection, Second = secondProjection });
     }
 }

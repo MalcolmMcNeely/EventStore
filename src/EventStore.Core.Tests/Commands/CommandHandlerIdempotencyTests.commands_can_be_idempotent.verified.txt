@@ -1,0 +1,11 @@
+﻿{
+  aggregateRoot: {
+    Created: true,
+    Data: data,
+    Id: testStream
+  },
+  projection: {
+    Id: testStream,
+    Data: data
+  }
+}
