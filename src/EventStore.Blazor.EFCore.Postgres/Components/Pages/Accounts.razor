@@ -9,50 +9,62 @@
 @inject IProjectionRepository<TotalBusinessAccountProjection> TotalBusinessAccountRepository
 @inject ICommandDispatcher CommandDispatcher
 
-<MudStack>
-    <MudStack Row="true">
-        <MudTextField @bind-Value="NewAccountName" Label="New Account Name" Variant="Variant.Filled"/>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   Disabled="@(TotalBusinessAccount.Accounts.Contains(NewAccountName))"
-                   OnClick="@OpenAccountAsync">
-            Open Account
-        </MudButton>
-    </MudStack>
+<br/>
 
-    <MudStack Row="true">
-        <MudSelect @bind-Value="@CloseAccountName"
-                   Label="Select account to close"
-                   Placeholder="Please Select">
-            @foreach (var account in TotalBusinessAccount.Accounts)
-            {
-                <MudSelectItem Value="@account">@account</MudSelectItem>
-            }
-        </MudSelect>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   Disabled="@(!TotalBusinessAccount.Accounts.Contains(CloseAccountName))"
-                   OnClick="@CloseAccountAsync">
-            Close Account
-        </MudButton>
-    </MudStack>
+<MudPaper Outlined="true" Width="600px">
+    <MudStack>
+        <MudStack Row="true">
+            <MudTextField @bind-Value="NewAccountName" Label="New Account Name" Variant="Variant.Filled"/>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="@(TotalBusinessAccount.Accounts.Contains(NewAccountName))"
+                       OnClick="@OpenAccountAsync">
+                Open Account
+            </MudButton>
+            <MudSpacer/>
+        </MudStack>
 
-    <MudStack Row="true">
-        <MudText Typo="Typo.button">Total Business Balance</MudText>
-        <MudNumericField @bind-Value="@TotalBusinessAccount.Balance"
-                         ReadOnly="true"
-                         HideSpinButtons="true"
-                         Variant="Variant.Text"
-                         Adornment="Adornment.Start"
-                         AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+        <MudStack Row="true">
+            <MudSelect @bind-Value="@CloseAccountName"
+                       Label="Select account to close"
+                       Placeholder="Please Select">
+                @foreach (var account in TotalBusinessAccount.Accounts)
+                {
+                    <MudSelectItem Value="@account">@account</MudSelectItem>
+                }
+            </MudSelect>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="@(!TotalBusinessAccount.Accounts.Contains(CloseAccountName))"
+                       OnClick="@CloseAccountAsync">
+                Close Account
+            </MudButton>
+            <MudSpacer/>
+        </MudStack>
+
+        <MudStack Row="true">
+            <MudText Typo="Typo.button">Total Business Balance</MudText>
+            <MudNumericField @bind-Value="@TotalBusinessAccount.Balance"
+                             ReadOnly="true"
+                             HideSpinButtons="true"
+                             Variant="Variant.Text"
+                             Adornment="Adornment.Start"
+                             AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+            <MudSpacer/>
+        </MudStack>
     </MudStack>
-</MudStack>
+</MudPaper>
+
+<br/>
 
 <MudStack Row="true" Wrap="Wrap.Wrap">
     @foreach (var account in IndividualAccounts)
     {
+        <MudDivider Vertical="true"/>
         <AccountToolbar AccountName="@account.Name" OnChanged="OnAccountChanged"/>
     }
+    
+    <MudDivider Vertical="true"/>
 </MudStack>
 
 @code {
@@ -72,6 +84,8 @@
             {
                 IndividualAccounts.Add(await IndividualAccountRepository.LoadAsync(accountName));
             }
+
+            StateHasChanged();
         }
     }
 
