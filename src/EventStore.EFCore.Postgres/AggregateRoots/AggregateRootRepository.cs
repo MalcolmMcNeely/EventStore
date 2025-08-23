@@ -3,6 +3,7 @@ using EventStore.EFCore.Postgres.Database;
 using EventStore.Events;
 using EventStore.Events.Streams;
 using EventStore.Events.Transport;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.EFCore.Postgres.AggregateRoots;
@@ -14,7 +15,10 @@ public sealed class AggregateRootRepository<TAggregateRoot>(IServiceScopeFactory
         using var semaphorePool = await DbSemaphoreSlimPool.AcquireAsync(token);
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EventStoreDbContext>();
-        return await dbContext.FindAsync<TAggregateRoot>([key], token).ConfigureAwait(false) ?? new TAggregateRoot { Id = key };
+        return await dbContext.Set<TAggregateRoot>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id.Equals(key), token)
+            .ConfigureAwait(false) ?? new TAggregateRoot { Id = key };
     }
 
     public async Task<bool> SaveAsync(TAggregateRoot aggregateRoot, string key, CancellationToken token = default)
