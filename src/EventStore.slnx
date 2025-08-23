@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/SampleApps/">
+    <Project Path="EventStore.Blazor.EFCore.Postgres/EventStore.Blazor.EFCore.Postgres.csproj" />
+    <Project Path="EventStore.SampleApp.Azure/EventStore.SampleApp.Azure.csproj" />
+    <Project Path="EventStore.SampleApp.Domain/EventStore.SampleApp.Domain.csproj" />
+    <Project Path="EventStore.SampleApp.EFCore.Postgres/EventStore.SampleApp.EFCore.Postgres.csproj" />
+    <Project Path="EventStore.SampleApp.InMemory/EventStore.SampleApp.InMemory.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="../Notes.md" />
+    <File Path="docker-compose.yaml" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="EventStore.Azure.Tests/EventStore.Azure.Tests.csproj" />
+    <Project Path="EventStore.Core.Tests/EventStore.Core.Tests.csproj" />
+    <Project Path="EventStore.EFCore.Postgres.Tests/EventStore.EFCore.Postgres.Tests.csproj" />
+    <Project Path="EventStore.Testing/EventStore.Testing.csproj" />
+  </Folder>
+  <Project Path="EventStore.Azure/EventStore.Azure.csproj" />
+  <Project Path="EventStore.Core/EventStore.Core.csproj" />
+  <Project Path="EventStore.EFCore.Postgres/EventStore.EFCore.Postgres.csproj" />
+  <Project Path="EventStore.InMemory/EventStore.InMemory.csproj" />
+</Solution>
