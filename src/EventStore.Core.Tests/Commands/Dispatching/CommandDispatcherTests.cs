@@ -9,8 +9,7 @@ public class CommandDispatcherTests : IntegrationTest
 {
     static int _counter;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()
@@ -22,12 +21,12 @@ public class CommandDispatcherTests : IntegrationTest
     public async Task it_can_dispatch_a_command()
     {
         _counter = 0;
-        
+
         await DispatchCommandAsync(new TestCommand());
 
         await Verify(_counter);
     }
-    
+
     [Test]
     public async Task it_can_dispatch_many_commands()
     {
@@ -37,7 +36,7 @@ public class CommandDispatcherTests : IntegrationTest
 
         await Verify(_counter);
     }
-    
+
     class TestCommand : ICommand
     {
         public string CausationId { get; set; } = Guid.NewGuid().ToString();
@@ -48,9 +47,8 @@ public class CommandDispatcherTests : IntegrationTest
         public Task HandleAsync(TestCommand command, CancellationToken token)
         {
             _counter++;
-            
+
             return Task.CompletedTask;
         }
     }
 }
-

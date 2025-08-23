@@ -15,8 +15,7 @@ public class EventStreamTests : IntegrationTest
     IEventStreamFactory _eventStreamFactory;
     readonly VerifySettings _verifySettings = new();
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

@@ -12,8 +12,7 @@ public class AzureSanityTests : IntegrationTest
     BlobClient _blobClient;
     BinaryData _binaryData;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

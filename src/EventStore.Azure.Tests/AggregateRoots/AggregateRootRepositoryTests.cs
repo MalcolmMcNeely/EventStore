@@ -9,8 +9,7 @@ public class AggregateRootRepositoryTests : IntegrationTest
 {
     IAggregateRootRepository<SimpleAggregateRoot> _repository;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

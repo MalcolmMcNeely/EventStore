@@ -1,5 +1,6 @@
 ﻿using EventStore.AggregateRoots;
 using EventStore.Testing;
+using EventStore.Testing.Configuration;
 using EventStore.Testing.TestDomains.Simple;
 
 namespace EventStore.Core.Tests.AggregateRoots;
@@ -7,6 +8,11 @@ namespace EventStore.Core.Tests.AggregateRoots;
 public class AggregateRootRepositoryTests : IntegrationTest
 {
     IAggregateRootRepository<SimpleAggregateRoot> _repository;
+
+    protected override void Configure()
+    {
+        TestConfiguration.Configure().Build();
+    }
 
     [SetUp]
     public void Setup()

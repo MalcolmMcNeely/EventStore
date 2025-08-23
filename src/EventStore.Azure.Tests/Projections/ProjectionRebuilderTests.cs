@@ -11,11 +11,9 @@ namespace EventStore.Azure.Tests.Projections;
 
 public class ProjectionRebuilderTests : IntegrationTest
 {
-    IProjectionRepository<SimpleProjection> _projectionRepository;
     BlobClient _blobClient;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()
@@ -40,8 +38,8 @@ public class ProjectionRebuilderTests : IntegrationTest
         await _blobClient.DeleteAsync();
         await Wait.UntilAsync(async () => !await _blobClient.ExistsAsync());
 
-        _projectionRepository = GetService<IProjectionRepository<SimpleProjection>>();
-        var rebuiltProjection = (await _projectionRepository.LoadAsync(nameof(SimpleProjection)))!;
+        var projectionRepository = GetService<IProjectionRepository<SimpleProjection>>();
+        var rebuiltProjection = (await projectionRepository.LoadAsync(nameof(SimpleProjection)))!;
 
         await Verify(rebuiltProjection);
     }

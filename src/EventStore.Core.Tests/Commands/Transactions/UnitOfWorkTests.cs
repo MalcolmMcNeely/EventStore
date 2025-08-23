@@ -10,12 +10,15 @@ public class UnitOfWorkTests : IntegrationTest
 {
     IAggregateRootRepository<SimpleAggregateRoot> _repository;
     SimpleCommand _command;
-    
+
+    protected override void Configure()
+    {
+        TestConfiguration.Configure().WithSimpleDomain().Build();
+    }
+
     [SetUp]
     public async Task Setup()
     {
-        TestConfiguration.Configure().WithSimpleDomain().Build();
-
         _repository = GetService<IAggregateRootRepository<SimpleAggregateRoot>>();
         _command = new SimpleCommand { Data = "Hello" };
 

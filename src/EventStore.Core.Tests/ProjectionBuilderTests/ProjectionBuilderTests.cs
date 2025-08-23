@@ -10,8 +10,7 @@ public class ProjectionBuilderTests : IntegrationTest
 {
     IProjectionRepository<SimpleProjection>? _projectionRepository;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

@@ -9,22 +9,13 @@ namespace EventStore.EFCore.Postgres.Tests.Projections;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
-    IProjectionRepository<SimpleProjection> _projectionRepository;
-
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()
             .WithEFCoreServices(typeof(ProjectionBuilderTests).Assembly)
             .WithSimpleDomain(true)
             .Build();
-    }
-
-    [SetUp]
-    public void Setup()
-    {
-        _projectionRepository = GetScopedService<IProjectionRepository<SimpleProjection>>();
     }
 
     [Test]

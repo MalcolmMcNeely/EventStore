@@ -8,10 +8,7 @@ namespace EventStore.Azure.Tests.Projections;
 
 public class ProjectionBuilderTests : IntegrationTest
 {
-    IProjectionRepository<SimpleProjection> _projectionRepository;
-
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()
@@ -20,18 +17,12 @@ public class ProjectionBuilderTests : IntegrationTest
             .Build();
     }
 
-    [SetUp]
-    public void Setup()
-    {
-        _projectionRepository = GetService<IProjectionRepository<SimpleProjection>>();
-    }
-
     [Test]
     public async Task when_command_is_dispatched_it_updates_the_projection()
     {
         await DispatchCommandAsync(new SimpleCommand { Data = "test" });
 
-        var projection = await _projectionRepository.LoadAsync(nameof(SimpleProjection));
+        var projection = await GetService<IProjectionRepository<SimpleProjection>>().LoadAsync(nameof(SimpleProjection));
 
         await Verify(projection);
     }

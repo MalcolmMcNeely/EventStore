@@ -17,7 +17,7 @@ public static class TestConfiguration
 
     public static T Resolve<T>() where T : class
     {
-        if (_testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
+        if (_testConfigurationBuilder?.ServiceHost is null)
         {
             throw new TestConfigurationException("TestConfiguration has not been configured");
         }
@@ -27,7 +27,7 @@ public static class TestConfiguration
 
     public static T ResolveScoped<T>() where T : class
     {
-        if (_testConfigurationBuilder is null || _testConfigurationBuilder.ServiceHost is null)
+        if (_testConfigurationBuilder?.ServiceHost is null)
         {
             throw new TestConfigurationException("TestConfiguration has not been configured");
         }

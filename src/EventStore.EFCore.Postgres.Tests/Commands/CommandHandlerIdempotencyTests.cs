@@ -9,8 +9,7 @@ namespace EventStore.EFCore.Postgres.Tests.Commands;
 
 public class CommandHandlerIdempotencyTests : IntegrationTest
 {
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

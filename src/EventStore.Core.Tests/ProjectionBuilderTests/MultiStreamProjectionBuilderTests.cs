@@ -8,8 +8,7 @@ namespace EventStore.Core.Tests.ProjectionBuilderTests;
 
 public class MultiStreamProjectionBuilderTests : IntegrationTest
 {
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

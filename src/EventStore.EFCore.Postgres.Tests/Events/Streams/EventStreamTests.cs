@@ -9,8 +9,7 @@ namespace EventStore.EFCore.Postgres.Tests.Events.Streams;
 
 public class EventStreamTests : IntegrationTest
 {
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()

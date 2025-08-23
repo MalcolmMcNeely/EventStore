@@ -9,8 +9,7 @@ public class CommandDispatcherTests : IntegrationTest
 {
     static int _counter;
 
-    [OneTimeSetUp]
-    public void Configure()
+    protected override void Configure()
     {
         TestConfiguration
             .Configure()
