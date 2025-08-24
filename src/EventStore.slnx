@@ -12,6 +12,7 @@
     <File Path="grafana-datasources.yml" />
     <File Path="otel-config.yaml" />
     <File Path="prometheus.yml" />
+    <File Path="..\README.md" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="EventStore.Azure.Tests/EventStore.Azure.Tests.csproj" />

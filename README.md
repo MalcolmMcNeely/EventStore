@@ -1,5 +1,20 @@
 Implementation of an Event Sourcing library with InMemory, Azure, and Blazor/EF Core sample apps
 
+Technologies used:
+
+- Azure storage
+- Entity framework core
+- Blazor
+- Open telemetry auto instrumentation
+- Grafana
+- Grafana Loki
+- Prometheus
+- Jaeger
+- Docker
+- NUnit
+- Test containers
+- Verify
+
 # Running Blazor.EFCore.Postgres
 
 ## Prerequisites
