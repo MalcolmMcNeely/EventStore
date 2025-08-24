@@ -7,6 +7,8 @@ namespace EventStore.SampleApp.Domain;
 
 public class DbContextFactory : IDesignTimeDbContextFactory<EventStoreDbContext>
 {
+    const string ConnectionString = "Server=localhost;Port=5432;Database=EventStore;User ID=postgres;Password=password;Include Error Detail=true;";
+    
     public EventStoreDbContext CreateDbContext(string[] args)
     {
         var configuration = new ConfigurationBuilder()

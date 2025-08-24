@@ -2,6 +2,7 @@ using EventStore;
 using EventStore.Blazor.EFCore.Postgres.BackgroundServices;
 using MudBlazor.Services;
 using EventStore.Blazor.EFCore.Postgres.Components;
+using EventStore.Blazor.EFCore.Postgres.Extensions;
 using EventStore.Blazor.EFCore.Postgres.Services.Commands;
 using EventStore.Blazor.EFCore.Postgres.Services.Events;
 using EventStore.Commands;
@@ -52,6 +53,8 @@ builder.AddPostgresServices(x =>
     x.AutoMigrate = true;
 });
 
+builder.AddHealthChecksConfiguration(databaseConnectionString);
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -61,9 +64,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
 app.UseAntiforgery();
+
+app.MapHealthChecks("/healthz");
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

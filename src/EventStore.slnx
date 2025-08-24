@@ -9,6 +9,9 @@
   <Folder Name="/Solution Items/">
     <File Path="../Notes.md" />
     <File Path="docker-compose.yaml" />
+    <File Path="grafana-datasources.yml" />
+    <File Path="otel-config.yaml" />
+    <File Path="prometheus.yml" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="EventStore.Azure.Tests/EventStore.Azure.Tests.csproj" />
